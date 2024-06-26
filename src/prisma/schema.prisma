@@ -1,0 +1,237 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  employee
+  freelance
+}
+
+model User {
+  userID           String         @id @default(cuid())
+  email            String         @unique @db.VarChar(300)
+  password         String         @db.VarChar(300)
+  role             Role
+  verified         Boolean        @default(false) @db.Boolean
+  createdAt        DateTime       @default(now()) @db.Timestamp()
+  updatedAt        DateTime       @default(now()) @updatedAt @db.Timestamp()
+  PassHistory      PasswordHash[]
+  Application      Application[]
+  Activity         ActivityLogs[]
+  Notification     Notification[]
+  Review           Review[]
+  Schedule         Schedule[]
+  Profile          Profile?
+  Company          Company?
+  sentMessages     Message[]      @relation("SentMessage")
+  receivedMessages Message[]      @relation("ReceivedMessage")
+}
+
+model Notification {
+  notificationID String   @id @default(cuid())
+  read           Boolean  @default(false) @db.Boolean
+  createdAt      DateTime @default(now()) @db.Timestamp()
+  updatedAt      DateTime @default(now()) @updatedAt @db.Timestamp()
+  User           User?    @relation(fields: [userID], references: [userID])
+  userID         String?
+}
+
+model Message {
+  messageID  String   @id @default(cuid())
+  message    String
+  senderID   String
+  receiverID String
+  createdAt  DateTime @default(now()) @db.Timestamp()
+  updatedAt  DateTime @default(now()) @updatedAt @db.Timestamp()
+  sender     User     @relation("SentMessage", fields: [senderID], references: [userID])
+  receiver   User     @relation("ReceivedMessage", fields: [receiverID], references: [userID])
+}
+
+model Company {
+  companyID   String    @id @default(cuid())
+  companyName String    @db.VarChar(300)
+  description String    @db.VarChar(300)
+  location    String    @db.VarChar(300)
+  companySize String    @db.VarChar(300)
+  createdAt   DateTime  @default(now()) @db.Timestamp()
+  updatedAt   DateTime  @default(now()) @updatedAt @db.Timestamp()
+  User        User?     @relation(fields: [userID], references: [userID])
+  userID      String?   @unique
+  JobPost     JobPost[]
+}
+
+model Profile {
+  profileID String      @id @default(cuid())
+  firstname String      @db.VarChar(256)
+  lastname  String      @db.VarChar(256)
+  phone     String
+  birthday  DateTime    @default(now()) @db.Date
+  createdAt DateTime    @default(now()) @db.Timestamp()
+  updatedAt DateTime    @default(now()) @updatedAt @db.Timestamp()
+  Avatar    Media?
+  Resume    Resume[]
+  Skills    Skills[]
+  Portfolio Portfolio[]
+  About     About?
+  User      User?       @relation(fields: [userID], references: [userID])
+  userID    String?     @unique
+}
+
+model About {
+  aboutID   String   @id @default(cuid())
+  bio       String?  @db.VarChar(300)
+  Skills    Skills[]
+  createdAt DateTime @default(now()) @db.Timestamp()
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp()
+  Profile   Profile? @relation(fields: [profileID], references: [profileID])
+  profileID String?  @unique
+}
+
+model Skills {
+  skillsID  String      @id @default(cuid())
+  skills    String      @db.VarChar(100)
+  createdAt DateTime    @default(now()) @db.Timestamp()
+  updatedAt DateTime    @default(now()) @updatedAt @db.Timestamp()
+  About     About?      @relation(fields: [aboutID], references: [aboutID])
+  aboutID   String?
+  Portfolio Portfolio[]
+  Profile   Profile?    @relation(fields: [profileID], references: [profileID])
+  profileID String?
+}
+
+model Media {
+  mediaID   String     @id @default(cuid())
+  media     String     @db.Text
+  createdAt DateTime   @default(now()) @db.Timestamp()
+  updatedAt DateTime   @default(now()) @updatedAt @db.Timestamp()
+  Portfolio Portfolio? @relation(fields: [portfolio], references: [portfolioID])
+  portfolio String?
+  Profile   Profile?   @relation(fields: [profileID], references: [profileID])
+  profileID String?    @unique
+}
+
+model Portfolio {
+  portfolioID    String   @id @default(cuid())
+  title          String   @db.VarChar(300)
+  description    String   @db.VarChar(300)
+  employmentType String   @db.VarChar(300)
+  companyName    String   @db.VarChar(300)
+  location       String   @db.VarChar(300)
+  locationType   String   @db.VarChar(300)
+  startDate      DateTime @db.Date
+  endDate        DateTime @db.Date
+  createdAt      DateTime @default(now()) @db.Timestamp()
+  updatedAt      DateTime @default(now()) @updatedAt @db.Timestamp()
+  Media          Media[]
+  Skills         Skills[]
+  Profile        Profile? @relation(fields: [profileID], references: [profileID])
+  profileID      String?
+}
+
+model Resume {
+  resumeID      String       @id @default(cuid())
+  resume        String
+  createdAt     DateTime     @default(now()) @db.Timestamp()
+  updatedAt     DateTime     @default(now()) @updatedAt @db.Timestamp()
+  Profile       Profile?     @relation(fields: [profileID], references: [profileID])
+  profileID     String?
+  Application   Application? @relation(fields: [applicationID], references: [applicationID])
+  applicationID String?      @unique
+}
+
+model PasswordHash {
+  passowrdID String   @id @default(cuid())
+  passHash   String   @db.VarChar(300)
+  createdAt  DateTime @default(now()) @db.Timestamp()
+  updatedAt  DateTime @default(now()) @updatedAt @db.Timestamp()
+  User       User?    @relation(fields: [userID], references: [userID])
+  userID     String?
+}
+
+model JobPost {
+  jobPostID   String        @id @default(cuid())
+  title       String        @db.VarChar(300)
+  description String        @db.VarChar(300)
+  keyword     String[]
+  default     Boolean       @default(false) @db.Boolean
+  createdAt   DateTime      @default(now()) @db.Timestamp()
+  updatedAt   DateTime      @default(now()) @updatedAt @db.Timestamp()
+  Application Application[]
+  Company     Company?      @relation(fields: [companyID], references: [companyID])
+  companyID   String?
+}
+
+model Application {
+  applicationID String            @id @default(cuid())
+  id            String            @db.VarChar(20)
+  status        String            @db.VarChar(200)
+  createdAt     DateTime          @default(now()) @db.Timestamp()
+  updatedAt     DateTime          @default(now()) @updatedAt @db.Timestamp()
+  ATS           ApplicationScore?
+  Resume        Resume?
+  JobPost       JobPost?          @relation(fields: [jobPostID], references: [jobPostID])
+  jobPostID     String?
+  User          User?             @relation(fields: [userID], references: [userID])
+  userID        String?
+}
+
+model ActivityLogs {
+  logsID      String   @id @default(cuid())
+  title       String   @db.VarChar(200)
+  description String   @db.VarChar(200)
+  createdAt   DateTime @default(now()) @db.Timestamp()
+  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamp()
+  User        User?    @relation(fields: [userID], references: [userID])
+  userID      String?
+}
+
+model ApplicationScore {
+  applicationScoreID String       @id @default(cuid())
+  score              Float
+  createdAt          DateTime     @default(now()) @db.Timestamp()
+  updatedAt          DateTime     @default(now()) @updatedAt @db.Timestamp()
+  Application        Application? @relation(fields: [applicationID], references: [applicationID])
+  applicationID      String?      @unique
+}
+
+model Archive {
+  archiveID String   @id @default(cuid())
+  createdAt DateTime @default(now()) @db.Timestamp()
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp()
+}
+
+model Schedule {
+  scheduleID  String   @id @default(cuid())
+  title       String   @db.VarChar(300)
+  description String?  @db.VarChar(300)
+  startDate   DateTime @db.Timestamp()
+  endDate     DateTime @db.Timestamp()
+  link        String   @db.Text
+  createdAt   DateTime @default(now()) @db.Timestamp()
+  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamp()
+  User        User?    @relation(fields: [userID], references: [userID])
+  userID      String?
+}
+
+model Review {
+  reviewID String @id @default(cuid())
+  review   String
+  rating   Int
+
+  createdAt DateTime @default(now()) @db.Timestamp()
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp()
+  User      User?    @relation(fields: [userID], references: [userID])
+  userID    String?
+}
