@@ -90,6 +90,15 @@ export interface NexusGenInputs {
     lastname?: string | null; // String
     phone?: string | null; // String
   }
+  ScheduleInput: { // input type
+    description?: string | null; // String
+    endDate?: NexusGenScalars['DateTime'] | null; // DateTime
+    link?: string | null; // String
+    receiverID?: string | null; // String
+    senderID?: string | null; // String
+    startDate?: NexusGenScalars['DateTime'] | null; // DateTime
+    title?: string | null; // String
+  }
   SkillInput: { // input type
     skills?: string | null; // String
   }
@@ -307,6 +316,7 @@ export interface NexusGenFieldTypes {
     createApplication: NexusGenRootTypes['application'] | null; // application
     createJobPost: NexusGenRootTypes['jobpost'] | null; // jobpost
     createPortoflio: NexusGenRootTypes['portfolio'] | null; // portfolio
+    createSchedule: NexusGenRootTypes['schedule'] | null; // schedule
     createSkills: NexusGenRootTypes['skills'] | null; // skills
     createUserAdminAccount: NexusGenRootTypes['user'] | null; // user
     createUserFreelancers: NexusGenRootTypes['user'] | null; // user
@@ -513,6 +523,7 @@ export interface NexusGenFieldTypeNames {
     createApplication: 'application'
     createJobPost: 'jobpost'
     createPortoflio: 'portfolio'
+    createSchedule: 'schedule'
     createSkills: 'skills'
     createUserAdminAccount: 'user'
     createUserFreelancers: 'user'
@@ -724,6 +735,9 @@ export interface NexusGenArgTypes {
       file?: NexusGenScalars['Upload'] | null; // Upload
       input: NexusGenInputs['PortfolioInput']; // PortfolioInput!
       profileID: string; // ID!
+    }
+    createSchedule: { // args
+      input: NexusGenInputs['ScheduleInput']; // ScheduleInput!
     }
     createSkills: { // args
       input: NexusGenInputs['SkillInput']; // SkillInput!

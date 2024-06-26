@@ -20,23 +20,26 @@ enum Role {
 }
 
 model User {
-  userID           String         @id @default(cuid())
-  email            String         @unique @db.VarChar(300)
-  password         String         @db.VarChar(300)
+  userID           String             @id @default(cuid())
+  email            String             @unique @db.VarChar(300)
+  password         String             @db.VarChar(300)
   role             Role
-  verified         Boolean        @default(false) @db.Boolean
-  createdAt        DateTime       @default(now()) @db.Timestamp()
-  updatedAt        DateTime       @default(now()) @updatedAt @db.Timestamp()
+  verified         Boolean            @default(false) @db.Boolean
+  createdAt        DateTime           @default(now()) @db.Timestamp()
+  updatedAt        DateTime           @default(now()) @updatedAt @db.Timestamp()
   PassHistory      PasswordHash[]
   Application      Application[]
   Activity         ActivityLogs[]
   Notification     Notification[]
   Review           Review[]
-  Schedule         Schedule[]
+  scheduleSender   Schedule[]         @relation("ScheduleSender")
+  scheduleReceiver Schedule[]         @relation("ScheduleReceiver")
+  sentMessages     Message[]          @relation("SentMessage")
+  receivedMessages Message[]          @relation("ReceivedMessage")
+  Organizer        ProjectOrganizer[]
   Profile          Profile?
   Company          Company?
-  sentMessages     Message[]      @relation("SentMessage")
-  receivedMessages Message[]      @relation("ReceivedMessage")
+  Archive          Archive[]
 }
 
 model Notification {
@@ -171,6 +174,7 @@ model JobPost {
   Application Application[]
   Company     Company?      @relation(fields: [companyID], references: [companyID])
   companyID   String?
+  Archive     Archive?
 }
 
 model Application {
@@ -208,8 +212,13 @@ model ApplicationScore {
 
 model Archive {
   archiveID String   @id @default(cuid())
+  status    Boolean  @default(true)
+  JobPost   JobPost? @relation(fields: [jobPost], references: [jobPostID])
+  jobPost   String?  @unique
   createdAt DateTime @default(now()) @db.Timestamp()
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamp()
+  User      User?    @relation(fields: [userID], references: [userID])
+  userID    String?  @unique
 }
 
 model Schedule {
@@ -221,8 +230,10 @@ model Schedule {
   link        String   @db.Text
   createdAt   DateTime @default(now()) @db.Timestamp()
   updatedAt   DateTime @default(now()) @updatedAt @db.Timestamp()
-  User        User?    @relation(fields: [userID], references: [userID])
-  userID      String?
+  senderID    String
+  receiverID  String
+  sender      User     @relation(name: "ScheduleSender", fields: [senderID], references: [userID])
+  receiver    User     @relation(name: "ScheduleReceiver", fields: [receiverID], references: [userID])
 }
 
 model Review {
@@ -234,4 +245,13 @@ model Review {
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamp()
   User      User?    @relation(fields: [userID], references: [userID])
   userID    String?
+}
+
+model ProjectOrganizer {
+  projectOrganizerID String   @id @default(cuid())
+  status             String
+  createdAt          DateTime @default(now()) @db.Timestamp()
+  updatedAt          DateTime @default(now()) @updatedAt @db.Timestamp()
+  User               User?    @relation(fields: [userID], references: [userID])
+  userID             String?
 }
