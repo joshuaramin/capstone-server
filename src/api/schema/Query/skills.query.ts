@@ -7,10 +7,10 @@ export const SkillQuery = extendType({
     t.list.field("getAllSkill", {
       type: "skills",
       args: { input: "PaginationInput" },
-      resolve: async (_, { input: { skip, take } }): Promise<any> => {
+      resolve: async (_, { input: { page, take } }): Promise<any> => {
         return await prisma.skills.findMany({
           take,
-          skip,
+          skip: take * (page - 1),
         });
       },
     });
@@ -25,6 +25,14 @@ export const SkillQuery = extendType({
               mode: "insensitive",
             },
           },
+        });
+      },
+    });
+    t.list.field("getSkillsByGroup", {
+      type: "skills",
+      resolve: async (): Promise<any> => {
+        return await prisma.skills.groupBy({
+          by: ["skillsID", "skills"],
         });
       },
     });

@@ -1,15 +1,21 @@
 import { extendType, idArg, nonNull } from "nexus";
 import { prisma } from "../../helpers/server";
+import { ERROR_MESSAGE_BAD_INPUT } from "../../helpers/error";
 
 export const ResumeMutation = extendType({
   type: "resume",
   definition(t) {
     t.field("createResume", {
-      type: "resume",
+      type: "ResumePayload",
       args: { profileID: nonNull(idArg()), file: "Upload" },
       resolve: async (_, { profileID, file }): Promise<any> => {
         const { createReadStream, filename } = await file;
-        return await prisma.resume.create({
+
+        if (!file) {
+          return ERROR_MESSAGE_BAD_INPUT;
+        }
+
+        const resume = await prisma.resume.create({
           data: {
             resume: "",
             Profile: {
@@ -19,6 +25,11 @@ export const ResumeMutation = extendType({
             },
           },
         });
+
+        return {
+          __tyname: "resume",
+          ...resume,
+        };
       },
     });
     t.field("deleteResume", {

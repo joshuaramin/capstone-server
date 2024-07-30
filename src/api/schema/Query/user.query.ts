@@ -5,7 +5,7 @@ export const PaginationInput = inputObjectType({
   name: "PaginationInput",
   definition(t) {
     t.int("take");
-    t.int("skip");
+    t.int("page");
   },
 });
 
@@ -14,12 +14,17 @@ export const UserQuery = extendType({
   definition(t) {
     t.list.field("getAllUserAccountByRole", {
       type: "user",
-      args: { input: "PaginationInput" },
-      resolve: async (_, { input: { take, skip } }): Promise<any> => {
-        return await prisma.user.findMany({
-          take,
-          skip,
+      args: { input: "PaginationInput", role: "roleEnum" },
+      resolve: async (_, { input: { take, page }, role }): Promise<any> => {
+        const result = await prisma.user.findMany({
+          where: {
+            role,
+          },
+          take: take,
+          skip: take * (page - 1),
         });
+
+        return result;
       },
     });
     t.field("getSearchByUser", {

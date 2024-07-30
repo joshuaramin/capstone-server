@@ -7,10 +7,10 @@ export const CompanyQuery = extendType({
     t.list.field("getAllCompanies", {
       type: "company",
       args: { input: nonNull("PaginationInput") },
-      resolve: async (_, { input: { skip, take } }): Promise<any> => {
+      resolve: async (_, { input: { page, take } }): Promise<any> => {
         return await prisma.company.findMany({
           take,
-          skip,
+          skip: take * (page - 1),
         });
       },
     });

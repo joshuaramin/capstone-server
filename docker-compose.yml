@@ -9,3 +9,12 @@ services:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: root
           POSTGRES_DB: capstone
+    pgadmin: 
+        image: dpage/pgadmin4
+        container_name: pgadmin4_container
+        restart: always
+        ports:
+          - "8888:80"
+        environment:
+          PGADMIN_DEFAULT_EMAIL: raminjoshua05@gmail.com
+          PGADMIN_DEFAULT_PASSWORD: admin

@@ -1,25 +1,28 @@
 import { extendType, idArg, inputObjectType, nonNull } from "nexus";
 import { prisma } from "../../helpers/server";
-
-export const SkillInput = inputObjectType({
-  name: "SkillInput",
-  definition(t) {
-    t.string("skills");
-  },
-});
+import { ERROR_MESSAGE_BAD_INPUT } from "../../helpers/error";
 
 export const SkillsMutation = extendType({
   type: "Mutation",
   definition(t) {
     t.field("createSkills", {
-      type: "skills",
+      type: "SkillPayload",
       args: { input: nonNull("SkillInput") },
       resolve: async (_, { input: { skills } }): Promise<any> => {
-        return await prisma.skills.create({
+        if (!skills) {
+          return ERROR_MESSAGE_BAD_INPUT;
+        }
+
+        const skill = await prisma.skills.create({
           data: {
             skills,
           },
         });
+
+        return {
+          __typename: "skills",
+          ...skill,
+        };
       },
     });
     t.field("deleteSkills", {
@@ -33,10 +36,19 @@ export const SkillsMutation = extendType({
       type: "skills",
       args: { skillsID: nonNull(idArg()), input: nonNull("SkillInput") },
       resolve: async (_, { input: { skills }, skillsID }): Promise<any> => {
-        return await prisma.skills.update({
+        if (!skills) {
+          return ERROR_MESSAGE_BAD_INPUT;
+        }
+
+        const skill = await prisma.skills.update({
           data: { skills },
           where: { skillsID },
         });
+
+        return {
+          __typename: "skills",
+          ...skill,
+        };
       },
     });
   },

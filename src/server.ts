@@ -23,6 +23,11 @@ import * as GraphQLMutation from "./api/schema/Mutation/index";
 import * as GraphQLObject from "./api/schema/Object/index";
 import * as GraphQLSubscriptions from "./api/schema/Subscriptions/index";
 import * as GraphQLError from "./api/schema/errorHandling";
+import * as GraphQLUnion from "./api/schema/union";
+import * as GraphQLInterface from "./api/schema/Interface/interface";
+import * as GraphQLInput from "./api/schema/Input/index";
+import * as GraphQLEnum from "./api/schema/Enum/index";
+import { graphqlUploadExpress } from "graphql-upload-ts";
 
 (async function CapastonProject() {
   const app = express();
@@ -37,17 +42,16 @@ import * as GraphQLError from "./api/schema/errorHandling";
       GraphQLMutation,
       GraphQLSubscriptions,
       GraphQLError,
+      GraphQLUnion,
+      GraphQLInterface,
+      GraphQLInput,
+      GraphQLEnum,
     ],
-    plugins: [
-      fieldAuthorizePlugin({
-        formatError(authConfig) {
-          return { name: "Authorization", message: "You are not authorized" };
-        },
-      }),
-    ],
+    plugins: [fieldAuthorizePlugin()],
     features: {
       abstractTypeStrategies: {
         resolveType: false,
+        isTypeOf: false,
       },
     },
     outputs: {
@@ -58,6 +62,7 @@ import * as GraphQLError from "./api/schema/errorHandling";
 
   app.use(cookieParser());
 
+  app.use(graphqlUploadExpress());
   const wsSevrer = new WebSocketServer({
     path: "/graphql",
     server: httpServer,

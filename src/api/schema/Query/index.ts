@@ -2,7 +2,6 @@ import * as AboutQuery from "./about.query";
 import * as ActivityLogsQuery from "./activitylogs.query";
 import * as ApplicationQuery from "./application.query";
 import * as ApplicantScoreQuery from "./applicationscore.query";
-import * as ArchiveQuery from "./archive.query";
 import * as CompanyQuery from "./company.query";
 import * as JobPostQuery from "./jobpost.query";
 import * as MedieaQuery from "./media.query";
@@ -11,6 +10,7 @@ import * as NotificationQuery from "./notification.query";
 import * as PasswordQuery from "./password.query";
 import * as PortfolioQuery from "./portfolio.query";
 import * as ProfileQuery from "./profile.query";
+import * as ResetPassword from "./resetPassword";
 import * as ResumeQuery from "./resume.query";
 import * as ScheduleQuery from "./schedule.query";
 import * as SkillQuery from "./skills.query";
@@ -21,7 +21,6 @@ export {
   ActivityLogsQuery,
   ApplicantScoreQuery,
   ApplicationQuery,
-  ArchiveQuery,
   CompanyQuery,
   JobPostQuery,
   MedieaQuery,
@@ -30,6 +29,7 @@ export {
   PasswordQuery,
   PortfolioQuery,
   ProfileQuery,
+  ResetPassword,
   ResumeQuery,
   ScheduleQuery,
   SkillQuery,

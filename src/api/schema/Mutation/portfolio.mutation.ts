@@ -1,5 +1,6 @@
 import { extendType, idArg, inputObjectType, nonNull } from "nexus";
 import { prisma } from "../../helpers/server";
+import { ERROR_MESSAGE_BAD_INPUT } from "../../helpers/error";
 
 export const PortfolioInput = inputObjectType({
   name: "PortfolioInput",
@@ -19,16 +20,46 @@ export const PortfolioMutation = extendType({
   type: "Mutation",
   definition(t) {
     t.field("createPortoflio", {
-      type: "portfolio",
+      type: "PortfolioPayload",
       args: {
         profileID: nonNull(idArg()),
         input: nonNull("PortfolioInput"),
         file: "Upload",
       },
 
-      resolve: async (_, { profileID, input: { companyName, description, employmentType, endDate, location, locationType, startDate, title}, file }): Promise<any> => {
+      resolve: async (
+        _,
+        {
+          profileID,
+          input: {
+            companyName,
+            description,
+            employmentType,
+            endDate,
+            location,
+            locationType,
+            startDate,
+            title,
+          },
+          file,
+        }
+      ): Promise<any> => {
         const { createReadStream, filename } = await file;
-        return await prisma.portfolio.create({
+
+        if (
+          !companyName ||
+          !description ||
+          !employmentType ||
+          !endDate ||
+          !location ||
+          !locationType ||
+          !startDate ||
+          !title
+        ) {
+          return ERROR_MESSAGE_BAD_INPUT;
+        }
+
+        const portfolio = await prisma.portfolio.create({
           data: {
             companyName,
             description,
@@ -50,12 +81,20 @@ export const PortfolioMutation = extendType({
             },
           },
         });
+
+        return {
+          _typename: "portfolio",
+          ...portfolio,
+        };
       },
     });
     t.field("updatePorfolio", {
       type: "portfolio",
       args: { portfolioID: nonNull(idArg()), input: nonNull("PortfolioInput") },
       resolve: async (_, { portfolioID, input }): Promise<any> => {
+        if (!input) {
+          return ERROR_MESSAGE_BAD_INPUT;
+        }
         return await prisma.portfolio.update({
           data: {
             ...input,

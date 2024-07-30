@@ -15,18 +15,33 @@ datasource db {
 
 enum Role {
   admin
-  employee
+  recruiter
   freelance
+}
+
+enum paymentType {
+  ewallet
+  card
+}
+
+enum ExperienceLevel {
+  Entry
+  Intermediate
+  Expert
+  Senior
 }
 
 model User {
   userID           String             @id @default(cuid())
   email            String             @unique @db.VarChar(300)
+  plan             String?            @db.VarChar(100)
   password         String             @db.VarChar(300)
   role             Role
   verified         Boolean            @default(false) @db.Boolean
+  isArchive        Boolean            @default(false) @db.Boolean
   createdAt        DateTime           @default(now()) @db.Timestamp()
   updatedAt        DateTime           @default(now()) @updatedAt @db.Timestamp()
+  Requirement      Requirements[]
   PassHistory      PasswordHash[]
   Application      Application[]
   Activity         ActivityLogs[]
@@ -36,10 +51,24 @@ model User {
   scheduleReceiver Schedule[]         @relation("ScheduleReceiver")
   sentMessages     Message[]          @relation("SentMessage")
   receivedMessages Message[]          @relation("ReceivedMessage")
+  report           Report[]
   Organizer        ProjectOrganizer[]
+  Favourite        Favourite[]
+  ResetPassword    ResetPassword[]
   Profile          Profile?
   Company          Company?
-  Archive          Archive[]
+}
+
+model Requirements {
+  requirementsID String   @id @default(cuid())
+  requirement    String   @db.Text
+  type           String   @db.VarChar(300)
+  createdAt      DateTime @default(now()) @db.Timestamp()
+  updatedAt      DateTime @default(now()) @updatedAt @db.Timestamp()
+  User           User?    @relation(fields: [userID], references: [userID])
+  userID         String?
+  Company        Company? @relation(fields: [companyID], references: [companyID])
+  companyID      String?
 }
 
 model Notification {
@@ -47,7 +76,7 @@ model Notification {
   read           Boolean  @default(false) @db.Boolean
   createdAt      DateTime @default(now()) @db.Timestamp()
   updatedAt      DateTime @default(now()) @updatedAt @db.Timestamp()
-  User           User?    @relation(fields: [userID], references: [userID])
+  User           User?    @relation(fields: [userID], references: [userID], onDelete: Cascade)
   userID         String?
 }
 
@@ -58,29 +87,34 @@ model Message {
   receiverID String
   createdAt  DateTime @default(now()) @db.Timestamp()
   updatedAt  DateTime @default(now()) @updatedAt @db.Timestamp()
-  sender     User     @relation("SentMessage", fields: [senderID], references: [userID])
-  receiver   User     @relation("ReceivedMessage", fields: [receiverID], references: [userID])
+  sender     User     @relation("SentMessage", fields: [senderID], references: [userID], onDelete: Cascade)
+  receiver   User     @relation("ReceivedMessage", fields: [receiverID], references: [userID], onDelete: Cascade)
 }
 
 model Company {
-  companyID   String    @id @default(cuid())
-  companyName String    @db.VarChar(300)
-  description String    @db.VarChar(300)
-  location    String    @db.VarChar(300)
-  companySize String    @db.VarChar(300)
-  createdAt   DateTime  @default(now()) @db.Timestamp()
-  updatedAt   DateTime  @default(now()) @updatedAt @db.Timestamp()
-  User        User?     @relation(fields: [userID], references: [userID])
-  userID      String?   @unique
-  JobPost     JobPost[]
+  companyID    String             @id @default(cuid())
+  companyName  String             @db.VarChar(300)
+  description  String             @db.VarChar(300)
+  location     String             @db.VarChar(300)
+  companySize  String             @db.VarChar(300)
+  verified     Boolean            @default(false) @db.Boolean
+  Requirements Requirements[]
+  JobPost      JobPost[]
+  review       Review[]
+  Organizer    ProjectOrganizer[]
+  createdAt    DateTime           @default(now()) @db.Timestamp()
+  updatedAt    DateTime           @default(now()) @updatedAt @db.Timestamp()
+  User         User?              @relation(fields: [userID], references: [userID], onDelete: Cascade)
+  userID       String?            @unique
+  media        Media[]
 }
 
 model Profile {
   profileID String      @id @default(cuid())
   firstname String      @db.VarChar(256)
   lastname  String      @db.VarChar(256)
-  phone     String
-  birthday  DateTime    @default(now()) @db.Date
+  phone     String?
+  birthday  DateTime?   @default(now()) @db.Date
   createdAt DateTime    @default(now()) @db.Timestamp()
   updatedAt DateTime    @default(now()) @updatedAt @db.Timestamp()
   Avatar    Media?
@@ -88,8 +122,18 @@ model Profile {
   Skills    Skills[]
   Portfolio Portfolio[]
   About     About?
-  User      User?       @relation(fields: [userID], references: [userID])
+  User      User?       @relation(fields: [userID], references: [userID], onDelete: Cascade)
   userID    String?     @unique
+}
+
+model ResetPassword {
+  resetPassID String   @id @default(cuid())
+  reset       String   @db.VarChar(200)
+  expiredAt   DateTime @db.Timestamp()
+  createdAt   DateTime @default(now()) @db.Timestamp()
+  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamp()
+  User        User?    @relation(fields: [userID], references: [userID])
+  userID      String?
 }
 
 model About {
@@ -98,7 +142,7 @@ model About {
   Skills    Skills[]
   createdAt DateTime @default(now()) @db.Timestamp()
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamp()
-  Profile   Profile? @relation(fields: [profileID], references: [profileID])
+  Profile   Profile? @relation(fields: [profileID], references: [profileID], onDelete: Cascade)
   profileID String?  @unique
 }
 
@@ -107,22 +151,25 @@ model Skills {
   skills    String      @db.VarChar(100)
   createdAt DateTime    @default(now()) @db.Timestamp()
   updatedAt DateTime    @default(now()) @updatedAt @db.Timestamp()
-  About     About?      @relation(fields: [aboutID], references: [aboutID])
+  About     About?      @relation(fields: [aboutID], references: [aboutID], onDelete: Cascade)
   aboutID   String?
   Portfolio Portfolio[]
-  Profile   Profile?    @relation(fields: [profileID], references: [profileID])
+  Profile   Profile?    @relation(fields: [profileID], references: [profileID], onDelete: Cascade)
   profileID String?
+  JobPost   JobPost[]
 }
 
 model Media {
-  mediaID   String     @id @default(cuid())
-  media     String     @db.Text
-  createdAt DateTime   @default(now()) @db.Timestamp()
-  updatedAt DateTime   @default(now()) @updatedAt @db.Timestamp()
-  Portfolio Portfolio? @relation(fields: [portfolio], references: [portfolioID])
-  portfolio String?
-  Profile   Profile?   @relation(fields: [profileID], references: [profileID])
-  profileID String?    @unique
+  mediaID     String     @id @default(cuid())
+  media       String     @db.Text
+  createdAt   DateTime   @default(now()) @db.Timestamp()
+  updatedAt   DateTime   @default(now()) @updatedAt @db.Timestamp()
+  Portfolio   Portfolio? @relation(fields: [portfolioID], references: [portfolioID], onDelete: Cascade)
+  portfolioID String?
+  Profile     Profile?   @relation(fields: [profileID], references: [profileID], onDelete: Cascade)
+  profileID   String?    @unique
+  Company     Company?   @relation(fields: [companyID], references: [companyID])
+  companyID   String?
 }
 
 model Portfolio {
@@ -132,49 +179,94 @@ model Portfolio {
   employmentType String   @db.VarChar(300)
   companyName    String   @db.VarChar(300)
   location       String   @db.VarChar(300)
-  locationType   String   @db.VarChar(300)
+  locationType   String   @db.VarChar(300) //Hybrid Onsite Work-from-home
   startDate      DateTime @db.Date
   endDate        DateTime @db.Date
   createdAt      DateTime @default(now()) @db.Timestamp()
   updatedAt      DateTime @default(now()) @updatedAt @db.Timestamp()
   Media          Media[]
   Skills         Skills[]
-  Profile        Profile? @relation(fields: [profileID], references: [profileID])
+  Profile        Profile? @relation(fields: [profileID], references: [profileID], onDelete: Cascade)
   profileID      String?
 }
 
 model Resume {
   resumeID      String       @id @default(cuid())
-  resume        String
+  resume        String       @db.Text
   createdAt     DateTime     @default(now()) @db.Timestamp()
   updatedAt     DateTime     @default(now()) @updatedAt @db.Timestamp()
-  Profile       Profile?     @relation(fields: [profileID], references: [profileID])
+  Profile       Profile?     @relation(fields: [profileID], references: [profileID], onDelete: Cascade)
   profileID     String?
-  Application   Application? @relation(fields: [applicationID], references: [applicationID])
+  Application   Application? @relation(fields: [applicationID], references: [applicationID], onDelete: Cascade)
   applicationID String?      @unique
 }
 
 model PasswordHash {
   passowrdID String   @id @default(cuid())
-  passHash   String   @db.VarChar(300)
+  passHash   String   @db.Text
   createdAt  DateTime @default(now()) @db.Timestamp()
   updatedAt  DateTime @default(now()) @updatedAt @db.Timestamp()
-  User       User?    @relation(fields: [userID], references: [userID])
+  User       User?    @relation(fields: [userID], references: [userID], onDelete: Cascade)
   userID     String?
 }
 
+model Payment {
+  paymentID   String      @id @default(cuid())
+  paymentType paymentType
+  createdAt   DateTime    @default(now()) @db.Timestamp()
+  updatedAt   DateTime    @default(now()) @updatedAt @db.Timestamp()
+}
+
 model JobPost {
-  jobPostID   String        @id @default(cuid())
-  title       String        @db.VarChar(300)
-  description String        @db.VarChar(300)
-  keyword     String[]
-  default     Boolean       @default(false) @db.Boolean
-  createdAt   DateTime      @default(now()) @db.Timestamp()
-  updatedAt   DateTime      @default(now()) @updatedAt @db.Timestamp()
+  jobPostID   String          @id @default(cuid())
+  title       String          @db.VarChar(300)
+  slug        String
+  description String          @db.Text
+  location    String          @db.VarChar(100)
+  duration    String          @db.VarChar(300)
+  JobType     String[]
+  endDate     DateTime        @db.Timestamp()
+  experience  ExperienceLevel
+  isDraft     Boolean         @default(false) @db.Boolean
+  isArchive   Boolean         @default(false) @db.Boolean
+  createdAt   DateTime        @default(now()) @db.Timestamp()
+  updatedAt   DateTime        @default(now()) @updatedAt @db.Timestamp()
+  Salary      Salary?
   Application Application[]
-  Company     Company?      @relation(fields: [companyID], references: [companyID])
+  Favourite   Favourite[]
+  Skills      Skills[]
+  Report      Report[]
+  Company     Company?        @relation(fields: [companyID], references: [companyID], onDelete: Cascade)
   companyID   String?
-  Archive     Archive?
+}
+
+model Salary {
+  salaryID  String   @id @default(cuid())
+  min       Float
+  max       Float
+  currency  String   @db.VarChar(3)
+  createdAt DateTime @default(now()) @db.Timestamp()
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp()
+  JobPost   JobPost? @relation(fields: [jobPostID], references: [jobPostID])
+  jobPostID String?  @unique
+}
+
+model Favourite {
+  favouriteID String   @id @default(cuid())
+  createdAt   DateTime @default(now()) @db.Timestamp()
+  User        User?    @relation(fields: [userID], references: [userID])
+  userID      String?
+  JobPost     JobPost? @relation(fields: [jobpostID], references: [jobPostID])
+  jobpostID   String?
+}
+
+model Report {
+  reportID  String   @id @default(cuid())
+  message   String
+  User      User?    @relation(fields: [userID], references: [userID])
+  userID    String?
+  JobPost   JobPost? @relation(fields: [jobpostID], references: [jobPostID])
+  jobpostID String?
 }
 
 model Application {
@@ -185,9 +277,9 @@ model Application {
   updatedAt     DateTime          @default(now()) @updatedAt @db.Timestamp()
   ATS           ApplicationScore?
   Resume        Resume?
-  JobPost       JobPost?          @relation(fields: [jobPostID], references: [jobPostID])
+  JobPost       JobPost?          @relation(fields: [jobPostID], references: [jobPostID], onDelete: Cascade)
   jobPostID     String?
-  User          User?             @relation(fields: [userID], references: [userID])
+  User          User?             @relation(fields: [userID], references: [userID], onDelete: Cascade)
   userID        String?
 }
 
@@ -197,7 +289,7 @@ model ActivityLogs {
   description String   @db.VarChar(200)
   createdAt   DateTime @default(now()) @db.Timestamp()
   updatedAt   DateTime @default(now()) @updatedAt @db.Timestamp()
-  User        User?    @relation(fields: [userID], references: [userID])
+  User        User?    @relation(fields: [userID], references: [userID], onDelete: Cascade)
   userID      String?
 }
 
@@ -206,19 +298,8 @@ model ApplicationScore {
   score              Float
   createdAt          DateTime     @default(now()) @db.Timestamp()
   updatedAt          DateTime     @default(now()) @updatedAt @db.Timestamp()
-  Application        Application? @relation(fields: [applicationID], references: [applicationID])
+  Application        Application? @relation(fields: [applicationID], references: [applicationID], onDelete: Cascade)
   applicationID      String?      @unique
-}
-
-model Archive {
-  archiveID String   @id @default(cuid())
-  status    Boolean  @default(true)
-  JobPost   JobPost? @relation(fields: [jobPost], references: [jobPostID])
-  jobPost   String?  @unique
-  createdAt DateTime @default(now()) @db.Timestamp()
-  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp()
-  User      User?    @relation(fields: [userID], references: [userID])
-  userID    String?  @unique
 }
 
 model Schedule {
@@ -232,26 +313,32 @@ model Schedule {
   updatedAt   DateTime @default(now()) @updatedAt @db.Timestamp()
   senderID    String
   receiverID  String
-  sender      User     @relation(name: "ScheduleSender", fields: [senderID], references: [userID])
-  receiver    User     @relation(name: "ScheduleReceiver", fields: [receiverID], references: [userID])
+  sender      User     @relation(name: "ScheduleSender", fields: [senderID], references: [userID], onDelete: Cascade)
+  receiver    User     @relation(name: "ScheduleReceiver", fields: [receiverID], references: [userID], onDelete: Cascade)
 }
 
 model Review {
-  reviewID String @id @default(cuid())
-  review   String
-  rating   Int
-
+  reviewID  String   @id @default(cuid())
+  review    String
+  rating    Int
   createdAt DateTime @default(now()) @db.Timestamp()
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamp()
-  User      User?    @relation(fields: [userID], references: [userID])
+  User      User?    @relation(fields: [userID], references: [userID], onDelete: Cascade)
   userID    String?
+  Company   Company? @relation(fields: [companyID], references: [companyID], onDelete: Cascade)
+  companyID String?
 }
 
 model ProjectOrganizer {
   projectOrganizerID String   @id @default(cuid())
-  status             String
+  status             String   @db.VarChar(100)
+  amount             Float
+  startDate          DateTime @db.Date
+  endDate            DateTime @db.Date
   createdAt          DateTime @default(now()) @db.Timestamp()
   updatedAt          DateTime @default(now()) @updatedAt @db.Timestamp()
-  User               User?    @relation(fields: [userID], references: [userID])
+  User               User?    @relation(fields: [userID], references: [userID], onDelete: Cascade)
   userID             String?
+  Company            Company? @relation(fields: [companyID], references: [companyID])
+  companyID          String?
 }

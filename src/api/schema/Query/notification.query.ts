@@ -6,10 +6,18 @@ export const NotificationQuery = extendType({
   definition(t) {
     t.list.field("getNotificationByUserID", {
       type: "notification",
-      args: { userID: nonNull(idArg()) },
-      resolve: async (_, { userID }): Promise<any> => {
+      args: {
+        userID: nonNull(idArg()),
+        pagination: nonNull("PaginationInput"),
+      },
+      resolve: async (
+        _,
+        { userID, pagination: { take, page } }
+      ): Promise<any> => {
         return await prisma.notification.findMany({
           where: { userID },
+          take,
+          skip: take * (page - 1),
         });
       },
     });

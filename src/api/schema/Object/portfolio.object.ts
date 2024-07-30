@@ -1,4 +1,5 @@
 import { objectType } from "nexus";
+import { prisma } from "../../helpers/server";
 
 export const PortfolioObject = objectType({
   name: "portfolio",
@@ -13,5 +14,15 @@ export const PortfolioObject = objectType({
     t.date("endDate");
     t.datetime("createdAt");
     t.datetime("updatedAt");
+    t.list.field("media", {
+      type: "media",
+      resolve: async ({ portfolioID }): Promise<any> => {
+        return await prisma.media.findMany({
+          where: {
+            portfolioID,
+          },
+        });
+      },
+    });
   },
 });

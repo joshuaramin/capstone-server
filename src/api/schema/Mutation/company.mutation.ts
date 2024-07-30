@@ -1,15 +1,5 @@
-import { extendType, idArg, inputObjectType, nonNull } from "nexus";
+import { booleanArg, extendType, idArg, inputObjectType, nonNull } from "nexus";
 import { prisma } from "../../helpers/server";
-
-export const CompanyInput = inputObjectType({
-  name: "CompanyInput",
-  definition(t) {
-    t.string("companyName");
-    t.string("companySize");
-    t.string("description");
-    t.string("location");
-  },
-});
 
 export const CompanyMutation = extendType({
   type: "Mutation",
@@ -24,6 +14,18 @@ export const CompanyMutation = extendType({
           },
           where: {
             companyID,
+          },
+        });
+      },
+    });
+    t.field("updateCompany", {
+      type: "company",
+      args: { companyID: nonNull(idArg()), verified: nonNull(booleanArg()) },
+      resolve: async (_, { companyID }): Promise<any> => {
+        return await prisma.company.update({
+          where: { companyID },
+          data: {
+            verified: true,
           },
         });
       },

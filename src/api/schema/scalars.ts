@@ -6,6 +6,7 @@ import {
 } from "graphql-scalars";
 import { asNexusMethod } from "nexus";
 import { GraphQLUpload } from "graphql-upload-ts";
+
 export const DatetimeGQL = asNexusMethod(GraphQLDateTime, "datetime");
 export const DateGQL = asNexusMethod(GraphQLDate, "date");
 export const EmailGQL = asNexusMethod(GraphQLEmailAddress, "email");

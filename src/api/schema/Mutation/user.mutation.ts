@@ -1,98 +1,116 @@
-import { extendType, idArg, inputObjectType, nonNull, stringArg } from "nexus";
+import { extendType, idArg, nonNull, stringArg } from "nexus";
 import { prisma } from "../../helpers/server";
 import { ComparePass, PashBcrypt } from "../../helpers/hash";
-import { compare } from "bcrypt";
+import jsonwebtoken from "jsonwebtoken";
 
-export const UserInput = inputObjectType({
-  name: "UserInput",
-  definition(t) {
-    t.string("email");
-    t.string("password");
-    t.string("firstname");
-    t.string("lastname");
-    t.phone("phone");
-  },
-});
+const { sign } = jsonwebtoken;
 
-export const UserFreelanceInput = inputObjectType({
-  name: "UserFreelanceInput",
-  definition(t) {
-    t.string("email");
-    t.string("password");
-    t.string("firstname");
-    t.string("lastname");
-    t.phone("phone");
-    t.date("birthday");
-  },
-});
+import {
+  EMAIL_ADDRESS_NOT_FOUND,
+  ERROR_ALREADY_EXIST,
+  ERROR_MESSAGE_BAD_INPUT,
+  ERROR_MESSAGE_CREDENTIALS,
+} from "../../helpers/error";
 
-export const UserRecruiterInput = inputObjectType({
-  name: "UserRecruiterInput",
-  definition(t) {
-    t.string("email");
-    t.string("password");
-    t.string("firstname");
-    t.string("lastname");
-    t.phone("phone");
-    t.date("birthday");
-    t.string("companyName");
-    t.string("description");
-    t.string("location");
-    t.string("companySize");
-  },
-});
+import generateRandom from "../../helpers/generateRandom";
+import {
+  FreelancerVerificationEmail,
+  RecruitersInstruction,
+  ResetPasswordLink,
+  VerificationEmail,
+} from "../../helpers/sendgrid";
+import { uploader } from "../../helpers/cloudinary";
 
 export const UserMutation = extendType({
   type: "Mutation",
   definition(t) {
     t.field("createUserAdminAccount", {
-      type: "user",
+      type: "UserPayload",
       args: { input: nonNull("UserInput") },
       resolve: async (
         _,
-        { input: { firstname, lastname, password, phone, email } }
+        { input: { firstname, lastname, password, email } }
       ): Promise<any> => {
-        return await prisma.user.create({
+        if (!firstname || !lastname || !password || !email) {
+          return ERROR_MESSAGE_BAD_INPUT;
+        }
+
+        const checkUserEmail = await prisma.user.findUnique({
+          where: { email },
+        });
+
+        if (checkUserEmail) {
+          return ERROR_ALREADY_EXIST;
+        }
+
+        const users = await prisma.user.create({
           data: {
             email,
             password: await PashBcrypt(password),
             role: "admin",
+            verified: true,
             Profile: {
               create: {
                 firstname,
                 lastname,
-                phone,
               },
             },
           },
         });
+
+        return {
+          __typename: "user",
+          success: 200,
+          ...users,
+        };
       },
     });
     t.field("createUserRecreuiters", {
-      type: "user",
+      type: "UserPayload",
       args: { input: nonNull("UserRecruiterInput") },
       resolve: async (
         _,
         {
           input: {
-            birthday,
             companyName,
             companySize,
             description,
             email,
+            plan,
             firstname,
             lastname,
             location,
             password,
-            phone,
           },
         }
       ): Promise<any> => {
-        return await prisma.user.create({
+        if (
+          !companyName ||
+          !companySize ||
+          !description ||
+          !email ||
+          !plan ||
+          !firstname ||
+          !lastname ||
+          !location ||
+          !password
+        ) {
+          return ERROR_MESSAGE_BAD_INPUT;
+        }
+
+        const emailCheck = await prisma.user.findUnique({
+          where: { email },
+        });
+
+        if (emailCheck) {
+          return ERROR_ALREADY_EXIST;
+        }
+        const users = await prisma.user.create({
           data: {
             email,
             password: await PashBcrypt(password),
-            role: "employee",
+            plan,
+            role: "recruiter",
             Company: {
               create: {
                 companyName,
@@ -105,22 +123,53 @@ export const UserMutation = extendType({
               create: {
                 firstname,
                 lastname,
-                phone,
-                birthday,
               },
             },
           },
         });
+
+        RecruitersInstruction(users.email, `${firstname} ${lastname}`);
+        VerificationEmail(
+          users.email,
+          `${firstname} ${lastname}`,
+          users.userID
+        );
+
+        return {
+          __typename: "user",
+          ...users,
+        };
       },
     });
     t.field("createUserFreelancers", {
-      type: "user",
-      args: { input: nonNull("UserFreelanceInput") },
+      type: "UserPayload",
+      args: {
+        input: nonNull("UserFreelanceInput"),
+        requirement: "RequirementInput",
+        fileUpload: nonNull("Upload"),
+      },
       resolve: async (
         _,
-        { input: { email, birthday, firstname, lastname, password, phone } }
+        {
+          input: { email, firstname, lastname, password },
+          requirement: { type },
+          fileUpload,
+        }
       ): Promise<any> => {
-        return await prisma.user.create({
+        if (!email || !firstname || !lastname || !password) {
+          return ERROR_MESSAGE_BAD_INPUT;
+        }
+
+        const checkUserEmail = await prisma.user.findUnique({
+          where: { email },
+        });
+
+        if (checkUserEmail) {
+          return ERROR_ALREADY_EXIST;
+        }
+
+        const { createReadStream, filename } = await fileUpload;
+        const users = await prisma.user.create({
           data: {
             email,
             password: await PashBcrypt(password),
@@ -129,12 +178,23 @@ export const UserMutation = extendType({
               create: {
                 firstname,
                 lastname,
-                phone,
-                birthday,
+              },
+            },
+            Requirement: {
+              create: {
+                type,
+                requirement: await uploader(createReadStream()),
               },
             },
           },
         });
+
+        FreelancerVerificationEmail(users.email, `${firstname} ${lastname}`);
+
+        return {
+          __typename: "user",
+          ...users,
+        };
       },
     });
     t.field("deleteUserAccount", {
@@ -148,18 +208,66 @@ export const UserMutation = extendType({
         });
       },
     });
+
+    t.field("findMyEmailAddress", {
+      type: "EmailPayload",
+      args: { email: nonNull(stringArg()) },
+      resolve: async (_, { email }): Promise<any> => {
+        const users = await prisma.user.findUnique({
+          where: { email },
+          include: {
+            Profile: true,
+          },
+        });
+
+        if (!email) {
+          return ERROR_MESSAGE_BAD_INPUT;
+        }
+
+        if (!users) {
+          return EMAIL_ADDRESS_NOT_FOUND;
+        }
+
+        const date = new Date();
+        const expireDate = new Date(date.getTime() + 60 * 60 * 1000);
+
+        const resetLink = await prisma.resetPassword.create({
+          data: {
+            reset: generateRandom(8),
+            expiredAt: expireDate,
+            User: {
+              connect: {
+                userID: users.userID,
+              },
+            },
+          },
+        });
+
+        /// sendgrid: send an email to the user if the user is exist.
+
+        ResetPasswordLink(
+          users.email,
+          resetLink.reset,
+          `${users.Profile.firstname} ${users.Profile.lastname}`,
+          users.userID
+        );
+
+        return {
+          __typename: "user",
+          ...users,
+        };
+      },
+    });
     t.field("updateUserPasswordAccount", {
-      type: "user",
+      type: "UserPayload",
       args: { userID: nonNull(idArg()), password: nonNull(stringArg()) },
       resolve: async (_, { userID, password }): Promise<any> => {
         const users = await prisma.user.findUnique({
           where: { userID },
         });
 
-        if (!users) {
-          return {
-            //error
-          };
+        if (!password) {
+          return ERROR_MESSAGE_BAD_INPUT;
         }
 
         const checkPassHash = await prisma.passwordHash.findMany({
@@ -170,12 +278,17 @@ export const UserMutation = extendType({
           const compareBcrypt = await ComparePass(password, passHash);
 
           if (compareBcrypt) {
-            //return error
+            return ERROR_ALREADY_EXIST;
           }
         }
 
         await prisma.passwordHash.create({
-          data: { passHash: users.password },
+          data: {
+            passHash: users.password,
+            User: {
+              connect: { userID },
+            },
+          },
         });
 
         const data = await prisma.user.update({
@@ -189,10 +302,56 @@ export const UserMutation = extendType({
         };
       },
     });
-    t.field("login", {
+    t.field("verifyMyAccount", {
       type: "user",
-      args: {},
-      resolve: async (): Promise<any> => {},
+      args: { userID: nonNull(idArg()) },
+      resolve: async (_, { userID }): Promise<any> => {
+        return await prisma.user.update({
+          where: { userID },
+          data: { verified: true },
+        });
+      },
+    });
+    t.field("login", {
+      type: "CredentialsPayload",
+      args: { email: nonNull(stringArg()), password: nonNull(stringArg()) },
+      resolve: async (_, { email, password }, { req, res }): Promise<any> => {
+        if (!email || !password) {
+          return ERROR_MESSAGE_BAD_INPUT;
+        }
+
+        const users = await prisma.user.findUnique({
+          where: { email },
+        });
+
+        if (!users) {
+          return EMAIL_ADDRESS_NOT_FOUND;
+        }
+
+        const valid = await ComparePass(password, users?.password);
+
+        if (!valid) {
+          return ERROR_MESSAGE_CREDENTIALS;
+        }
+
+        const token = sign(
+          { userID: users.userID, role: users.role },
+          "BeeHired",
+          {
+            algorithm: "HS256",
+            expiresIn: 60 * 60 * 7 * 24,
+          }
+        );
+
+        res.cookie("access_token", token);
+
+        return {
+          __typename: "token",
+          userID: users.userID,
+          role: users.role,
+          token,
+        };
+      },
     });
   },
 });

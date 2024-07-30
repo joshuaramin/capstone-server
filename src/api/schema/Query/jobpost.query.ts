@@ -1,4 +1,12 @@
-import { extendType, idArg, nonNull, stringArg } from "nexus";
+import {
+  extendType,
+  idArg,
+  intArg,
+  list,
+  nonNull,
+  nullable,
+  stringArg,
+} from "nexus";
 import { prisma } from "../../helpers/server";
 
 export const JobPostQuery = extendType({
@@ -6,11 +14,25 @@ export const JobPostQuery = extendType({
   definition(t) {
     t.list.field("getAllJobPost", {
       type: "jobpost",
-      args: { input: nonNull("PaginationInput") },
-      resolve: async (_, { input: { skip, take } }): Promise<any> => {
+      args: {
+        input: nonNull("PaginationInput"),
+      },
+      resolve: async (_, { input: { page, take } }): Promise<any> => {
         return await prisma.jobPost.findMany({
           take,
-          skip,
+          skip: take * (page - 1),
+          where: {
+            NOT: {
+              OR: [
+                {
+                  isArchive: true,
+                },
+                {
+                  isDraft: true,
+                },
+              ],
+            },
+          },
         });
       },
     });
@@ -25,15 +47,27 @@ export const JobPostQuery = extendType({
     });
     t.list.field("getSearchByTitle", {
       type: "jobpost",
-      args: { search: nonNull(stringArg()) },
-      resolve: async (_, { search }): Promise<any> => {
+      args: {
+        search: nonNull(stringArg()),
+        pagination: nonNull("PaginationInput"),
+      },
+      resolve: async (
+        _,
+        { search, pagination: { take, page } }
+      ): Promise<any> => {
         return await prisma.jobPost.findMany({
           where: {
             title: {
               contains: search,
               mode: "insensitive",
             },
+            NOT: {
+              isArchive: true,
+              isDraft: true,
+            },
           },
+          take,
+          skip: take * (page - 1),
         });
       },
     });

@@ -7,6 +7,7 @@ export const UserObject = objectType({
     t.id("userID");
     t.string("email");
     t.string("password");
+    t.string("plan");
     t.string("role");
     t.boolean("verified");
     t.datetime("createdAt");
@@ -65,13 +66,14 @@ export const UserObject = objectType({
         });
       },
     });
-    t.list.field("getMySchedule", {
-      type: "schedule",
-      resolve: async ({ userID }): Promise<any> => {
-        return await prisma.schedule.findMany({
-          where: { userID },
-        });
-      },
-    });
+  },
+});
+
+export const TokenObject = objectType({
+  name: "token",
+  definition(t) {
+    t.id("userID");
+    t.string("role");
+    t.string("token");
   },
 });

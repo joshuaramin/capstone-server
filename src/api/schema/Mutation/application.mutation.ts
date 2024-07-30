@@ -1,20 +1,39 @@
 import { extendType, idArg, nonNull, stringArg } from "nexus";
 import { prisma } from "../../helpers/server";
+import generateRandom from "../../helpers/generateRandom";
+import {
+  ERROR_MESSAGE_BAD_INPUT,
+  ERROR_MESSAGE_FORBIDDEN,
+} from "../../helpers/error";
 
 export const ApplicationMutation = extendType({
   type: "Mutation",
   definition(t) {
     t.field("createApplication", {
-      type: "application",
+      type: "ApplicationPayload",
       args: {
         userID: nonNull(idArg()),
         jobPostID: nonNull(idArg()),
         resumeID: nonNull(idArg()),
       },
       resolve: async (_, { userID, jobPostID, resumeID }): Promise<any> => {
-        return await prisma.application.create({
+        //check if the user is verified
+
+        if (!resumeID) {
+          return ERROR_MESSAGE_BAD_INPUT;
+        }
+
+        const users = await prisma.user.findUnique({
+          where: { userID },
+        });
+
+        if (users.verified === false) {
+          return ERROR_MESSAGE_FORBIDDEN;
+        }
+
+        const application = await prisma.application.create({
           data: {
-            id: "",
+            id: generateRandom(8),
             status: "Pending",
             ATS: {
               create: {
@@ -38,6 +57,11 @@ export const ApplicationMutation = extendType({
             },
           },
         });
+
+        return {
+          __typename: "application",
+          ...application,
+        };
       },
     });
     t.field("updateApplicationStatus", {
@@ -52,6 +76,5 @@ export const ApplicationMutation = extendType({
         });
       },
     });
-    
   },
 });

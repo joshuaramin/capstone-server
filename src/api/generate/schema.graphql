@@ -6,6 +6,13 @@ input AboutInput {
   bio: String
 }
 
+type AlreadyExist implements Error {
+  code: Int
+  message: String
+}
+
+union ApplicationPayload = BADINPUT | Forbidden | application
+
 type BADINPUT implements Error {
   code: Int
   message: String
@@ -17,6 +24,13 @@ input CompanyInput {
   description: String
   location: String
 }
+
+type CredentialsInvalid implements Error {
+  code: Int
+  message: String
+}
+
+union CredentialsPayload = BADINPUT | CredentialsInvalid | NOTFOUND | token
 
 """
 A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
@@ -33,7 +47,14 @@ A field whose value conforms to the standard internet email address format as sp
 """
 scalar EmailAddress @specifiedBy(url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address")
 
+union EmailPayload = BADINPUT | NOTFOUND | user
+
 interface Error {
+  code: Int
+  message: String
+}
+
+type Expired implements Error {
   code: Int
   message: String
 }
@@ -43,35 +64,52 @@ type Forbidden implements Error {
   message: String
 }
 
+union JobPostPayload = BADINPUT | Forbidden | jobpost
+
 type Mutation {
+  archiveJobPost(jobPostID: ID!): jobpost
   createAbout(input: AboutInput!, profileID: ID!): about
-  createApplication(jobPostID: ID!, resumeID: ID!, userID: ID!): application
-  createJobPost(companyID: ID!, input: jobPostInput!): jobpost
-  createPortoflio(file: Upload, input: PortfolioInput!, profileID: ID!): portfolio
-  createSchedule(input: ScheduleInput!): schedule
-  createSkills(input: SkillInput!): skills
-  createUserAdminAccount(input: UserInput!): user
-  createUserFreelancers(input: UserFreelanceInput!): user
-  createUserRecreuiters(input: UserRecruiterInput!): user
+  createApplication(jobPostID: ID!, resumeID: ID!, userID: ID!): ApplicationPayload
+  createJobPost(companyID: ID!, experience: experienceEnum!, input: jobPostInput!, salary: salaryInput!, skillsID: [ID]!): JobPostPayload
+  createMessage(message: String!, receiverID: String!, senderID: String!): message
+  createPortoflio(file: Upload, input: PortfolioInput!, profileID: ID!): PortfolioPayload
+  createSchedule(input: ScheduleInput!, receiverID: String!, senderID: String!): SchedulePayload
+  createSkills(input: SkillInput!): SkillPayload
+  createUserAdminAccount(input: UserInput!): UserPayload
+  createUserFreelancers(fileUpload: Upload!, input: UserFreelanceInput!, requirement: RequirementInput): UserPayload
+  createUserRecreuiters(input: UserRecruiterInput!): UserPayload
   deleteJobPost(jobPostID: ID!): jobpost
+  deleteMedia(mediaID: ID!): media
   deletePortoflio(portfolioID: ID!): portfolio
+  deleteSchedule(scheduleID: ID!): schedule
   deleteSkills(skillsID: ID!): skills
   deleteUserAccount(userID: ID!): user
-  login: user
+  findMyEmailAddress(email: String!): EmailPayload
+  generateJobPostApplicant(jobPostID: ID!): [jobpost]
+  getMyResetPasswordLink(reset: String!): resetPasswordPayload
+  login(email: String!, password: String!): CredentialsPayload
   updateAbout(aboutID: ID!, bio: String!): about
   updateApplicationStatus(applicationID: ID!, status: String!): application
-  updateCompany(companyID: ID!, input: CompanyInput!): company
+  updateCompany(companyID: ID!, verified: Boolean!): company
   updateJobPost(input: jobPostInput!, jobPostID: ID!): jobpost
-  updateJobPostDefault(defaultStatus: Boolean!, jobPostID: ID!): jobpost
+  updateJobPostDefault(isDraft: Boolean!, jobPostID: ID!): jobpost
+  updateMessage(message: String!, messageID: String!): message
   updateNotification(notificationID: ID!): notification
   updatePorfolio(input: PortfolioInput!, portfolioID: ID!): portfolio
   updateProfile(input: ProfileInput!, profileID: ID!): profile
+  updateSchedule(input: ScheduleInput!, scheduleID: ID!): schedule
   updateSkills(input: SkillInput!, skillsID: ID!): skills
-  updateUserPasswordAccount(password: String!, userID: ID!): user
+  updateUserPasswordAccount(password: String!, userID: ID!): UserPayload
+  verifyMyAccount(userID: ID!): user
+}
+
+type NOTFOUND implements Error {
+  code: Int
+  message: String
 }
 
 input PaginationInput {
-  skip: Int
+  page: Int
   take: Int
 }
 
@@ -91,6 +129,8 @@ input PortfolioInput {
   title: String
 }
 
+union PortfolioPayload = BADINPUT | portfolio
+
 input ProfileInput {
   birthday: Date
   firstname: String
@@ -102,40 +142,51 @@ type Query {
   getAboutByProfileID(profileID: ID!): about
   getAllCompanies(input: PaginationInput!): [company]
   getAllJobPost(input: PaginationInput!): [jobpost]
+  getAllMediaProfile(pagination: PaginationInput!, profileID: ID!): [media]
   getAllResumyByProfileID(profileID: ID!): [resume]
   getAllSchedule(input: PaginationInput): [schedule]
   getAllSkill(input: PaginationInput): [skills]
-  getAllUserAccountByRole(input: PaginationInput): [user]
+  getAllUserAccountByRole(input: PaginationInput, role: roleEnum): [user]
   getApplicationByID(applicationID: ID!): application
   getCompanyByID(companyID: ID!): company
-  getJobApplicationBYId(jobPostID: ID!): [application]
+  getJobApplicationById(jobPostID: ID!, pagination: PaginationInput!): [application]
   getJobPostById(jobPostID: ID!): jobpost
   getNotificationByID(notificationID: ID!): notification
-  getNotificationByUserID(userID: ID!): [notification]
+  getNotificationByUserID(pagination: PaginationInput!, userID: ID!): [notification]
+  getPersonalMessage(receiverID: ID!, senderID: ID!): [message]
   getPortfolioByProfileID(profileID: ID!): [portfolio]
   getProfileByUser(userID: ID!): profile
   getScheduleById(scheduleID: ID!): schedule
   getSearchByCompanyName(search: String!): company
   getSearchBySkill(search: String!): [skills]
-  getSearchByTitle(search: String!): [jobpost]
+  getSearchByTitle(pagination: PaginationInput!, search: String!): [jobpost]
   getSearchByUser(search: String!): user
+  getSkillsByGroup: [skills]
   getUserAccountById(userID: ID!): user
   getUserActivityLogs(input: PaginationInput!, userID: ID!): [activityLogs]
 }
+
+input RequirementInput {
+  type: String
+}
+
+union ResumePayload = BADINPUT | resume
 
 input ScheduleInput {
   description: String
   endDate: DateTime
   link: String
-  receiverID: String
-  senderID: String
   startDate: DateTime
   title: String
 }
 
+union SchedulePayload = BADINPUT | schedule
+
 input SkillInput {
   skills: String
 }
+
+union SkillPayload = BADINPUT | skills
 
 type Subscription {
   getAllUser: [user]
@@ -146,12 +197,10 @@ type Subscription {
 scalar Upload
 
 input UserFreelanceInput {
-  birthday: Date
   email: String
   firstname: String
   lastname: String
   password: String
-  phone: PhoneNumber
 }
 
 input UserInput {
@@ -159,11 +208,11 @@ input UserInput {
   firstname: String
   lastname: String
   password: String
-  phone: PhoneNumber
 }
 
+union UserPayload = AlreadyExist | BADINPUT | user
+
 input UserRecruiterInput {
-  birthday: Date
   companyName: String
   companySize: String
   description: String
@@ -172,7 +221,7 @@ input UserRecruiterInput {
   lastname: String
   location: String
   password: String
-  phone: PhoneNumber
+  plan: String
 }
 
 type about {
@@ -194,13 +243,8 @@ type application {
   applicationID: ID
   createdAt: DateTime
   id: String
+  score: ats
   status: String
-  updatedAt: DateTime
-}
-
-type archive {
-  archiveID: ID
-  createdaAt: DateTime
   updatedAt: DateTime
 }
 
@@ -216,22 +260,43 @@ type company {
   companyName: String
   companySize: String
   description: String
+  getJobPostCount: Int
+  jobPost: [jobpost]
   location: String
+  logo: media
+  verified: Boolean
+}
+
+enum experienceEnum {
+  Entry
+  Expert
+  Intermediate
+  Senior
 }
 
 input jobPostInput {
+  JobType: [String]
   description: String
-  keyword: [String]
+  duration: String
+  endDate: DateTime
+  location: String
   title: String
 }
 
 type jobpost {
+  JobType: [String]
+  applicants: [application]
   createdAt: DateTime
-  default: Boolean
   description: String
+  experience: String
+  getCompany: company
+  isArchive: Boolean
+  isDraft: Boolean
   jobPostID: ID
-  keyword: [String]
+  salary: salary
+  skills: [skills]
   title: String
+  totalApplicant: Int
   updatedAt: DateTime
 }
 
@@ -246,7 +311,9 @@ type message {
   createdAt: DateTime
   message: String
   messageID: ID
+  receivedUser: message
   receiverID: String
+  sendUser: user
   senderID: String
   updatedAt: DateTime
 }
@@ -272,6 +339,7 @@ type portfolio {
   employementType: String
   endDate: Date
   location: String
+  media: [media]
   portfolioID: ID
   startDate: Date
   title: String
@@ -292,14 +360,47 @@ type profile {
   updatedAt: DateTime
 }
 
+type resetPassword {
+  createdAt: DateTime
+  expiredAt: DateTime
+  reset: String
+  resetPassID: ID
+  updatedAt: DateTime
+}
+
+union resetPasswordPayload = Expired | NOTFOUND | resetPassword
+
 type resume {
-  createResume(file: Upload, profileID: ID!): resume
+  createResume(file: Upload, profileID: ID!): ResumePayload
   createdAt: DateTime
   deleteResume(resumeID: ID!): resume
   resume: String
   resumeID: ID
   updatedaAt: DateTime
 }
+
+enum roleEnum {
+  admin
+  freelance
+  recruiter
+}
+
+type salary {
+  createdAt: DateTime
+  currency: String
+  max: Float
+  min: Float
+  salaryID: ID
+  updatedAt: DateTime
+}
+
+input salaryInput {
+  currency: String
+  max: Float
+  min: Float
+}
+
+union salaryPayload = BADINPUT | salary
 
 type schedule {
   createdAt: DateTime
@@ -314,9 +415,16 @@ type schedule {
 
 type skills {
   createdAt: DateTime
+  jobCount: Int
   skills: String
   skillsID: ID
   updatedAt: DateTime
+}
+
+type token {
+  role: String
+  token: String
+  userID: ID
 }
 
 type user {
@@ -326,10 +434,10 @@ type user {
   getMyCompany: company
   getMyLogs: [activityLogs]
   getMyNotification: [notification]
-  getMySchedule: [schedule]
   myProfile: profile
   password: String
   passwordHash: [password]
+  plan: String
   role: String
   updatedAt: DateTime
   userID: ID

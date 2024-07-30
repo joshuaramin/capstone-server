@@ -1,44 +1,101 @@
-import { booleanArg, extendType, idArg, inputObjectType, nonNull } from "nexus";
-import { prisma } from "../../helpers/server";
-
-export const JobPostInput = inputObjectType({
-  name: "jobPostInput",
-  definition(t) {
-    t.string("title");
-    t.string("description");
-    t.list.string("keyword");
-  },
-});
+import { booleanArg, extendType, idArg, list, nonNull } from "nexus";
+import { prisma, pubsub } from "../../helpers/server";
+import {
+  ERROR_MESSAGE_BAD_INPUT,
+  ERROR_MESSAGE_FORBIDDEN,
+} from "../../helpers/error";
 
 export const JobPostMutation = extendType({
   type: "Mutation",
   definition(t) {
     t.field("createJobPost", {
-      type: "jobpost",
-      args: { companyID: nonNull(idArg()), input: nonNull("jobPostInput") },
+      type: "JobPostPayload",
+      args: {
+        companyID: nonNull(idArg()),
+        input: nonNull("jobPostInput"),
+        salary: nonNull("salaryInput"),
+        skillsID: nonNull(list(idArg())),
+        experience: nonNull("experienceEnum"),
+      },
       resolve: async (
         _,
-        { companyID, input: { title, description, keyword } }
+        {
+          companyID,
+          input: { title, description, endDate, JobType, location, duration },
+          salary: { min, max, currency },
+          skillsID,
+          experience,
+        }
       ): Promise<any> => {
-        return await prisma.jobPost.create({
+        if (
+          !title ||
+          !description ||
+          !endDate ||
+          !JobType ||
+          !location ||
+          !duration ||
+          !min ||
+          !max ||
+          !currency
+        ) {
+          return ERROR_MESSAGE_BAD_INPUT;
+        }
+        const company = await prisma.company.findUnique({
+          where: {
+            companyID,
+          },
+        });
+
+        if (company.verified === false) {
+          return ERROR_MESSAGE_FORBIDDEN;
+        }
+        const job = await prisma.jobPost.create({
           data: {
             title,
             description,
-            keyword,
+            endDate,
+            location,
+            duration,
+            experience: experience as any,
+            Salary: {
+              create: {
+                min,
+                max,
+                currency,
+              },
+            },
+            JobType,
             Company: {
               connect: {
                 companyID,
               },
             },
+            Skills: {
+              connect: skillsID.map((skillsID) => {
+                return {
+                  skillsID,
+                };
+              }),
+            },
           },
         });
+
+        pubsub.publish("createJob", job);
+
+        return {
+          __typename: "jobpost",
+          ...job,
+        };
       },
     });
     t.field("updateJobPost", {
       type: "jobpost",
       args: { jobPostID: nonNull(idArg()), input: nonNull("jobPostInput") },
       resolve: async (_, { jobPostID, input }): Promise<any> => {
-        return await prisma.jobPost.update({
+        if (!input) {
+          return ERROR_MESSAGE_BAD_INPUT;
+        }
+        const job = await prisma.jobPost.update({
           data: {
             ...input,
           },
@@ -46,18 +103,35 @@ export const JobPostMutation = extendType({
             jobPostID,
           },
         });
+
+        return {
+          __typename: "jobpost",
+          ...job,
+        };
       },
     });
     t.field("updateJobPostDefault", {
       type: "jobpost",
       args: {
         jobPostID: nonNull(idArg()),
-        defaultStatus: nonNull(booleanArg()),
+        isDraft: nonNull(booleanArg()),
       },
-      resolve: async (_, { jobPostID, defaultStatus }): Promise<any> => {
+      resolve: async (_, { jobPostID, isDraft }): Promise<any> => {
         return await prisma.jobPost.update({
           where: { jobPostID },
-          data: { default: defaultStatus },
+          data: { isDraft },
+        });
+      },
+    });
+    t.field("archiveJobPost", {
+      type: "jobpost",
+      args: { jobPostID: nonNull(idArg()) },
+      resolve: async (_, { jobPostID }): Promise<any> => {
+        return await prisma.jobPost.update({
+          data: { isArchive: true },
+          where: {
+            jobPostID,
+          },
         });
       },
     });
@@ -66,6 +140,15 @@ export const JobPostMutation = extendType({
       args: { jobPostID: nonNull(idArg()) },
       resolve: async (_, { jobPostID }): Promise<any> => {
         return await prisma.jobPost.delete({
+          where: { jobPostID },
+        });
+      },
+    });
+    t.list.field("generateJobPostApplicant", {
+      type: "jobpost",
+      args: { jobPostID: nonNull(idArg()) },
+      resolve: async (_, { jobPostID }): Promise<any> => {
+        return await prisma.jobPost.findMany({
           where: { jobPostID },
         });
       },

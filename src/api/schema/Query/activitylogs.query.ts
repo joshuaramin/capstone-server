@@ -7,13 +7,13 @@ export const ActivityLogs = extendType({
     t.list.field("getUserActivityLogs", {
       type: "activityLogs",
       args: { userID: nonNull(idArg()), input: nonNull("PaginationInput") },
-      resolve: async (_, { userID, input: { skip, take } }): Promise<any> => {
+      resolve: async (_, { userID, input: { page, take } }): Promise<any> => {
         return await prisma.activityLogs.findMany({
           where: {
             userID,
           },
           take,
-          skip,
+          skip: take * (page - 1),
         });
       },
     });

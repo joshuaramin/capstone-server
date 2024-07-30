@@ -7,10 +7,10 @@ export const ScheduleQuery = extendType({
     t.list.field("getAllSchedule", {
       type: "schedule",
       args: { input: "PaginationInput" },
-      resolve: async (_, { input: { skip, take } }): Promise<any> => {
+      resolve: async (_, { input: { page, take } }): Promise<any> => {
         return await prisma.schedule.findMany({
           take,
-          skip,
+          skip: take * (page - 1),
         });
       },
     });

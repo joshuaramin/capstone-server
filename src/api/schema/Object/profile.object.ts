@@ -30,7 +30,7 @@ export const ProfileObject = objectType({
     t.list.field("getMyResume", {
       type: "resume",
       resolve: async ({ profileID }): Promise<any> => {
-        return await prisma.profile.findMany({
+        return await prisma.resume.findMany({
           where: { profileID },
         });
       },
