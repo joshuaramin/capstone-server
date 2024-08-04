@@ -7,6 +7,7 @@ export const CompanyObject = objectType({
     t.id("companyID");
     t.string("companyName");
     t.string("description");
+    t.string("slug");
     t.string("location");
     t.boolean("verified");
     t.string("companySize");
@@ -31,6 +32,18 @@ export const CompanyObject = objectType({
         return await prisma.jobPost.count({
           where: {
             companyID,
+          },
+        });
+      },
+    });
+    t.field("user", {
+      type: "user",
+      resolve: async ({ companyID }) => {
+        return await prisma.user.findFirst({
+          where: {
+            Company: {
+              companyID,
+            },
           },
         });
       },

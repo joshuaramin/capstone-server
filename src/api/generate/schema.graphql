@@ -64,13 +64,22 @@ type Forbidden implements Error {
   message: String
 }
 
+type JobPagination {
+  currentPage: Int
+  hasNextPage: Boolean
+  hasPrevPage: Boolean
+  item: [jobpost]
+  totalItems: Int
+  totalPages: Int
+}
+
 union JobPostPayload = BADINPUT | Forbidden | jobpost
 
 type Mutation {
   archiveJobPost(jobPostID: ID!): jobpost
   createAbout(input: AboutInput!, profileID: ID!): about
   createApplication(jobPostID: ID!, resumeID: ID!, userID: ID!): ApplicationPayload
-  createJobPost(companyID: ID!, experience: experienceEnum!, input: jobPostInput!, salary: salaryInput!, skillsID: [ID]!): JobPostPayload
+  createJobPost(companyID: ID!, input: jobPostInput!, salary: salaryInput!, skillsID: [ID]!): JobPostPayload
   createMessage(message: String!, receiverID: String!, senderID: String!): message
   createPortoflio(file: Upload, input: PortfolioInput!, profileID: ID!): PortfolioPayload
   createSchedule(input: ScheduleInput!, receiverID: String!, senderID: String!): SchedulePayload
@@ -151,6 +160,8 @@ type Query {
   getCompanyByID(companyID: ID!): company
   getJobApplicationById(jobPostID: ID!, pagination: PaginationInput!): [application]
   getJobPostById(jobPostID: ID!): jobpost
+  getMyCompanyByUserID(userID: ID!): company
+  getMyCompanyJobPost(pagination: PaginationInput, userID: ID!): [jobpost]
   getNotificationByID(notificationID: ID!): notification
   getNotificationByUserID(pagination: PaginationInput!, userID: ID!): [notification]
   getPersonalMessage(receiverID: ID!, senderID: ID!): [message]
@@ -164,6 +175,7 @@ type Query {
   getSkillsByGroup: [skills]
   getUserAccountById(userID: ID!): user
   getUserActivityLogs(input: PaginationInput!, userID: ID!): [activityLogs]
+  jobPagination(pagination: PaginationInput, userID: ID!): JobPagination
 }
 
 input RequirementInput {
@@ -264,14 +276,9 @@ type company {
   jobPost: [jobpost]
   location: String
   logo: media
+  slug: String
+  user: user
   verified: Boolean
-}
-
-enum experienceEnum {
-  Entry
-  Expert
-  Intermediate
-  Senior
 }
 
 input jobPostInput {
@@ -279,6 +286,7 @@ input jobPostInput {
   description: String
   duration: String
   endDate: DateTime
+  experience: String
   location: String
   title: String
 }
@@ -288,13 +296,17 @@ type jobpost {
   applicants: [application]
   createdAt: DateTime
   description: String
+  duration: String
+  endDate: DateTime
   experience: String
   getCompany: company
   isArchive: Boolean
   isDraft: Boolean
+  isOpen: Boolean
   jobPostID: ID
   salary: salary
   skills: [skills]
+  slug: String
   title: String
   totalApplicant: Int
   updatedAt: DateTime

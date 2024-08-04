@@ -8,8 +8,12 @@ export const JobPost = objectType({
     t.string("title");
     t.string("description");
     t.string("experience");
+    t.string("slug");
+    t.string("duration");
+    t.datetime("endDate");
     t.boolean("isDraft");
     t.boolean("isArchive");
+    t.boolean("isOpen");
     t.list.string("JobType");
     t.datetime("createdAt");
     t.datetime("updatedAt");

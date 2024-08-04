@@ -27,6 +27,8 @@ import * as GraphQLUnion from "./api/schema/union";
 import * as GraphQLInterface from "./api/schema/Interface/interface";
 import * as GraphQLInput from "./api/schema/Input/index";
 import * as GraphQLEnum from "./api/schema/Enum/index";
+import * as GraphQLPagination from './api/schema/pagination/index';
+
 import { graphqlUploadExpress } from "graphql-upload-ts";
 
 (async function CapastonProject() {
@@ -46,6 +48,7 @@ import { graphqlUploadExpress } from "graphql-upload-ts";
       GraphQLInterface,
       GraphQLInput,
       GraphQLEnum,
+      GraphQLPagination,
     ],
     plugins: [fieldAuthorizePlugin()],
     features: {

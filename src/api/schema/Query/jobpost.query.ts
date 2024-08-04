@@ -36,6 +36,34 @@ export const JobPostQuery = extendType({
         });
       },
     });
+    t.field("jobPagination", {
+      type: "JobPagination",
+      args: { userID: nonNull(idArg()), pagination: "PaginationInput" },
+      resolve: async (
+        _,
+        { userID, pagination: { take, page } }
+      ): Promise<any> => {
+        const getAlljobs = await prisma.jobPost.findMany({
+          where: {
+            Company: {
+              userID,
+            },
+          },
+        });
+
+
+        const offset = (page - 1) * take;
+        const item = getAlljobs.slice(offset, offset + take)
+        return {
+          totalPages: Math.ceil(getAlljobs.length / take),
+          totalItems: getAlljobs.length,
+          currentPage: page,
+          hasNextPage: page < Math.ceil(getAlljobs.length / take),
+          hasPrevPage: page > 1,
+          item,
+        };
+      },
+    });
     t.field("getJobPostById", {
       type: "jobpost",
       args: { jobPostID: nonNull(idArg()) },
@@ -68,6 +96,19 @@ export const JobPostQuery = extendType({
           },
           take,
           skip: take * (page - 1),
+        });
+      },
+    });
+    t.list.field("getMyCompanyJobPost", {
+      type: "jobpost",
+      args: { userID: nonNull(idArg()), pagination: "PaginationInput" },
+      resolve: async (_, { userID }): Promise<any> => {
+        return await prisma.jobPost.findMany({
+          where: {
+            Company: {
+              userID,
+            },
+          },
         });
       },
     });

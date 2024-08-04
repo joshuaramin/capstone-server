@@ -4,6 +4,7 @@ import {
   ERROR_MESSAGE_BAD_INPUT,
   ERROR_MESSAGE_FORBIDDEN,
 } from "../../helpers/error";
+import { Slugify } from "../../helpers/slugify";
 
 export const JobPostMutation = extendType({
   type: "Mutation",
@@ -15,16 +16,14 @@ export const JobPostMutation = extendType({
         input: nonNull("jobPostInput"),
         salary: nonNull("salaryInput"),
         skillsID: nonNull(list(idArg())),
-        experience: nonNull("experienceEnum"),
       },
       resolve: async (
         _,
         {
           companyID,
-          input: { title, description, endDate, JobType, location, duration },
+          input: { title, description, endDate, JobType, location, duration, experience },
           salary: { min, max, currency },
           skillsID,
-          experience,
         }
       ): Promise<any> => {
         if (
@@ -56,7 +55,9 @@ export const JobPostMutation = extendType({
             endDate,
             location,
             duration,
-            experience: experience as any,
+            experience,
+            isOpen: false,
+            slug: Slugify(title),
             Salary: {
               create: {
                 min,

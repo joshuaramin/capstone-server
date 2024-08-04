@@ -23,6 +23,19 @@ export const CompanyQuery = extendType({
         });
       },
     });
+    t.field("getMyCompanyByUserID", {
+      type: "company",
+      args: { userID: nonNull(idArg()) },
+      resolve: async (_, { userID }): Promise<any> => {
+        return await prisma.company.findFirst({
+          where: {
+            User: {
+              userID,
+            },
+          },
+        });
+      },
+    });
     t.field("getSearchByCompanyName", {
       type: "company",
       args: { search: nonNull(stringArg()) },

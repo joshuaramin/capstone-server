@@ -1,4 +1,4 @@
-import { interfaceType, objectType } from "nexus";
+import { objectType } from "nexus";
 
 export const BadInputObject = objectType({
   name: "BADINPUT",

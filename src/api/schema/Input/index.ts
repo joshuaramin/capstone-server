@@ -71,6 +71,7 @@ export const JobPostInput = inputObjectType({
     t.string("duration");
     t.list.string("JobType");
     t.datetime("endDate");
+    t.string("experience")
   },
 });
 

@@ -24,13 +24,6 @@ enum paymentType {
   card
 }
 
-enum ExperienceLevel {
-  Entry
-  Intermediate
-  Expert
-  Senior
-}
-
 model User {
   userID           String             @id @default(cuid())
   email            String             @unique @db.VarChar(300)
@@ -94,6 +87,7 @@ model Message {
 model Company {
   companyID    String             @id @default(cuid())
   companyName  String             @db.VarChar(300)
+  slug         String             @db.VarChar(300)
   description  String             @db.VarChar(300)
   location     String             @db.VarChar(300)
   companySize  String             @db.VarChar(300)
@@ -218,25 +212,26 @@ model Payment {
 }
 
 model JobPost {
-  jobPostID   String          @id @default(cuid())
-  title       String          @db.VarChar(300)
+  jobPostID   String        @id @default(cuid())
+  title       String        @db.VarChar(300)
   slug        String
-  description String          @db.Text
-  location    String          @db.VarChar(100)
-  duration    String          @db.VarChar(300)
+  description String        @db.Text
+  location    String        @db.VarChar(100)
+  duration    String        @db.VarChar(300)
   JobType     String[]
-  endDate     DateTime        @db.Timestamp()
-  experience  ExperienceLevel
-  isDraft     Boolean         @default(false) @db.Boolean
-  isArchive   Boolean         @default(false) @db.Boolean
-  createdAt   DateTime        @default(now()) @db.Timestamp()
-  updatedAt   DateTime        @default(now()) @updatedAt @db.Timestamp()
+  endDate     DateTime      @db.Timestamp()
+  experience  String        @db.VarChar(100)
+  isDraft     Boolean       @default(true) @db.Boolean
+  isArchive   Boolean       @default(false) @db.Boolean
+  isOpen      Boolean       @default(false)
+  createdAt   DateTime      @default(now()) @db.Timestamp()
+  updatedAt   DateTime      @default(now()) @updatedAt @db.Timestamp()
   Salary      Salary?
   Application Application[]
   Favourite   Favourite[]
   Skills      Skills[]
   Report      Report[]
-  Company     Company?        @relation(fields: [companyID], references: [companyID], onDelete: Cascade)
+  Company     Company?      @relation(fields: [companyID], references: [companyID], onDelete: Cascade)
   companyID   String?
 }
 
