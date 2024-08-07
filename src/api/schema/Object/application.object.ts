@@ -9,6 +9,18 @@ export const ApplicationObject = objectType({
     t.string("status");
     t.datetime("createdAt");
     t.datetime("updatedAt");
+    t.field("user", {
+      type: "user",
+      resolve: async ({ applicationID }): Promise<any> => {
+        return await prisma.user.findFirst({
+          where: {
+            Application: {
+              some: { applicationID },
+            },
+          },
+        });
+      },
+    });
     t.field("score", {
       type: "ats",
       resolve: async ({ applicationID }): Promise<any> => {

@@ -1,4 +1,4 @@
-import { subscriptionType } from "nexus";
+import { idArg, nonNull, subscriptionType } from "nexus";
 import { prisma, pubsub } from "../../helpers/server";
 
 export const SystemSubscriptions = subscriptionType({
@@ -16,6 +16,16 @@ export const SystemSubscriptions = subscriptionType({
       type: "jobpost",
       subscribe: async (): Promise<any> => {
         pubsub.asyncIterator("createjobPost");
+      },
+      resolve: async (payload): Promise<any> => {
+        return payload;
+      },
+    });
+    t.list.field("getMyCompanyJobPostSubscriptions", {
+      type: "jobpost",
+      args: { companyID: nonNull(idArg()) },
+      subscribe: async (): Promise<any> => {
+        pubsub.asyncIterator("createJobPostToMyCompany");
       },
       resolve: async (payload): Promise<any> => {
         return payload;

@@ -51,9 +51,8 @@ export const JobPostQuery = extendType({
           },
         });
 
-
         const offset = (page - 1) * take;
-        const item = getAlljobs.slice(offset, offset + take)
+        const item = getAlljobs.slice(offset, offset + take);
         return {
           totalPages: Math.ceil(getAlljobs.length / take),
           totalItems: getAlljobs.length,
@@ -108,6 +107,17 @@ export const JobPostQuery = extendType({
             Company: {
               userID,
             },
+          },
+        });
+      },
+    });
+    t.field("getJobPostBySlug", {
+      type: "jobpost",
+      args: { id: nonNull(idArg()) },
+      resolve: async (_, { id }): Promise<any> => {
+        return await prisma.jobPost.findFirst({
+          where: {
+            jobPostID: id
           },
         });
       },

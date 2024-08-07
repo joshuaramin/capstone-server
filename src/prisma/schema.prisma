@@ -219,7 +219,7 @@ model JobPost {
   location    String        @db.VarChar(100)
   duration    String        @db.VarChar(300)
   JobType     String[]
-  endDate     DateTime      @db.Timestamp()
+  endDate     DateTime      @db.Date()
   experience  String        @db.VarChar(100)
   isDraft     Boolean       @default(true) @db.Boolean
   isArchive   Boolean       @default(false) @db.Boolean

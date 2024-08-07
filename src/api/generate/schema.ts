@@ -130,7 +130,7 @@ export interface NexusGenInputs {
     JobType?: Array<string | null> | null; // [String]
     description?: string | null; // String
     duration?: string | null; // String
-    endDate?: NexusGenScalars['DateTime'] | null; // DateTime
+    endDate?: NexusGenScalars['Date'] | null; // Date
     experience?: string | null; // String
     location?: string | null; // String
     title?: string | null; // String
@@ -195,6 +195,14 @@ export interface NexusGenObjects {
   }
   Query: {};
   Subscription: {};
+  UserPagination: { // root type
+    currentPage?: number | null; // Int
+    hasNextPage?: boolean | null; // Boolean
+    hasPrevPage?: boolean | null; // Boolean
+    item?: Array<NexusGenRootTypes['user'] | null> | null; // [user]
+    totalItems?: number | null; // Int
+    totalPages?: number | null; // Int
+  }
   about: { // root type
     aboutID?: string | null; // ID
     bio?: string | null; // String
@@ -241,6 +249,7 @@ export interface NexusGenObjects {
     isDraft?: boolean | null; // Boolean
     isOpen?: boolean | null; // Boolean
     jobPostID?: string | null; // ID
+    location?: string | null; // String
     slug?: string | null; // String
     title?: string | null; // String
     updatedAt?: NexusGenScalars['DateTime'] | null; // DateTime
@@ -450,6 +459,7 @@ export interface NexusGenFieldTypes {
     getCompanyByID: NexusGenRootTypes['company'] | null; // company
     getJobApplicationById: Array<NexusGenRootTypes['application'] | null> | null; // [application]
     getJobPostById: NexusGenRootTypes['jobpost'] | null; // jobpost
+    getJobPostBySlug: NexusGenRootTypes['jobpost'] | null; // jobpost
     getMyCompanyByUserID: NexusGenRootTypes['company'] | null; // company
     getMyCompanyJobPost: Array<NexusGenRootTypes['jobpost'] | null> | null; // [jobpost]
     getNotificationByID: NexusGenRootTypes['notification'] | null; // notification
@@ -469,7 +479,16 @@ export interface NexusGenFieldTypes {
   }
   Subscription: { // field return type
     getAllUser: Array<NexusGenRootTypes['user'] | null> | null; // [user]
+    getMyCompanyJobPostSubscriptions: Array<NexusGenRootTypes['jobpost'] | null> | null; // [jobpost]
     jobPost: Array<NexusGenRootTypes['jobpost'] | null> | null; // [jobpost]
+  }
+  UserPagination: { // field return type
+    currentPage: number | null; // Int
+    hasNextPage: boolean | null; // Boolean
+    hasPrevPage: boolean | null; // Boolean
+    item: Array<NexusGenRootTypes['user'] | null> | null; // [user]
+    totalItems: number | null; // Int
+    totalPages: number | null; // Int
   }
   about: { // field return type
     aboutID: string | null; // ID
@@ -491,6 +510,7 @@ export interface NexusGenFieldTypes {
     score: NexusGenRootTypes['ats'] | null; // ats
     status: string | null; // String
     updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
+    user: NexusGenRootTypes['user'] | null; // user
   }
   ats: { // field return type
     applicationID: string | null; // ID
@@ -524,6 +544,7 @@ export interface NexusGenFieldTypes {
     isDraft: boolean | null; // Boolean
     isOpen: boolean | null; // Boolean
     jobPostID: string | null; // ID
+    location: string | null; // String
     salary: NexusGenRootTypes['salary'] | null; // salary
     skills: Array<NexusGenRootTypes['skills'] | null> | null; // [skills]
     slug: string | null; // String
@@ -734,6 +755,7 @@ export interface NexusGenFieldTypeNames {
     getCompanyByID: 'company'
     getJobApplicationById: 'application'
     getJobPostById: 'jobpost'
+    getJobPostBySlug: 'jobpost'
     getMyCompanyByUserID: 'company'
     getMyCompanyJobPost: 'jobpost'
     getNotificationByID: 'notification'
@@ -753,7 +775,16 @@ export interface NexusGenFieldTypeNames {
   }
   Subscription: { // field return type name
     getAllUser: 'user'
+    getMyCompanyJobPostSubscriptions: 'jobpost'
     jobPost: 'jobpost'
+  }
+  UserPagination: { // field return type name
+    currentPage: 'Int'
+    hasNextPage: 'Boolean'
+    hasPrevPage: 'Boolean'
+    item: 'user'
+    totalItems: 'Int'
+    totalPages: 'Int'
   }
   about: { // field return type name
     aboutID: 'ID'
@@ -775,6 +806,7 @@ export interface NexusGenFieldTypeNames {
     score: 'ats'
     status: 'String'
     updatedAt: 'DateTime'
+    user: 'user'
   }
   ats: { // field return type name
     applicationID: 'ID'
@@ -808,6 +840,7 @@ export interface NexusGenFieldTypeNames {
     isDraft: 'Boolean'
     isOpen: 'Boolean'
     jobPostID: 'ID'
+    location: 'String'
     salary: 'salary'
     skills: 'skills'
     slug: 'String'
@@ -1107,6 +1140,9 @@ export interface NexusGenArgTypes {
     getJobPostById: { // args
       jobPostID: string; // ID!
     }
+    getJobPostBySlug: { // args
+      id: string; // ID!
+    }
     getMyCompanyByUserID: { // args
       userID: string; // ID!
     }
@@ -1157,6 +1193,11 @@ export interface NexusGenArgTypes {
     jobPagination: { // args
       pagination?: NexusGenInputs['PaginationInput'] | null; // PaginationInput
       userID: string; // ID!
+    }
+  }
+  Subscription: {
+    getMyCompanyJobPostSubscriptions: { // args
+      companyID: string; // ID!
     }
   }
   resume: {

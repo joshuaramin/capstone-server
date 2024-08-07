@@ -81,7 +81,7 @@ export const JobPostMutation = extendType({
           },
         });
 
-        pubsub.publish("createJob", job);
+        pubsub.publish("createJobPostToMyCompany", job);
 
         return {
           __typename: "jobpost",

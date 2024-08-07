@@ -160,6 +160,7 @@ type Query {
   getCompanyByID(companyID: ID!): company
   getJobApplicationById(jobPostID: ID!, pagination: PaginationInput!): [application]
   getJobPostById(jobPostID: ID!): jobpost
+  getJobPostBySlug(id: ID!): jobpost
   getMyCompanyByUserID(userID: ID!): company
   getMyCompanyJobPost(pagination: PaginationInput, userID: ID!): [jobpost]
   getNotificationByID(notificationID: ID!): notification
@@ -202,6 +203,7 @@ union SkillPayload = BADINPUT | skills
 
 type Subscription {
   getAllUser: [user]
+  getMyCompanyJobPostSubscriptions(companyID: ID!): [jobpost]
   jobPost: [jobpost]
 }
 
@@ -220,6 +222,15 @@ input UserInput {
   firstname: String
   lastname: String
   password: String
+}
+
+type UserPagination {
+  currentPage: Int
+  hasNextPage: Boolean
+  hasPrevPage: Boolean
+  item: [user]
+  totalItems: Int
+  totalPages: Int
 }
 
 union UserPayload = AlreadyExist | BADINPUT | user
@@ -258,6 +269,7 @@ type application {
   score: ats
   status: String
   updatedAt: DateTime
+  user: user
 }
 
 type ats {
@@ -285,7 +297,7 @@ input jobPostInput {
   JobType: [String]
   description: String
   duration: String
-  endDate: DateTime
+  endDate: Date
   experience: String
   location: String
   title: String
@@ -304,6 +316,7 @@ type jobpost {
   isDraft: Boolean
   isOpen: Boolean
   jobPostID: ID
+  location: String
   salary: salary
   skills: [skills]
   slug: String

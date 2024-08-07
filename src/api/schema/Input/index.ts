@@ -61,7 +61,7 @@ export const UserRecruiterInput = inputObjectType({
     t.string("companySize");
   },
 });
-
+  
 export const JobPostInput = inputObjectType({
   name: "jobPostInput",
   definition(t) {
@@ -70,7 +70,7 @@ export const JobPostInput = inputObjectType({
     t.string("location");
     t.string("duration");
     t.list.string("JobType");
-    t.datetime("endDate");
+    t.date("endDate");
     t.string("experience")
   },
 });

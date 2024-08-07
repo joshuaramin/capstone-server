@@ -7,6 +7,7 @@ export const JobPost = objectType({
     t.id("jobPostID");
     t.string("title");
     t.string("description");
+    t.string("location");
     t.string("experience");
     t.string("slug");
     t.string("duration");
