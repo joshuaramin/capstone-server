@@ -21,6 +21,7 @@ import {
 } from "../../helpers/sendgrid";
 import { uploader } from "../../helpers/cloudinary";
 import slugify from "slugify";
+import { Slugify } from "../../helpers/slugify";
 
 export const UserMutation = extendType({
   type: "Mutation",
@@ -115,7 +116,7 @@ export const UserMutation = extendType({
             Company: {
               create: {
                 companyName,
-                slug: slugify(companyName, { lower: true }),
+                slug: Slugify(companyName),
                 companySize,
                 description,
                 location,
