@@ -3,7 +3,7 @@ import { unionType } from "nexus";
 export const UserUnion = unionType({
   name: "UserPayload",
   definition(t) {
-    t.members("user", "BADINPUT", "AlreadyExist");
+    t.members("user", "BADINPUT", "AlreadyExist", "PasswordAlreadyExist");
   },
 });
 
@@ -52,7 +52,7 @@ export const ResumePayload = unionType({
 export const JobPostPayload = unionType({
   name: "JobPostPayload",
   definition(t) {
-    t.members("jobpost", "BADINPUT", "Forbidden");
+    t.members("jobpost", "BADINPUT", "Forbidden", "Payment");
   },
 });
 

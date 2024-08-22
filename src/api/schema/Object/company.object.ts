@@ -13,9 +13,9 @@ export const CompanyObject = objectType({
     t.string("companySize");
     t.field("logo", {
       type: "media",
-      resolve: async (): Promise<any> => {
+      resolve: async ({ companyID }): Promise<any> => {
         return await prisma.media.findFirst({
-          where: {},
+          where: { companyID },
         });
       },
     });

@@ -132,11 +132,14 @@ export interface NexusGenInputs {
     duration?: string | null; // String
     endDate?: NexusGenScalars['Date'] | null; // Date
     experience?: string | null; // String
+    isOpen?: string | null; // String
     location?: string | null; // String
+    status?: string | null; // String
     title?: string | null; // String
   }
   salaryInput: { // input type
     currency?: string | null; // String
+    fixed?: number | null; // Int
     max?: number | null; // Float
     min?: number | null; // Float
   }
@@ -193,6 +196,14 @@ export interface NexusGenObjects {
     code?: number | null; // Int
     message?: string | null; // String
   }
+  PasswordAlreadyExist: { // root type
+    code?: number | null; // Int
+    message?: string | null; // String
+  }
+  Payment: { // root type
+    code?: number | null; // Int
+    message?: string | null; // String
+  }
   Query: {};
   Subscription: {};
   UserPagination: { // root type
@@ -246,11 +257,11 @@ export interface NexusGenObjects {
     endDate?: NexusGenScalars['DateTime'] | null; // DateTime
     experience?: string | null; // String
     isArchive?: boolean | null; // Boolean
-    isDraft?: boolean | null; // Boolean
-    isOpen?: boolean | null; // Boolean
+    isOpen?: string | null; // String
     jobPostID?: string | null; // ID
     location?: string | null; // String
     slug?: string | null; // String
+    status?: string | null; // String
     title?: string | null; // String
     updatedAt?: NexusGenScalars['DateTime'] | null; // DateTime
   }
@@ -317,6 +328,7 @@ export interface NexusGenObjects {
   salary: { // root type
     createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
     currency?: string | null; // String
+    fixed?: number | null; // Float
     max?: number | null; // Float
     min?: number | null; // Float
     salaryID?: string | null; // ID
@@ -356,19 +368,19 @@ export interface NexusGenObjects {
 }
 
 export interface NexusGenInterfaces {
-  Error: NexusGenRootTypes['AlreadyExist'] | NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['CredentialsInvalid'] | NexusGenRootTypes['Expired'] | NexusGenRootTypes['Forbidden'] | NexusGenRootTypes['NOTFOUND'];
+  Error: NexusGenRootTypes['AlreadyExist'] | NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['CredentialsInvalid'] | NexusGenRootTypes['Expired'] | NexusGenRootTypes['Forbidden'] | NexusGenRootTypes['NOTFOUND'] | NexusGenRootTypes['PasswordAlreadyExist'] | NexusGenRootTypes['Payment'];
 }
 
 export interface NexusGenUnions {
   ApplicationPayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['Forbidden'] | NexusGenRootTypes['application'];
   CredentialsPayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['CredentialsInvalid'] | NexusGenRootTypes['NOTFOUND'] | NexusGenRootTypes['token'];
   EmailPayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['NOTFOUND'] | NexusGenRootTypes['user'];
-  JobPostPayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['Forbidden'] | NexusGenRootTypes['jobpost'];
+  JobPostPayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['Forbidden'] | NexusGenRootTypes['Payment'] | NexusGenRootTypes['jobpost'];
   PortfolioPayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['portfolio'];
   ResumePayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['resume'];
   SchedulePayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['schedule'];
   SkillPayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['skills'];
-  UserPayload: NexusGenRootTypes['AlreadyExist'] | NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['user'];
+  UserPayload: NexusGenRootTypes['AlreadyExist'] | NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['PasswordAlreadyExist'] | NexusGenRootTypes['user'];
   resetPasswordPayload: NexusGenRootTypes['Expired'] | NexusGenRootTypes['NOTFOUND'] | NexusGenRootTypes['resetPassword'];
   salaryPayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['salary'];
 }
@@ -407,20 +419,23 @@ export interface NexusGenFieldTypes {
     totalPages: number | null; // Int
   }
   Mutation: { // field return type
+    addSkills: NexusGenRootTypes['skills'] | null; // skills
     archiveJobPost: NexusGenRootTypes['jobpost'] | null; // jobpost
     createAbout: NexusGenRootTypes['about'] | null; // about
     createApplication: NexusGenRootTypes['ApplicationPayload'] | null; // ApplicationPayload
     createJobPost: NexusGenRootTypes['JobPostPayload'] | null; // JobPostPayload
     createMessage: NexusGenRootTypes['message'] | null; // message
     createPortoflio: NexusGenRootTypes['PortfolioPayload'] | null; // PortfolioPayload
+    createResume: NexusGenRootTypes['ResumePayload'] | null; // ResumePayload
     createSchedule: NexusGenRootTypes['SchedulePayload'] | null; // SchedulePayload
     createSkills: NexusGenRootTypes['SkillPayload'] | null; // SkillPayload
     createUserAdminAccount: NexusGenRootTypes['UserPayload'] | null; // UserPayload
     createUserFreelancers: NexusGenRootTypes['UserPayload'] | null; // UserPayload
-    createUserRecreuiters: NexusGenRootTypes['UserPayload'] | null; // UserPayload
+    createUserRecruiter: NexusGenRootTypes['UserPayload'] | null; // UserPayload
     deleteJobPost: NexusGenRootTypes['jobpost'] | null; // jobpost
     deleteMedia: NexusGenRootTypes['media'] | null; // media
     deletePortoflio: NexusGenRootTypes['portfolio'] | null; // portfolio
+    deleteResume: NexusGenRootTypes['resume'] | null; // resume
     deleteSchedule: NexusGenRootTypes['schedule'] | null; // schedule
     deleteSkills: NexusGenRootTypes['skills'] | null; // skills
     deleteUserAccount: NexusGenRootTypes['user'] | null; // user
@@ -432,7 +447,6 @@ export interface NexusGenFieldTypes {
     updateApplicationStatus: NexusGenRootTypes['application'] | null; // application
     updateCompany: NexusGenRootTypes['company'] | null; // company
     updateJobPost: NexusGenRootTypes['jobpost'] | null; // jobpost
-    updateJobPostDefault: NexusGenRootTypes['jobpost'] | null; // jobpost
     updateMessage: NexusGenRootTypes['message'] | null; // message
     updateNotification: NexusGenRootTypes['notification'] | null; // notification
     updatePorfolio: NexusGenRootTypes['portfolio'] | null; // portfolio
@@ -443,6 +457,14 @@ export interface NexusGenFieldTypes {
     verifyMyAccount: NexusGenRootTypes['user'] | null; // user
   }
   NOTFOUND: { // field return type
+    code: number | null; // Int
+    message: string | null; // String
+  }
+  PasswordAlreadyExist: { // field return type
+    code: number | null; // Int
+    message: string | null; // String
+  }
+  Payment: { // field return type
     code: number | null; // Int
     message: string | null; // String
   }
@@ -458,6 +480,7 @@ export interface NexusGenFieldTypes {
     getApplicationByID: NexusGenRootTypes['application'] | null; // application
     getCompanyByID: NexusGenRootTypes['company'] | null; // company
     getJobApplicationById: Array<NexusGenRootTypes['application'] | null> | null; // [application]
+    getJobBoard: NexusGenRootTypes['JobPagination'] | null; // JobPagination
     getJobPostById: NexusGenRootTypes['jobpost'] | null; // jobpost
     getJobPostBySlug: NexusGenRootTypes['jobpost'] | null; // jobpost
     getMyCompanyByUserID: NexusGenRootTypes['company'] | null; // company
@@ -470,7 +493,6 @@ export interface NexusGenFieldTypes {
     getScheduleById: NexusGenRootTypes['schedule'] | null; // schedule
     getSearchByCompanyName: NexusGenRootTypes['company'] | null; // company
     getSearchBySkill: Array<NexusGenRootTypes['skills'] | null> | null; // [skills]
-    getSearchByTitle: Array<NexusGenRootTypes['jobpost'] | null> | null; // [jobpost]
     getSearchByUser: NexusGenRootTypes['user'] | null; // user
     getSkillsByGroup: Array<NexusGenRootTypes['skills'] | null> | null; // [skills]
     getUserAccountById: NexusGenRootTypes['user'] | null; // user
@@ -541,13 +563,13 @@ export interface NexusGenFieldTypes {
     experience: string | null; // String
     getCompany: NexusGenRootTypes['company'] | null; // company
     isArchive: boolean | null; // Boolean
-    isDraft: boolean | null; // Boolean
-    isOpen: boolean | null; // Boolean
+    isOpen: string | null; // String
     jobPostID: string | null; // ID
     location: string | null; // String
     salary: NexusGenRootTypes['salary'] | null; // salary
     skills: Array<NexusGenRootTypes['skills'] | null> | null; // [skills]
     slug: string | null; // String
+    status: string | null; // String
     title: string | null; // String
     totalApplicant: number | null; // Int
     updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
@@ -614,9 +636,7 @@ export interface NexusGenFieldTypes {
     updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
   }
   resume: { // field return type
-    createResume: NexusGenRootTypes['ResumePayload'] | null; // ResumePayload
     createdAt: NexusGenScalars['DateTime'] | null; // DateTime
-    deleteResume: NexusGenRootTypes['resume'] | null; // resume
     resume: string | null; // String
     resumeID: string | null; // ID
     updatedaAt: NexusGenScalars['DateTime'] | null; // DateTime
@@ -624,6 +644,7 @@ export interface NexusGenFieldTypes {
   salary: { // field return type
     createdAt: NexusGenScalars['DateTime'] | null; // DateTime
     currency: string | null; // String
+    fixed: number | null; // Float
     max: number | null; // Float
     min: number | null; // Float
     salaryID: string | null; // ID
@@ -703,20 +724,23 @@ export interface NexusGenFieldTypeNames {
     totalPages: 'Int'
   }
   Mutation: { // field return type name
+    addSkills: 'skills'
     archiveJobPost: 'jobpost'
     createAbout: 'about'
     createApplication: 'ApplicationPayload'
     createJobPost: 'JobPostPayload'
     createMessage: 'message'
     createPortoflio: 'PortfolioPayload'
+    createResume: 'ResumePayload'
     createSchedule: 'SchedulePayload'
     createSkills: 'SkillPayload'
     createUserAdminAccount: 'UserPayload'
     createUserFreelancers: 'UserPayload'
-    createUserRecreuiters: 'UserPayload'
+    createUserRecruiter: 'UserPayload'
     deleteJobPost: 'jobpost'
     deleteMedia: 'media'
     deletePortoflio: 'portfolio'
+    deleteResume: 'resume'
     deleteSchedule: 'schedule'
     deleteSkills: 'skills'
     deleteUserAccount: 'user'
@@ -728,7 +752,6 @@ export interface NexusGenFieldTypeNames {
     updateApplicationStatus: 'application'
     updateCompany: 'company'
     updateJobPost: 'jobpost'
-    updateJobPostDefault: 'jobpost'
     updateMessage: 'message'
     updateNotification: 'notification'
     updatePorfolio: 'portfolio'
@@ -739,6 +762,14 @@ export interface NexusGenFieldTypeNames {
     verifyMyAccount: 'user'
   }
   NOTFOUND: { // field return type name
+    code: 'Int'
+    message: 'String'
+  }
+  PasswordAlreadyExist: { // field return type name
+    code: 'Int'
+    message: 'String'
+  }
+  Payment: { // field return type name
     code: 'Int'
     message: 'String'
   }
@@ -754,6 +785,7 @@ export interface NexusGenFieldTypeNames {
     getApplicationByID: 'application'
     getCompanyByID: 'company'
     getJobApplicationById: 'application'
+    getJobBoard: 'JobPagination'
     getJobPostById: 'jobpost'
     getJobPostBySlug: 'jobpost'
     getMyCompanyByUserID: 'company'
@@ -766,7 +798,6 @@ export interface NexusGenFieldTypeNames {
     getScheduleById: 'schedule'
     getSearchByCompanyName: 'company'
     getSearchBySkill: 'skills'
-    getSearchByTitle: 'jobpost'
     getSearchByUser: 'user'
     getSkillsByGroup: 'skills'
     getUserAccountById: 'user'
@@ -837,13 +868,13 @@ export interface NexusGenFieldTypeNames {
     experience: 'String'
     getCompany: 'company'
     isArchive: 'Boolean'
-    isDraft: 'Boolean'
-    isOpen: 'Boolean'
+    isOpen: 'String'
     jobPostID: 'ID'
     location: 'String'
     salary: 'salary'
     skills: 'skills'
     slug: 'String'
+    status: 'String'
     title: 'String'
     totalApplicant: 'Int'
     updatedAt: 'DateTime'
@@ -910,9 +941,7 @@ export interface NexusGenFieldTypeNames {
     updatedAt: 'DateTime'
   }
   resume: { // field return type name
-    createResume: 'ResumePayload'
     createdAt: 'DateTime'
-    deleteResume: 'resume'
     resume: 'String'
     resumeID: 'ID'
     updatedaAt: 'DateTime'
@@ -920,6 +949,7 @@ export interface NexusGenFieldTypeNames {
   salary: { // field return type name
     createdAt: 'DateTime'
     currency: 'String'
+    fixed: 'Float'
     max: 'Float'
     min: 'Float'
     salaryID: 'ID'
@@ -971,6 +1001,9 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    addSkills: { // args
+      skills: Array<string | null>; // [String]!
+    }
     archiveJobPost: { // args
       jobPostID: string; // ID!
     }
@@ -987,7 +1020,7 @@ export interface NexusGenArgTypes {
       companyID: string; // ID!
       input: NexusGenInputs['jobPostInput']; // jobPostInput!
       salary: NexusGenInputs['salaryInput']; // salaryInput!
-      skillsID: Array<string | null>; // [ID]!
+      skills: Array<string | null>; // [String]!
     }
     createMessage: { // args
       message: string; // String!
@@ -997,6 +1030,10 @@ export interface NexusGenArgTypes {
     createPortoflio: { // args
       file?: NexusGenScalars['Upload'] | null; // Upload
       input: NexusGenInputs['PortfolioInput']; // PortfolioInput!
+      profileID: string; // ID!
+    }
+    createResume: { // args
+      file?: NexusGenScalars['Upload'] | null; // Upload
       profileID: string; // ID!
     }
     createSchedule: { // args
@@ -1015,7 +1052,8 @@ export interface NexusGenArgTypes {
       input: NexusGenInputs['UserFreelanceInput']; // UserFreelanceInput!
       requirement?: NexusGenInputs['RequirementInput'] | null; // RequirementInput
     }
-    createUserRecreuiters: { // args
+    createUserRecruiter: { // args
+      file: NexusGenScalars['Upload']; // Upload!
       input: NexusGenInputs['UserRecruiterInput']; // UserRecruiterInput!
     }
     deleteJobPost: { // args
@@ -1026,6 +1064,9 @@ export interface NexusGenArgTypes {
     }
     deletePortoflio: { // args
       portfolioID: string; // ID!
+    }
+    deleteResume: { // args
+      resumeID: string; // ID!
     }
     deleteSchedule: { // args
       scheduleID: string; // ID!
@@ -1062,12 +1103,9 @@ export interface NexusGenArgTypes {
       verified: boolean; // Boolean!
     }
     updateJobPost: { // args
-      input: NexusGenInputs['jobPostInput']; // jobPostInput!
+      input?: NexusGenInputs['jobPostInput'] | null; // jobPostInput
       jobPostID: string; // ID!
-    }
-    updateJobPostDefault: { // args
-      isDraft: boolean; // Boolean!
-      jobPostID: string; // ID!
+      salary?: NexusGenInputs['salaryInput'] | null; // salaryInput
     }
     updateMessage: { // args
       message: string; // String!
@@ -1137,6 +1175,10 @@ export interface NexusGenArgTypes {
       jobPostID: string; // ID!
       pagination: NexusGenInputs['PaginationInput']; // PaginationInput!
     }
+    getJobBoard: { // args
+      input: NexusGenInputs['PaginationInput']; // PaginationInput!
+      search: string; // String!
+    }
     getJobPostById: { // args
       jobPostID: string; // ID!
     }
@@ -1176,10 +1218,6 @@ export interface NexusGenArgTypes {
     getSearchBySkill: { // args
       search: string; // String!
     }
-    getSearchByTitle: { // args
-      pagination: NexusGenInputs['PaginationInput']; // PaginationInput!
-      search: string; // String!
-    }
     getSearchByUser: { // args
       search: string; // String!
     }
@@ -1192,6 +1230,7 @@ export interface NexusGenArgTypes {
     }
     jobPagination: { // args
       pagination?: NexusGenInputs['PaginationInput'] | null; // PaginationInput
+      search?: string | null; // String
       userID: string; // ID!
     }
   }
@@ -1200,30 +1239,21 @@ export interface NexusGenArgTypes {
       companyID: string; // ID!
     }
   }
-  resume: {
-    createResume: { // args
-      file?: NexusGenScalars['Upload'] | null; // Upload
-      profileID: string; // ID!
-    }
-    deleteResume: { // args
-      resumeID: string; // ID!
-    }
-  }
 }
 
 export interface NexusGenAbstractTypeMembers {
   ApplicationPayload: "BADINPUT" | "Forbidden" | "application"
   CredentialsPayload: "BADINPUT" | "CredentialsInvalid" | "NOTFOUND" | "token"
   EmailPayload: "BADINPUT" | "NOTFOUND" | "user"
-  JobPostPayload: "BADINPUT" | "Forbidden" | "jobpost"
+  JobPostPayload: "BADINPUT" | "Forbidden" | "Payment" | "jobpost"
   PortfolioPayload: "BADINPUT" | "portfolio"
   ResumePayload: "BADINPUT" | "resume"
   SchedulePayload: "BADINPUT" | "schedule"
   SkillPayload: "BADINPUT" | "skills"
-  UserPayload: "AlreadyExist" | "BADINPUT" | "user"
+  UserPayload: "AlreadyExist" | "BADINPUT" | "PasswordAlreadyExist" | "user"
   resetPasswordPayload: "Expired" | "NOTFOUND" | "resetPassword"
   salaryPayload: "BADINPUT" | "salary"
-  Error: "AlreadyExist" | "BADINPUT" | "CredentialsInvalid" | "Expired" | "Forbidden" | "NOTFOUND"
+  Error: "AlreadyExist" | "BADINPUT" | "CredentialsInvalid" | "Expired" | "Forbidden" | "NOTFOUND" | "PasswordAlreadyExist" | "Payment"
 }
 
 export interface NexusGenTypeInterfaces {
@@ -1233,6 +1263,8 @@ export interface NexusGenTypeInterfaces {
   Expired: "Error"
   Forbidden: "Error"
   NOTFOUND: "Error"
+  PasswordAlreadyExist: "Error"
+  Payment: "Error"
 }
 
 export type NexusGenObjectNames = keyof NexusGenObjects;

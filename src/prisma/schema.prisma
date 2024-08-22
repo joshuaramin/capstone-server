@@ -142,7 +142,7 @@ model About {
 
 model Skills {
   skillsID  String      @id @default(cuid())
-  skills    String      @db.VarChar(100)
+  skills    String      @unique @db.VarChar(100)
   createdAt DateTime    @default(now()) @db.Timestamp()
   updatedAt DateTime    @default(now()) @updatedAt @db.Timestamp()
   About     About?      @relation(fields: [aboutID], references: [aboutID], onDelete: Cascade)
@@ -219,11 +219,11 @@ model JobPost {
   location    String        @db.VarChar(100)
   duration    String        @db.VarChar(300)
   JobType     String[]
-  endDate     DateTime      @db.Date()
+  endDate     DateTime      @db.Date
   experience  String        @db.VarChar(100)
-  isDraft     Boolean       @default(true) @db.Boolean
-  isArchive   Boolean       @default(false) @db.Boolean
-  isOpen      Boolean       @default(false)
+  status      String        @db.VarChar(200)
+  isArchive   Boolean       @default(false)
+  isOpen      String        @db.VarChar(200)
   createdAt   DateTime      @default(now()) @db.Timestamp()
   updatedAt   DateTime      @default(now()) @updatedAt @db.Timestamp()
   Salary      Salary?
@@ -237,8 +237,9 @@ model JobPost {
 
 model Salary {
   salaryID  String   @id @default(cuid())
-  min       Float
-  max       Float
+  fixed     Int?     @db.Integer
+  min       Float?
+  max       Float?
   currency  String   @db.VarChar(3)
   createdAt DateTime @default(now()) @db.Timestamp()
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamp()

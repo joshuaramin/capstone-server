@@ -28,6 +28,13 @@ export const CredentialsInvalid = objectType({
   },
 });
 
+export const PasswordAlreadyExist = objectType({
+  name: "PasswordAlreadyExist",
+  definition(t) {
+    t.implements("Error");
+  },
+});
+
 export const NOTFOUND = objectType({
   name: "NOTFOUND",
   definition(t) {
@@ -37,6 +44,13 @@ export const NOTFOUND = objectType({
 
 export const EXPIRED = objectType({
   name: "Expired",
+  definition(t) {
+    t.implements("Error");
+  },
+});
+
+export const Payment = objectType({
+  name: "Payment",
   definition(t) {
     t.implements("Error");
   },

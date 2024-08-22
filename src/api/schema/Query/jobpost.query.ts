@@ -28,7 +28,7 @@ export const JobPostQuery = extendType({
                   isArchive: true,
                 },
                 {
-                  isDraft: true,
+                  status: "Draft",
                 },
               ],
             },
@@ -38,13 +38,21 @@ export const JobPostQuery = extendType({
     });
     t.field("jobPagination", {
       type: "JobPagination",
-      args: { userID: nonNull(idArg()), pagination: "PaginationInput" },
+      args: {
+        search: stringArg(),
+        userID: nonNull(idArg()),
+        pagination: "PaginationInput",
+      },
       resolve: async (
         _,
-        { userID, pagination: { take, page } }
+        { search, userID, pagination: { take, page } }
       ): Promise<any> => {
         const getAlljobs = await prisma.jobPost.findMany({
           where: {
+            title: {
+              contains: search,
+              mode: "insensitive",
+            },
             Company: {
               userID,
             },
@@ -63,38 +71,47 @@ export const JobPostQuery = extendType({
         };
       },
     });
-    t.field("getJobPostById", {
-      type: "jobpost",
-      args: { jobPostID: nonNull(idArg()) },
-      resolve: async (_, { jobPostID }): Promise<any> => {
-        return await prisma.jobPost.findFirst({
-          where: { jobPostID },
-        });
-      },
-    });
-    t.list.field("getSearchByTitle", {
-      type: "jobpost",
-      args: {
-        search: nonNull(stringArg()),
-        pagination: nonNull("PaginationInput"),
-      },
-      resolve: async (
-        _,
-        { search, pagination: { take, page } }
-      ): Promise<any> => {
-        return await prisma.jobPost.findMany({
+    t.field("getJobBoard", {
+      type: "JobPagination",
+      args: { search: nonNull(stringArg()), input: nonNull("PaginationInput") },
+      resolve: async (_, { input: { page, take }, search }): Promise<any> => {
+        const getAllJobs = await prisma.jobPost.findMany({
           where: {
             title: {
               contains: search,
               mode: "insensitive",
             },
             NOT: {
-              isArchive: true,
-              isDraft: true,
+              OR: [
+                {
+                  status: "Draft",
+                },
+                {
+                  isArchive: true,
+                },
+              ],
             },
           },
-          take,
-          skip: take * (page - 1),
+        });
+
+        const offset = (page - 1) * take;
+        const item = getAllJobs.slice(offset, offset + take);
+        return {
+          totalPages: Math.ceil(getAllJobs.length / take),
+          totalItems: getAllJobs.length,
+          currentPage: page,
+          hasNextPage: page < Math.ceil(getAllJobs.length / take),
+          hasPrevPage: page > 1,
+          item,
+        };
+      },
+    });
+    t.field("getJobPostById", {
+      type: "jobpost",
+      args: { jobPostID: nonNull(idArg()) },
+      resolve: async (_, { jobPostID }): Promise<any> => {
+        return await prisma.jobPost.findFirst({
+          where: { jobPostID },
         });
       },
     });
@@ -117,7 +134,7 @@ export const JobPostQuery = extendType({
       resolve: async (_, { id }): Promise<any> => {
         return await prisma.jobPost.findFirst({
           where: {
-            jobPostID: id
+            jobPostID: id,
           },
         });
       },

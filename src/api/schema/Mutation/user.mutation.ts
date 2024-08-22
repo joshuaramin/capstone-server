@@ -10,6 +10,7 @@ import {
   ERROR_ALREADY_EXIST,
   ERROR_MESSAGE_BAD_INPUT,
   ERROR_MESSAGE_CREDENTIALS,
+  ERROR_PASSWORD_ALREADY_EXIST,
 } from "../../helpers/error";
 
 import generateRandom from "../../helpers/generateRandom";
@@ -20,7 +21,6 @@ import {
   VerificationEmail,
 } from "../../helpers/sendgrid";
 import { uploader } from "../../helpers/cloudinary";
-import slugify from "slugify";
 import { Slugify } from "../../helpers/slugify";
 
 export const UserMutation = extendType({
@@ -37,12 +37,16 @@ export const UserMutation = extendType({
           return ERROR_MESSAGE_BAD_INPUT;
         }
 
-        const checkUserEmail = await prisma.user.findUnique({
+        const emailCheck = await prisma.user.findUnique({
           where: { email },
         });
 
-        if (checkUserEmail) {
-          return ERROR_ALREADY_EXIST;
+        if (emailCheck) {
+          return {
+            __typename: "AlreadyExist",
+            code: 409,
+            message: " Email Address is Already Exist.",
+          };
         }
 
         const users = await prisma.user.create({
@@ -67,9 +71,9 @@ export const UserMutation = extendType({
         };
       },
     });
-    t.field("createUserRecreuiters", {
+    t.field("createUserRecruiter", {
       type: "UserPayload",
-      args: { input: nonNull("UserRecruiterInput") },
+      args: { input: nonNull("UserRecruiterInput"), file: nonNull("Upload") },
       resolve: async (
         _,
         {
@@ -84,6 +88,7 @@ export const UserMutation = extendType({
             location,
             password,
           },
+          file,
         }
       ): Promise<any> => {
         if (
@@ -105,8 +110,14 @@ export const UserMutation = extendType({
         });
 
         if (emailCheck) {
-          return ERROR_ALREADY_EXIST;
+          return {
+            __typename: "AlreadyExist",
+            code: 409,
+            message: " Email Address is Already Exist.",
+          };
         }
+
+        const { createReadStream, filename } = await file;
         const users = await prisma.user.create({
           data: {
             email,
@@ -120,6 +131,11 @@ export const UserMutation = extendType({
                 companySize,
                 description,
                 location,
+                media: {
+                  create: {
+                    media: await uploader(createReadStream()),
+                  },
+                },
               },
             },
             Profile: {
@@ -281,7 +297,7 @@ export const UserMutation = extendType({
           const compareBcrypt = await ComparePass(password, passHash);
 
           if (compareBcrypt) {
-            return ERROR_ALREADY_EXIST;
+            return ERROR_PASSWORD_ALREADY_EXIST;
           }
         }
 

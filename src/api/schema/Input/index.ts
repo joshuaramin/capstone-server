@@ -3,8 +3,9 @@ import { inputObjectType } from "nexus";
 export const SalaryInput = inputObjectType({
   name: "salaryInput",
   definition(t) {
-    t.float("min");
-    t.float("max");
+    t.nullable.int("fixed")
+    t.nullable.float("min");
+    t.nullable.float("max");
     t.string("currency");
   },
 });
@@ -69,6 +70,8 @@ export const JobPostInput = inputObjectType({
     t.string("description");
     t.string("location");
     t.string("duration");
+    t.string("status"),
+    t.string("isOpen")
     t.list.string("JobType");
     t.date("endDate");
     t.string("experience")

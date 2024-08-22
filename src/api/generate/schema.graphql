@@ -73,23 +73,26 @@ type JobPagination {
   totalPages: Int
 }
 
-union JobPostPayload = BADINPUT | Forbidden | jobpost
+union JobPostPayload = BADINPUT | Forbidden | Payment | jobpost
 
 type Mutation {
+  addSkills(skills: [String]!): skills
   archiveJobPost(jobPostID: ID!): jobpost
   createAbout(input: AboutInput!, profileID: ID!): about
   createApplication(jobPostID: ID!, resumeID: ID!, userID: ID!): ApplicationPayload
-  createJobPost(companyID: ID!, input: jobPostInput!, salary: salaryInput!, skillsID: [ID]!): JobPostPayload
+  createJobPost(companyID: ID!, input: jobPostInput!, salary: salaryInput!, skills: [String]!): JobPostPayload
   createMessage(message: String!, receiverID: String!, senderID: String!): message
   createPortoflio(file: Upload, input: PortfolioInput!, profileID: ID!): PortfolioPayload
+  createResume(file: Upload, profileID: ID!): ResumePayload
   createSchedule(input: ScheduleInput!, receiverID: String!, senderID: String!): SchedulePayload
   createSkills(input: SkillInput!): SkillPayload
   createUserAdminAccount(input: UserInput!): UserPayload
   createUserFreelancers(fileUpload: Upload!, input: UserFreelanceInput!, requirement: RequirementInput): UserPayload
-  createUserRecreuiters(input: UserRecruiterInput!): UserPayload
+  createUserRecruiter(file: Upload!, input: UserRecruiterInput!): UserPayload
   deleteJobPost(jobPostID: ID!): jobpost
   deleteMedia(mediaID: ID!): media
   deletePortoflio(portfolioID: ID!): portfolio
+  deleteResume(resumeID: ID!): resume
   deleteSchedule(scheduleID: ID!): schedule
   deleteSkills(skillsID: ID!): skills
   deleteUserAccount(userID: ID!): user
@@ -100,8 +103,7 @@ type Mutation {
   updateAbout(aboutID: ID!, bio: String!): about
   updateApplicationStatus(applicationID: ID!, status: String!): application
   updateCompany(companyID: ID!, verified: Boolean!): company
-  updateJobPost(input: jobPostInput!, jobPostID: ID!): jobpost
-  updateJobPostDefault(isDraft: Boolean!, jobPostID: ID!): jobpost
+  updateJobPost(input: jobPostInput, jobPostID: ID!, salary: salaryInput): jobpost
   updateMessage(message: String!, messageID: String!): message
   updateNotification(notificationID: ID!): notification
   updatePorfolio(input: PortfolioInput!, portfolioID: ID!): portfolio
@@ -120,6 +122,16 @@ type NOTFOUND implements Error {
 input PaginationInput {
   page: Int
   take: Int
+}
+
+type PasswordAlreadyExist implements Error {
+  code: Int
+  message: String
+}
+
+type Payment implements Error {
+  code: Int
+  message: String
 }
 
 """
@@ -159,6 +171,7 @@ type Query {
   getApplicationByID(applicationID: ID!): application
   getCompanyByID(companyID: ID!): company
   getJobApplicationById(jobPostID: ID!, pagination: PaginationInput!): [application]
+  getJobBoard(input: PaginationInput!, search: String!): JobPagination
   getJobPostById(jobPostID: ID!): jobpost
   getJobPostBySlug(id: ID!): jobpost
   getMyCompanyByUserID(userID: ID!): company
@@ -171,12 +184,11 @@ type Query {
   getScheduleById(scheduleID: ID!): schedule
   getSearchByCompanyName(search: String!): company
   getSearchBySkill(search: String!): [skills]
-  getSearchByTitle(pagination: PaginationInput!, search: String!): [jobpost]
   getSearchByUser(search: String!): user
   getSkillsByGroup: [skills]
   getUserAccountById(userID: ID!): user
   getUserActivityLogs(input: PaginationInput!, userID: ID!): [activityLogs]
-  jobPagination(pagination: PaginationInput, userID: ID!): JobPagination
+  jobPagination(pagination: PaginationInput, search: String, userID: ID!): JobPagination
 }
 
 input RequirementInput {
@@ -233,7 +245,7 @@ type UserPagination {
   totalPages: Int
 }
 
-union UserPayload = AlreadyExist | BADINPUT | user
+union UserPayload = AlreadyExist | BADINPUT | PasswordAlreadyExist | user
 
 input UserRecruiterInput {
   companyName: String
@@ -299,7 +311,9 @@ input jobPostInput {
   duration: String
   endDate: Date
   experience: String
+  isOpen: String
   location: String
+  status: String
   title: String
 }
 
@@ -313,13 +327,13 @@ type jobpost {
   experience: String
   getCompany: company
   isArchive: Boolean
-  isDraft: Boolean
-  isOpen: Boolean
+  isOpen: String
   jobPostID: ID
   location: String
   salary: salary
   skills: [skills]
   slug: String
+  status: String
   title: String
   totalApplicant: Int
   updatedAt: DateTime
@@ -396,9 +410,7 @@ type resetPassword {
 union resetPasswordPayload = Expired | NOTFOUND | resetPassword
 
 type resume {
-  createResume(file: Upload, profileID: ID!): ResumePayload
   createdAt: DateTime
-  deleteResume(resumeID: ID!): resume
   resume: String
   resumeID: ID
   updatedaAt: DateTime
@@ -413,6 +425,7 @@ enum roleEnum {
 type salary {
   createdAt: DateTime
   currency: String
+  fixed: Float
   max: Float
   min: Float
   salaryID: ID
@@ -421,6 +434,7 @@ type salary {
 
 input salaryInput {
   currency: String
+  fixed: Int
   max: Float
   min: Float
 }

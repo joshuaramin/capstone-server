@@ -1,4 +1,4 @@
-import { booleanArg, extendType, idArg, list, nonNull } from "nexus";
+import { booleanArg, extendType, idArg, list, nonNull, stringArg } from "nexus";
 import { prisma, pubsub } from "../../helpers/server";
 import {
   ERROR_MESSAGE_BAD_INPUT,
@@ -15,15 +15,25 @@ export const JobPostMutation = extendType({
         companyID: nonNull(idArg()),
         input: nonNull("jobPostInput"),
         salary: nonNull("salaryInput"),
-        skillsID: nonNull(list(idArg())),
+        skills: nonNull(list(stringArg())),
       },
       resolve: async (
         _,
         {
           companyID,
-          input: { title, description, endDate, JobType, location, duration, experience },
-          salary: { min, max, currency },
-          skillsID,
+          input: {
+            title,
+            description,
+            endDate,
+            JobType,
+            location,
+            duration,
+            experience,
+            status,
+            isOpen,
+          },
+          salary: { min, max, currency, fixed },
+          skills,
         }
       ): Promise<any> => {
         if (
@@ -32,9 +42,8 @@ export const JobPostMutation = extendType({
           !endDate ||
           !JobType ||
           !location ||
+          !status ||
           !duration ||
-          !min ||
-          !max ||
           !currency
         ) {
           return ERROR_MESSAGE_BAD_INPUT;
@@ -43,85 +52,184 @@ export const JobPostMutation = extendType({
           where: {
             companyID,
           },
-        });
-
-        if (company.verified === false) {
-          return ERROR_MESSAGE_FORBIDDEN;
-        }
-        const job = await prisma.jobPost.create({
-          data: {
-            title,
-            description,
-            endDate,
-            location,
-            duration,
-            experience,
-            isOpen: false,
-            slug: Slugify(title),
-            Salary: {
-              create: {
-                min,
-                max,
-                currency,
-              },
-            },
-            JobType,
-            Company: {
-              connect: {
-                companyID,
-              },
-            },
-            Skills: {
-              connect: skillsID.map((skillsID) => {
-                return {
-                  skillsID,
-                };
-              }),
-            },
+          include: {
+            User: true,
+            JobPost: true,
           },
         });
 
-        pubsub.publish("createJobPostToMyCompany", job);
+        if (company.User.plan === "Basic" && company.JobPost.length === 5) {
+          return {
+            __typename: "Payment",
+            code: "402",
+            message:
+              "You don't have any posts remaining. Please upgrade your plan to the Pro version.",
+          };
+        }
 
-        return {
-          __typename: "jobpost",
-          ...job,
-        };
+        if (fixed) {
+          const job = await prisma.jobPost.create({
+            data: {
+              title,
+              description,
+              endDate,
+              location,
+              duration,
+              experience,
+              status,
+              isOpen,
+              slug: Slugify(title),
+              Salary: {
+                create: {
+                  fixed,
+                  currency,
+                },
+              },
+              JobType,
+              Company: {
+                connect: {
+                  companyID,
+                },
+              },
+              Skills: {
+                connect: skills.map((skill) => {
+                  return { skills: skill };
+                }) as any,
+              },
+            },
+          });
+
+          pubsub.publish("createJobPostToMyCompany", job);
+
+          return {
+            __typename: "jobpost",
+            ...job,
+          };
+        } else {
+          const job = await prisma.jobPost.create({
+            data: {
+              title,
+              description,
+              endDate,
+              location,
+              duration,
+              experience,
+              isOpen,
+              status,
+              slug: Slugify(title),
+              Salary: {
+                create: {
+                  min,
+                  max,
+                  currency,
+                },
+              },
+              JobType,
+              Company: {
+                connect: {
+                  companyID,
+                },
+              },
+              Skills: {
+                connect: skills.map((skill) => {
+                  return { skills: skill };
+                }) as any,
+              },
+            },
+          });
+
+          pubsub.publish("createJobPostToMyCompany", job);
+
+          return {
+            __typename: "jobpost",
+            ...job,
+          };
+        }
       },
     });
     t.field("updateJobPost", {
       type: "jobpost",
-      args: { jobPostID: nonNull(idArg()), input: nonNull("jobPostInput") },
-      resolve: async (_, { jobPostID, input }): Promise<any> => {
-        if (!input) {
-          return ERROR_MESSAGE_BAD_INPUT;
-        }
-        const job = await prisma.jobPost.update({
-          data: {
-            ...input,
-          },
-          where: {
-            jobPostID,
-          },
-        });
-
-        return {
-          __typename: "jobpost",
-          ...job,
-        };
-      },
-    });
-    t.field("updateJobPostDefault", {
-      type: "jobpost",
       args: {
         jobPostID: nonNull(idArg()),
-        isDraft: nonNull(booleanArg()),
+        input: "jobPostInput",
+        salary: "salaryInput",
       },
-      resolve: async (_, { jobPostID, isDraft }): Promise<any> => {
-        return await prisma.jobPost.update({
-          where: { jobPostID },
-          data: { isDraft },
-        });
+      resolve: async (
+        _,
+        {
+          jobPostID,
+          input: {
+            title,
+            description,
+            JobType,
+            duration,
+            endDate,
+            experience,
+            location,
+            status,
+            isOpen,
+          },
+          salary: { min, max, currency, fixed },
+        }
+      ): Promise<any> => {
+        if (fixed) {
+          const fixedPrice = await prisma.jobPost.update({
+            data: {
+              title,
+              description,
+              JobType,
+              duration,
+              endDate,
+              experience,
+              location,
+              isOpen,
+              status,
+              Salary: {
+                update: {
+                  fixed,
+                  currency,
+                },
+              },
+            },
+            where: {
+              jobPostID,
+            },
+          });
+
+          return {
+            __typename: "jobpost",
+            ...fixedPrice,
+          };
+        } else {
+          const perHourJob = await prisma.jobPost.update({
+            data: {
+              title,
+              description,
+              JobType,
+              duration,
+              endDate,
+              experience,
+              location,
+              isOpen,
+              status,
+              Salary: {
+                update: {
+                  min,
+                  max,
+                  currency,
+                },
+              },
+            },
+            where: {
+              jobPostID,
+            },
+          });
+
+          return {
+            __typename: "jobpost",
+            ...perHourJob,
+          };
+        }
       },
     });
     t.field("archiveJobPost", {

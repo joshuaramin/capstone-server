@@ -1,9 +1,10 @@
 import { extendType, idArg, nonNull } from "nexus";
 import { prisma } from "../../helpers/server";
 import { ERROR_MESSAGE_BAD_INPUT } from "../../helpers/error";
+import { uploader } from "../../helpers/cloudinary";
 
 export const ResumeMutation = extendType({
-  type: "resume",
+  type: "Mutation",
   definition(t) {
     t.field("createResume", {
       type: "ResumePayload",
@@ -17,7 +18,7 @@ export const ResumeMutation = extendType({
 
         const resume = await prisma.resume.create({
           data: {
-            resume: "",
+            resume: await uploader(createReadStream()),
             Profile: {
               connect: {
                 profileID,
@@ -27,7 +28,7 @@ export const ResumeMutation = extendType({
         });
 
         return {
-          __tyname: "resume",
+          __typename: "resume",
           ...resume,
         };
       },

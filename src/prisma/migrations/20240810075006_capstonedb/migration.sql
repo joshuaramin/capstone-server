@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('admin', 'employee', 'freelance');
+CREATE TYPE "Role" AS ENUM ('admin', 'recruiter', 'freelance');
 
 -- CreateEnum
 CREATE TYPE "paymentType" AS ENUM ('ewallet', 'card');
@@ -8,6 +8,7 @@ CREATE TYPE "paymentType" AS ENUM ('ewallet', 'card');
 CREATE TABLE "User" (
     "userID" TEXT NOT NULL,
     "email" VARCHAR(300) NOT NULL,
+    "plan" VARCHAR(100),
     "password" VARCHAR(300) NOT NULL,
     "role" "Role" NOT NULL,
     "verified" BOOLEAN NOT NULL DEFAULT false,
@@ -16,6 +17,19 @@ CREATE TABLE "User" (
     "updatedAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("userID")
+);
+
+-- CreateTable
+CREATE TABLE "Requirements" (
+    "requirementsID" TEXT NOT NULL,
+    "requirement" TEXT NOT NULL,
+    "type" VARCHAR(300) NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "userID" TEXT,
+    "companyID" TEXT,
+
+    CONSTRAINT "Requirements_pkey" PRIMARY KEY ("requirementsID")
 );
 
 -- CreateTable
@@ -45,6 +59,7 @@ CREATE TABLE "Message" (
 CREATE TABLE "Company" (
     "companyID" TEXT NOT NULL,
     "companyName" VARCHAR(300) NOT NULL,
+    "slug" VARCHAR(300) NOT NULL,
     "description" VARCHAR(300) NOT NULL,
     "location" VARCHAR(300) NOT NULL,
     "companySize" VARCHAR(300) NOT NULL,
@@ -61,13 +76,25 @@ CREATE TABLE "Profile" (
     "profileID" TEXT NOT NULL,
     "firstname" VARCHAR(256) NOT NULL,
     "lastname" VARCHAR(256) NOT NULL,
-    "phone" TEXT NOT NULL,
-    "birthday" DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "phone" TEXT,
+    "birthday" DATE DEFAULT CURRENT_TIMESTAMP,
     "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "userID" TEXT,
 
     CONSTRAINT "Profile_pkey" PRIMARY KEY ("profileID")
+);
+
+-- CreateTable
+CREATE TABLE "ResetPassword" (
+    "resetPassID" TEXT NOT NULL,
+    "reset" VARCHAR(200) NOT NULL,
+    "expiredAt" TIMESTAMP NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "userID" TEXT,
+
+    CONSTRAINT "ResetPassword_pkey" PRIMARY KEY ("resetPassID")
 );
 
 -- CreateTable
@@ -161,16 +188,35 @@ CREATE TABLE "Payment" (
 CREATE TABLE "JobPost" (
     "jobPostID" TEXT NOT NULL,
     "title" VARCHAR(300) NOT NULL,
+    "slug" TEXT NOT NULL,
     "description" TEXT NOT NULL,
+    "location" VARCHAR(100) NOT NULL,
+    "duration" VARCHAR(300) NOT NULL,
     "JobType" TEXT[],
-    "default" BOOLEAN NOT NULL DEFAULT false,
-    "amount" DOUBLE PRECISION NOT NULL,
+    "endDate" DATE NOT NULL,
+    "experience" VARCHAR(100) NOT NULL,
+    "isDraft" BOOLEAN NOT NULL DEFAULT true,
     "isArchive" BOOLEAN NOT NULL DEFAULT false,
+    "isOpen" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "companyID" TEXT,
 
     CONSTRAINT "JobPost_pkey" PRIMARY KEY ("jobPostID")
+);
+
+-- CreateTable
+CREATE TABLE "Salary" (
+    "salaryID" TEXT NOT NULL,
+    "fixed" INTEGER NOT NULL,
+    "min" DOUBLE PRECISION,
+    "max" DOUBLE PRECISION,
+    "currency" VARCHAR(3) NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "jobPostID" TEXT,
+
+    CONSTRAINT "Salary_pkey" PRIMARY KEY ("salaryID")
 );
 
 -- CreateTable
@@ -304,6 +350,9 @@ CREATE UNIQUE INDEX "Media_profileID_key" ON "Media"("profileID");
 CREATE UNIQUE INDEX "Resume_applicationID_key" ON "Resume"("applicationID");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Salary_jobPostID_key" ON "Salary"("jobPostID");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "ApplicationScore_applicationID_key" ON "ApplicationScore"("applicationID");
 
 -- CreateIndex
@@ -319,6 +368,12 @@ CREATE UNIQUE INDEX "_JobPostToSkills_AB_unique" ON "_JobPostToSkills"("A", "B")
 CREATE INDEX "_JobPostToSkills_B_index" ON "_JobPostToSkills"("B");
 
 -- AddForeignKey
+ALTER TABLE "Requirements" ADD CONSTRAINT "Requirements_userID_fkey" FOREIGN KEY ("userID") REFERENCES "User"("userID") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Requirements" ADD CONSTRAINT "Requirements_companyID_fkey" FOREIGN KEY ("companyID") REFERENCES "Company"("companyID") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Notification" ADD CONSTRAINT "Notification_userID_fkey" FOREIGN KEY ("userID") REFERENCES "User"("userID") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -332,6 +387,9 @@ ALTER TABLE "Company" ADD CONSTRAINT "Company_userID_fkey" FOREIGN KEY ("userID"
 
 -- AddForeignKey
 ALTER TABLE "Profile" ADD CONSTRAINT "Profile_userID_fkey" FOREIGN KEY ("userID") REFERENCES "User"("userID") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ResetPassword" ADD CONSTRAINT "ResetPassword_userID_fkey" FOREIGN KEY ("userID") REFERENCES "User"("userID") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "About" ADD CONSTRAINT "About_profileID_fkey" FOREIGN KEY ("profileID") REFERENCES "Profile"("profileID") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -365,6 +423,9 @@ ALTER TABLE "PasswordHash" ADD CONSTRAINT "PasswordHash_userID_fkey" FOREIGN KEY
 
 -- AddForeignKey
 ALTER TABLE "JobPost" ADD CONSTRAINT "JobPost_companyID_fkey" FOREIGN KEY ("companyID") REFERENCES "Company"("companyID") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Salary" ADD CONSTRAINT "Salary_jobPostID_fkey" FOREIGN KEY ("jobPostID") REFERENCES "JobPost"("jobPostID") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Favourite" ADD CONSTRAINT "Favourite_userID_fkey" FOREIGN KEY ("userID") REFERENCES "User"("userID") ON DELETE SET NULL ON UPDATE CASCADE;

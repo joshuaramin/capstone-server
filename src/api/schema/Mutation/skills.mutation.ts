@@ -1,4 +1,11 @@
-import { extendType, idArg, inputObjectType, nonNull } from "nexus";
+import {
+  extendType,
+  idArg,
+  inputObjectType,
+  list,
+  nonNull,
+  stringArg,
+} from "nexus";
 import { prisma } from "../../helpers/server";
 import { ERROR_MESSAGE_BAD_INPUT } from "../../helpers/error";
 
@@ -49,6 +56,25 @@ export const SkillsMutation = extendType({
           __typename: "skills",
           ...skill,
         };
+      },
+    });
+    t.field("addSkills", {
+      type: "skills",
+      args: { skills: nonNull(list(stringArg())) },
+      resolve: async (_, { skills }): Promise<any> => {
+        for (const skill of skills) {
+          const existingSkill = await prisma.skills.findMany({
+            where: { skills: skill },
+          });
+
+          if (!existingSkill) {
+            return await prisma.skills.create({
+              data: {
+                skills: skill,
+              },
+            });
+          }
+        }
       },
     });
   },

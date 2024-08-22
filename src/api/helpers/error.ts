@@ -29,10 +29,15 @@ export const EMAIL_ADDRESS_NOT_FOUND = {
 };
 
 export const ERROR_ALREADY_EXIST = {
-  __typename: "AlreadyExist",
+  __typename: "PasswordAlreadyExist",
   code: 409,
-  message:
-    "The request could not be completed due to a conflict with the current state of the resource",
+  message: "Email Address is Already Exist.",
+};
+
+export const ERROR_PASSWORD_ALREADY_EXIST = {
+  __typename: "lreadyExist",
+  code: 400,
+  message: "New password cannot be the same as the current password.",
 };
 
 export const ERROR_EXPIRED = {
@@ -40,4 +45,11 @@ export const ERROR_EXPIRED = {
   code: 410,
   message:
     "The resource you are looking for has been permanently removed. Please check the URL for any spelling mistakes or contact the site administrator if you believe this is an error.",
+};
+
+export const PAYMENT_REQUIRED = {
+  __typename: "Payment",
+  code: 402,
+  message:
+    "You don't have any posts remaining. Please upgrade your plan to the Pro version.",
 };
