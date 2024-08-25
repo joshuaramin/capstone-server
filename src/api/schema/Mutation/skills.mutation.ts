@@ -8,6 +8,7 @@ import {
 } from "nexus";
 import { prisma } from "../../helpers/server";
 import { ERROR_MESSAGE_BAD_INPUT } from "../../helpers/error";
+import Skills from "../../../skills.json";
 
 export const SkillsMutation = extendType({
   type: "Mutation",
@@ -18,6 +19,18 @@ export const SkillsMutation = extendType({
       resolve: async (_, { input: { skills } }): Promise<any> => {
         if (!skills) {
           return ERROR_MESSAGE_BAD_INPUT;
+        }
+
+        const ujSkill = await prisma.skills.findUnique({
+          where: { skills },
+        });
+
+        if (ujSkill) {
+          return {
+            __typename: "AlreadyExist",
+            code: 400,
+            message: "Skill is required exist.",
+          };
         }
 
         const skill = await prisma.skills.create({
@@ -60,21 +73,13 @@ export const SkillsMutation = extendType({
     });
     t.field("addSkills", {
       type: "skills",
-      args: { skills: nonNull(list(stringArg())) },
-      resolve: async (_, { skills }): Promise<any> => {
-        for (const skill of skills) {
-          const existingSkill = await prisma.skills.findMany({
-            where: { skills: skill },
-          });
 
-          if (!existingSkill) {
-            return await prisma.skills.create({
-              data: {
-                skills: skill,
-              },
-            });
-          }
-        }
+      resolve: async (): Promise<any> => {
+        Skills.map(async (sk) => {
+          return await prisma.skills.create({
+            data: { skills: sk },
+          });
+        });
       },
     });
   },

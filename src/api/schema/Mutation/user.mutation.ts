@@ -63,7 +63,16 @@ export const UserMutation = extendType({
             },
           },
         });
-
+        await prisma.passwordHash.create({
+          data: {
+            passHash: users.password,
+            User: {
+              connect: {
+                userID: users.userID,
+              },
+            },
+          },
+        });
         return {
           __typename: "user",
           success: 200,
@@ -146,7 +155,16 @@ export const UserMutation = extendType({
             },
           },
         });
-
+        await prisma.passwordHash.create({
+          data: {
+            passHash: users.password,
+            User: {
+              connect: {
+                userID: users.userID,
+              },
+            },
+          },
+        });
         RecruitersInstruction(users.email, `${firstname} ${lastname}`);
         VerificationEmail(
           users.email,
@@ -203,6 +221,17 @@ export const UserMutation = extendType({
               create: {
                 type,
                 requirement: await uploader(createReadStream()),
+              },
+            },
+          },
+        });
+
+        await prisma.passwordHash.create({
+          data: {
+            passHash: users.password,
+            User: {
+              connect: {
+                userID: users.userID,
               },
             },
           },

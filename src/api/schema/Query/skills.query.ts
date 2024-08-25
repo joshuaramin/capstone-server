@@ -28,6 +28,34 @@ export const SkillQuery = extendType({
         });
       },
     });
+    t.field("skillsPagination", {
+      type: "SkillsPagination",
+      args: { input: nonNull("PaginationInput"), search: nonNull(stringArg()) },
+      resolve: async (_, { input: { page, take }, search }): Promise<any> => {
+        const getAllSkills = await prisma.skills.findMany({
+          where: {
+            skills: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        });
+
+        const offset = (page - 1) * take;
+        const item = getAllSkills.slice(offset, offset + take);
+        return {
+          item,
+          totalPages: Math.ceil(getAllSkills.length / take),
+          totalItems: getAllSkills.length,
+          currentPage: page,
+          hasNextPage: page < Math.ceil(getAllSkills.length / take),
+          hasPrevPage: page > 1,
+        };
+      },
+    });
     t.list.field("getSkillsByGroup", {
       type: "skills",
       resolve: async (): Promise<any> => {

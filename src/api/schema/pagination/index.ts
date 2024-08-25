@@ -27,3 +27,17 @@ export const UserPagination = objectType({
     t.boolean("hasPrevPage");
   },
 });
+
+export const SkillsPagination = objectType({
+  name: "SkillsPagination",
+  definition(t) {
+    t.list.field("item", {
+      type: "skills",
+    });
+    t.int("totalPages");
+    t.int("currentPage");
+    t.int("totalItems");
+    t.boolean("hasNextPage");
+    t.boolean("hasPrevPage");
+  },
+});

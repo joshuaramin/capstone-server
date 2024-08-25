@@ -76,7 +76,7 @@ type JobPagination {
 union JobPostPayload = BADINPUT | Forbidden | Payment | jobpost
 
 type Mutation {
-  addSkills(skills: [String]!): skills
+  addSkills: skills
   archiveJobPost(jobPostID: ID!): jobpost
   createAbout(input: AboutInput!, profileID: ID!): about
   createApplication(jobPostID: ID!, resumeID: ID!, userID: ID!): ApplicationPayload
@@ -103,7 +103,7 @@ type Mutation {
   updateAbout(aboutID: ID!, bio: String!): about
   updateApplicationStatus(applicationID: ID!, status: String!): application
   updateCompany(companyID: ID!, verified: Boolean!): company
-  updateJobPost(input: jobPostInput, jobPostID: ID!, salary: salaryInput): jobpost
+  updateJobPost(input: jobPostInput, jobPostID: ID!, salary: salaryInput, skills: [String]!): jobpost
   updateMessage(message: String!, messageID: String!): message
   updateNotification(notificationID: ID!): notification
   updatePorfolio(input: PortfolioInput!, portfolioID: ID!): portfolio
@@ -189,6 +189,7 @@ type Query {
   getUserAccountById(userID: ID!): user
   getUserActivityLogs(input: PaginationInput!, userID: ID!): [activityLogs]
   jobPagination(pagination: PaginationInput, search: String, userID: ID!): JobPagination
+  skillsPagination(input: PaginationInput!, search: String!): SkillsPagination
 }
 
 input RequirementInput {
@@ -211,7 +212,16 @@ input SkillInput {
   skills: String
 }
 
-union SkillPayload = BADINPUT | skills
+union SkillPayload = AlreadyExist | BADINPUT | skills
+
+type SkillsPagination {
+  currentPage: Int
+  hasNextPage: Boolean
+  hasPrevPage: Boolean
+  item: [skills]
+  totalItems: Int
+  totalPages: Int
+}
 
 type Subscription {
   getAllUser: [user]

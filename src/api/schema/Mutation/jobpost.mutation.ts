@@ -153,6 +153,7 @@ export const JobPostMutation = extendType({
         jobPostID: nonNull(idArg()),
         input: "jobPostInput",
         salary: "salaryInput",
+        skills: nonNull(list(stringArg())),
       },
       resolve: async (
         _,
@@ -170,6 +171,7 @@ export const JobPostMutation = extendType({
             isOpen,
           },
           salary: { min, max, currency, fixed },
+          skills,
         }
       ): Promise<any> => {
         if (fixed) {
@@ -183,12 +185,18 @@ export const JobPostMutation = extendType({
               experience,
               location,
               isOpen,
+              slug: Slugify(title),
               status,
               Salary: {
                 update: {
                   fixed,
                   currency,
                 },
+              },
+              Skills: {
+                connect: skills.map((skilled) => {
+                  return { skills: skilled };
+                }),
               },
             },
             where: {
@@ -210,6 +218,7 @@ export const JobPostMutation = extendType({
               endDate,
               experience,
               location,
+              slug: Slugify(title),
               isOpen,
               status,
               Salary: {
@@ -218,6 +227,11 @@ export const JobPostMutation = extendType({
                   max,
                   currency,
                 },
+              },
+              Skills: {
+                connect: skills.map((skilled) => {
+                  return { skills: skilled };
+                }),
               },
             },
             where: {

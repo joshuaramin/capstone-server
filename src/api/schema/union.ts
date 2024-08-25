@@ -24,7 +24,7 @@ export const EmailAddressPayload = unionType({
 export const SkillPayload = unionType({
   name: "SkillPayload",
   definition(t) {
-    t.members("skills", "BADINPUT");
+    t.members("skills", "BADINPUT", "AlreadyExist");
   },
 });
 

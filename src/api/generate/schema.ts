@@ -205,6 +205,14 @@ export interface NexusGenObjects {
     message?: string | null; // String
   }
   Query: {};
+  SkillsPagination: { // root type
+    currentPage?: number | null; // Int
+    hasNextPage?: boolean | null; // Boolean
+    hasPrevPage?: boolean | null; // Boolean
+    item?: Array<NexusGenRootTypes['skills'] | null> | null; // [skills]
+    totalItems?: number | null; // Int
+    totalPages?: number | null; // Int
+  }
   Subscription: {};
   UserPagination: { // root type
     currentPage?: number | null; // Int
@@ -379,7 +387,7 @@ export interface NexusGenUnions {
   PortfolioPayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['portfolio'];
   ResumePayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['resume'];
   SchedulePayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['schedule'];
-  SkillPayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['skills'];
+  SkillPayload: NexusGenRootTypes['AlreadyExist'] | NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['skills'];
   UserPayload: NexusGenRootTypes['AlreadyExist'] | NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['PasswordAlreadyExist'] | NexusGenRootTypes['user'];
   resetPasswordPayload: NexusGenRootTypes['Expired'] | NexusGenRootTypes['NOTFOUND'] | NexusGenRootTypes['resetPassword'];
   salaryPayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['salary'];
@@ -498,6 +506,15 @@ export interface NexusGenFieldTypes {
     getUserAccountById: NexusGenRootTypes['user'] | null; // user
     getUserActivityLogs: Array<NexusGenRootTypes['activityLogs'] | null> | null; // [activityLogs]
     jobPagination: NexusGenRootTypes['JobPagination'] | null; // JobPagination
+    skillsPagination: NexusGenRootTypes['SkillsPagination'] | null; // SkillsPagination
+  }
+  SkillsPagination: { // field return type
+    currentPage: number | null; // Int
+    hasNextPage: boolean | null; // Boolean
+    hasPrevPage: boolean | null; // Boolean
+    item: Array<NexusGenRootTypes['skills'] | null> | null; // [skills]
+    totalItems: number | null; // Int
+    totalPages: number | null; // Int
   }
   Subscription: { // field return type
     getAllUser: Array<NexusGenRootTypes['user'] | null> | null; // [user]
@@ -803,6 +820,15 @@ export interface NexusGenFieldTypeNames {
     getUserAccountById: 'user'
     getUserActivityLogs: 'activityLogs'
     jobPagination: 'JobPagination'
+    skillsPagination: 'SkillsPagination'
+  }
+  SkillsPagination: { // field return type name
+    currentPage: 'Int'
+    hasNextPage: 'Boolean'
+    hasPrevPage: 'Boolean'
+    item: 'skills'
+    totalItems: 'Int'
+    totalPages: 'Int'
   }
   Subscription: { // field return type name
     getAllUser: 'user'
@@ -1001,9 +1027,6 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
-    addSkills: { // args
-      skills: Array<string | null>; // [String]!
-    }
     archiveJobPost: { // args
       jobPostID: string; // ID!
     }
@@ -1106,6 +1129,7 @@ export interface NexusGenArgTypes {
       input?: NexusGenInputs['jobPostInput'] | null; // jobPostInput
       jobPostID: string; // ID!
       salary?: NexusGenInputs['salaryInput'] | null; // salaryInput
+      skills: Array<string | null>; // [String]!
     }
     updateMessage: { // args
       message: string; // String!
@@ -1233,6 +1257,10 @@ export interface NexusGenArgTypes {
       search?: string | null; // String
       userID: string; // ID!
     }
+    skillsPagination: { // args
+      input: NexusGenInputs['PaginationInput']; // PaginationInput!
+      search: string; // String!
+    }
   }
   Subscription: {
     getMyCompanyJobPostSubscriptions: { // args
@@ -1249,7 +1277,7 @@ export interface NexusGenAbstractTypeMembers {
   PortfolioPayload: "BADINPUT" | "portfolio"
   ResumePayload: "BADINPUT" | "resume"
   SchedulePayload: "BADINPUT" | "schedule"
-  SkillPayload: "BADINPUT" | "skills"
+  SkillPayload: "AlreadyExist" | "BADINPUT" | "skills"
   UserPayload: "AlreadyExist" | "BADINPUT" | "PasswordAlreadyExist" | "user"
   resetPasswordPayload: "Expired" | "NOTFOUND" | "resetPassword"
   salaryPayload: "BADINPUT" | "salary"
