@@ -660,7 +660,7 @@ export async function ResetPasswordLink(
                         this email. Your password will remain unchanged.
                       </p>
                       <p style="color: #000001">
-                        For your security, the link will expire in 24 hours
+                        For your security, the link will expire in 1 hour
                       </p>
                       <p style="color: #000001">
                         If you have any questions or need further assistance,

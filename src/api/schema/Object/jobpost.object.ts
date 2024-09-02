@@ -11,7 +11,7 @@ export const JobPost = objectType({
     t.string("experience");
     t.string("slug");
     t.string("duration");
-    t.datetime("endDate");
+    t.date("endDate");
     t.string("status");
     t.boolean("isArchive");
     t.string("isOpen");

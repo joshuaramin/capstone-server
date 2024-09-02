@@ -382,6 +382,18 @@ export const UserMutation = extendType({
           return ERROR_MESSAGE_CREDENTIALS;
         }
 
+        await prisma.activityLogs.create({
+          data: {
+            title: "Logged In",
+            description: "You logged into your account.",
+            User: {
+              connect: {
+                email,
+              },
+            },
+          },
+        });
+
         const token = sign(
           { userID: users.userID, role: users.role },
           "BeeHired",

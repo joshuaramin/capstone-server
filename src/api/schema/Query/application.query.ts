@@ -4,21 +4,30 @@ import { prisma } from "../../helpers/server";
 export const ApplicationQuery = extendType({
   type: "Query",
   definition(t) {
-    t.list.field("getJobApplicationById", {
-      type: "application",
-      args: {
-        jobPostID: nonNull(idArg()),
-        pagination: nonNull("PaginationInput"),
-      },
+    t.field("getApplicantJobPostByIdPagination", {
+      type: "ApplicantPagination",
+      args: { input: nonNull("PaginationInput"), jobPostID: nonNull(idArg()) },
       resolve: async (
         _,
-        { jobPostID, pagination: { page, take } }
+        { input: { take, page }, jobPostID }
       ): Promise<any> => {
-        return await prisma.application.findMany({
-          where: { jobPostID },
-          take,
-          skip: take * (page - 1),
+        const getJobPostApplicant = await prisma.application.findMany({
+          where: {
+            jobPostID,
+          },
         });
+
+        const offset = (page - 1) * take;
+        const item = getJobPostApplicant.slice(offset, offset + take);
+
+        return {
+          totalPages: Math.ceil(getJobPostApplicant.length / take),
+          totalItems: getJobPostApplicant.length,
+          currentPage: page,
+          hasNextPage: page < Math.ceil(getJobPostApplicant.length / take),
+          hasPrevPage: page > 1,
+          item,
+        };
       },
     });
     t.field("getApplicationByID", {

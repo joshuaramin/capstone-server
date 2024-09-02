@@ -5,6 +5,7 @@ import {
   ERROR_MESSAGE_BAD_INPUT,
   ERROR_MESSAGE_FORBIDDEN,
 } from "../../helpers/error";
+import { ATSMainFunc } from "../../helpers/ats";
 
 export const ApplicationMutation = extendType({
   type: "Mutation",
@@ -31,13 +32,21 @@ export const ApplicationMutation = extendType({
           return ERROR_MESSAGE_FORBIDDEN;
         }
 
+        const resume = await prisma.resume.findUnique({
+          where: { resumeID },
+        });
+
+        const jobPostDesc = await prisma.jobPost.findUnique({
+          where: { jobPostID },
+        });
+
         const application = await prisma.application.create({
           data: {
             id: generateRandom(8),
             status: "Pending",
             ATS: {
               create: {
-                score: 10,
+                score: await ATSMainFunc(resume.resume, jobPostDesc.description),
               },
             },
             JobPost: {

@@ -3,6 +3,7 @@ import * as ActivityLogsQuery from "./activitylogs.query";
 import * as ApplicationQuery from "./application.query";
 import * as ApplicantScoreQuery from "./applicationscore.query";
 import * as CompanyQuery from "./company.query";
+import * as FavouriteQuery from "./favourite.query";
 import * as JobPostQuery from "./jobpost.query";
 import * as MedieaQuery from "./media.query";
 import * as MessageQuery from "./message.query";
@@ -22,6 +23,7 @@ export {
   ApplicantScoreQuery,
   ApplicationQuery,
   CompanyQuery,
+  FavouriteQuery,
   JobPostQuery,
   MedieaQuery,
   MessageQuery,

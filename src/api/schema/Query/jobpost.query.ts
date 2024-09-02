@@ -73,26 +73,92 @@ export const JobPostQuery = extendType({
     });
     t.field("getJobBoard", {
       type: "JobPagination",
-      args: { search: nonNull(stringArg()), input: nonNull("PaginationInput") },
-      resolve: async (_, { input: { page, take }, search }): Promise<any> => {
-        const getAllJobs = await prisma.jobPost.findMany({
-          where: {
-            title: {
-              contains: search,
-              mode: "insensitive",
-            },
-            NOT: {
-              OR: [
-                {
-                  status: "Draft",
-                },
-                {
-                  isArchive: true,
-                },
-              ],
-            },
+      args: {
+        search: stringArg(),
+        orderBy: stringArg(),
+        input: nonNull("PaginationInput"),
+        skills: list(stringArg()),
+        jobType: list(stringArg()),
+        experience: list(stringArg()),
+        duration: list(stringArg()),
+      },
+      resolve: async (
+        _,
+        {
+          input: { page, take },
+          search,
+          skills,
+          jobType,
+          experience,
+          duration,
+          orderBy,
+        }
+      ): Promise<any> => {
+        let whereArr: any = {
+          NOT: {
+            OR: [
+              {
+                status: "Draft",
+              },
+              {
+                isArchive: true,
+              },
+            ],
           },
-        });
+        };
+
+        let ordersBy: any = {
+          createdAt: orderBy,
+        };
+
+        if (search) {
+          whereArr = {
+            title: { contains: search, mode: "insensitive" },
+          };
+        }
+
+        if (experience) {
+          whereArr = {
+            experience: {
+              in: experience,
+            },
+          };
+        }
+
+        if (duration) {
+          whereArr = {
+            duration: {
+              in: duration,
+            },
+          };
+        }
+
+        if (jobType) {
+          whereArr = {
+            JobType: {
+              hasSome: jobType,
+            },
+          };
+        }
+
+        if (skills) {
+          whereArr = {
+            Skills: {
+              some: {
+                skills: {
+                  in: skills,
+                },
+              },
+            },
+          };
+        }
+
+        let queryParams = {
+          where: whereArr,
+          orderBy: ordersBy,
+        };
+
+        const getAllJobs = await prisma.jobPost.findMany(queryParams);
 
         const offset = (page - 1) * take;
         const item = getAllJobs.slice(offset, offset + take);
@@ -130,12 +196,41 @@ export const JobPostQuery = extendType({
     });
     t.field("getJobPostBySlug", {
       type: "jobpost",
-      args: { id: nonNull(idArg()) },
-      resolve: async (_, { id }): Promise<any> => {
+      args: { slug: nonNull(idArg()) },
+      resolve: async (_, { slug }): Promise<any> => {
         return await prisma.jobPost.findFirst({
           where: {
-            jobPostID: id,
+            slug,
           },
+        });
+      },
+    });
+    t.list.field("getSimilarJobPost", {
+      type: "jobpost",
+      args: {
+        jobPostID: nonNull(idArg()),
+        skills: nonNull(list(stringArg())),
+        input: nonNull("PaginationInput"),
+      },
+      resolve: async (
+        _,
+        { jobPostID, skills, input: { page, take } }
+      ): Promise<any> => {
+        return await prisma.jobPost.findMany({
+          where: {
+            Skills: {
+              some: {
+                skills: {
+                  in: skills,
+                },
+              },
+            },
+            NOT: {
+              jobPostID,
+            },
+          },
+          take,
+          skip: (page - 1) * take,
         });
       },
     });

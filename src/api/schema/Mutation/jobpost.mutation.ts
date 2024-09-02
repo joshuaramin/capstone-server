@@ -67,6 +67,19 @@ export const JobPostMutation = extendType({
           };
         }
 
+
+        await prisma.activityLogs.create({
+          data: {
+            title: "Create Job Post", 
+            description: "",
+            User: {
+              connect: {
+                 userID: company.userID
+              }
+            }
+          }
+        })
+
         if (fixed) {
           const job = await prisma.jobPost.create({
             data: {

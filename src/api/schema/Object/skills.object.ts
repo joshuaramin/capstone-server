@@ -23,3 +23,11 @@ export const SkillsObject = objectType({
     });
   },
 });
+
+export const groupSkills = objectType({
+  name: "skillsGroup",
+  definition(t) {
+    t.string("skills");
+    t.int("count");
+  },
+});

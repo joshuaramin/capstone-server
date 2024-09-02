@@ -5,7 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -186,6 +187,7 @@ model Portfolio {
 
 model Resume {
   resumeID      String       @id @default(cuid())
+  title         String       @db.Text
   resume        String       @db.Text
   createdAt     DateTime     @default(now()) @db.Timestamp()
   updatedAt     DateTime     @default(now()) @updatedAt @db.Timestamp()
@@ -291,7 +293,7 @@ model ActivityLogs {
 
 model ApplicationScore {
   applicationScoreID String       @id @default(cuid())
-  score              Float
+  score              Decimal      @db.Decimal(10, 2)
   createdAt          DateTime     @default(now()) @db.Timestamp()
   updatedAt          DateTime     @default(now()) @updatedAt @db.Timestamp()
   Application        Application? @relation(fields: [applicationID], references: [applicationID], onDelete: Cascade)

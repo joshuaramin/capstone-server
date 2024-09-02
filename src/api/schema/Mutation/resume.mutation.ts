@@ -18,6 +18,7 @@ export const ResumeMutation = extendType({
 
         const resume = await prisma.resume.create({
           data: {
+            title: filename,
             resume: await uploader(createReadStream()),
             Profile: {
               connect: {

@@ -21,6 +21,16 @@ export const ApplicationObject = objectType({
         });
       },
     });
+    t.field("resume", {
+      type: "resume",
+      resolve: async ({ applicationID }) => {
+        return await prisma.resume.findFirst({
+          where: {
+            applicationID,
+          },
+        });
+      },
+    });
     t.field("score", {
       type: "ats",
       resolve: async ({ applicationID }): Promise<any> => {

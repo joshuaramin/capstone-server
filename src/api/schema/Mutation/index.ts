@@ -3,6 +3,7 @@ import * as ActivityLogsMutation from "./activitylogs.mutation";
 import * as ApplicationMutation from "./application.mutation";
 import * as ApplicantScoreMutation from "./applicationscore.mutation";
 import * as CompanyMutation from "./company.mutation";
+import * as FavouriteMutation from './favourite.mutation'
 import * as JobPostMutation from "./jobpost.mutation";
 import * as MedieaMutation from "./media.mutation";
 import * as MessageMutation from "./message.mutation";
@@ -22,6 +23,7 @@ export {
   ApplicantScoreMutation,
   ApplicationMutation,
   CompanyMutation,
+  FavouriteMutation,
   JobPostMutation,
   MedieaMutation,
   MessageMutation,

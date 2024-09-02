@@ -41,3 +41,17 @@ export const SkillsPagination = objectType({
     t.boolean("hasPrevPage");
   },
 });
+
+export const Applicant = objectType({
+  name: "ApplicantPagination",
+  definition(t) {
+    t.list.field("item", {
+      type: "application",
+    });
+    t.int("totalPages");
+    t.int("currentPage");
+    t.int("totalItems");
+    t.boolean("hasNextPage");
+    t.boolean("hasPrevPage");
+  },
+});

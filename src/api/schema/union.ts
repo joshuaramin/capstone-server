@@ -76,3 +76,10 @@ export const ResetPasswordLinkPayload = unionType({
     t.members("resetPassword", "Expired", "NOTFOUND");
   },
 });
+
+export const FavouritePayload = unionType({
+  name: "FavouritePayload",
+  definition(t) {
+    t.members("favourite", "BADINPUT", "Forbidden");
+  },
+});
