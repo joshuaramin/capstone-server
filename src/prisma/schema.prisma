@@ -274,7 +274,7 @@ model Application {
   createdAt     DateTime          @default(now()) @db.Timestamp()
   updatedAt     DateTime          @default(now()) @updatedAt @db.Timestamp()
   ATS           ApplicationScore?
-  Resume        Resume?
+  Resume        Resume[]
   JobPost       JobPost?          @relation(fields: [jobPostID], references: [jobPostID], onDelete: Cascade)
   jobPostID     String?
   User          User?             @relation(fields: [userID], references: [userID], onDelete: Cascade)

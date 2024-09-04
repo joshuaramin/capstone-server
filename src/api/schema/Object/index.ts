@@ -11,6 +11,7 @@ import * as NotificationObject from "./notification.object";
 import * as PasswordObject from "./password.object";
 import * as PortfolioObject from "./portfolio.object";
 import * as ProfileObject from "./profile.object";
+import * as ReportObject from "./report.object";
 import * as ResetPassword from "./resetPasswordLink";
 import * as ResumeObject from "./resume.object";
 import * as Salary from "./salary.object";
@@ -31,6 +32,7 @@ export {
   PasswordObject,
   PortfolioObject,
   ProfileObject,
+  ReportObject,
   ResetPassword,
   ResumeObject,
   Salary,

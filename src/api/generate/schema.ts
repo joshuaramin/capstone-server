@@ -332,6 +332,10 @@ export interface NexusGenObjects {
     profileID?: string | null; // ID
     updatedAt?: NexusGenScalars['DateTime'] | null; // DateTime
   }
+  report: { // root type
+    message?: string | null; // String
+    reportID?: string | null; // ID
+  }
   resetPassword: { // root type
     createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
     expiredAt?: NexusGenScalars['DateTime'] | null; // DateTime
@@ -402,6 +406,7 @@ export interface NexusGenUnions {
   EmailPayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['NOTFOUND'] | NexusGenRootTypes['user'];
   FavouritePayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['Forbidden'] | NexusGenRootTypes['favourite'];
   JobPostPayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['Forbidden'] | NexusGenRootTypes['Payment'] | NexusGenRootTypes['jobpost'];
+  MediaPayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['media'];
   PortfolioPayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['portfolio'];
   ResumePayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['resume'];
   SchedulePayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['schedule'];
@@ -458,10 +463,12 @@ export interface NexusGenFieldTypes {
     archiveJobPost: NexusGenRootTypes['jobpost'] | null; // jobpost
     createAbout: NexusGenRootTypes['about'] | null; // about
     createApplication: NexusGenRootTypes['ApplicationPayload'] | null; // ApplicationPayload
+    createAvatar: NexusGenRootTypes['MediaPayload'] | null; // MediaPayload
     createFavourite: NexusGenRootTypes['FavouritePayload'] | null; // FavouritePayload
     createJobPost: NexusGenRootTypes['JobPostPayload'] | null; // JobPostPayload
     createMessage: NexusGenRootTypes['message'] | null; // message
     createPortoflio: NexusGenRootTypes['PortfolioPayload'] | null; // PortfolioPayload
+    createReportJobPost: NexusGenRootTypes['report'] | null; // report
     createResume: NexusGenRootTypes['ResumePayload'] | null; // ResumePayload
     createSchedule: NexusGenRootTypes['SchedulePayload'] | null; // SchedulePayload
     createSkills: NexusGenRootTypes['SkillPayload'] | null; // SkillPayload
@@ -684,6 +691,10 @@ export interface NexusGenFieldTypes {
     profileID: string | null; // ID
     updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
   }
+  report: { // field return type
+    message: string | null; // String
+    reportID: string | null; // ID
+  }
   resetPassword: { // field return type
     createdAt: NexusGenScalars['DateTime'] | null; // DateTime
     expiredAt: NexusGenScalars['DateTime'] | null; // DateTime
@@ -798,10 +809,12 @@ export interface NexusGenFieldTypeNames {
     archiveJobPost: 'jobpost'
     createAbout: 'about'
     createApplication: 'ApplicationPayload'
+    createAvatar: 'MediaPayload'
     createFavourite: 'FavouritePayload'
     createJobPost: 'JobPostPayload'
     createMessage: 'message'
     createPortoflio: 'PortfolioPayload'
+    createReportJobPost: 'report'
     createResume: 'ResumePayload'
     createSchedule: 'SchedulePayload'
     createSkills: 'SkillPayload'
@@ -1024,6 +1037,10 @@ export interface NexusGenFieldTypeNames {
     profileID: 'ID'
     updatedAt: 'DateTime'
   }
+  report: { // field return type name
+    message: 'String'
+    reportID: 'ID'
+  }
   resetPassword: { // field return type name
     createdAt: 'DateTime'
     expiredAt: 'DateTime'
@@ -1112,6 +1129,10 @@ export interface NexusGenArgTypes {
       resumeID: string; // ID!
       userID: string; // ID!
     }
+    createAvatar: { // args
+      file: NexusGenScalars['Upload']; // Upload!
+      profileID: string; // ID!
+    }
     createFavourite: { // args
       jobPostID: string; // ID!
       userID: string; // ID!
@@ -1131,6 +1152,11 @@ export interface NexusGenArgTypes {
       file?: NexusGenScalars['Upload'] | null; // Upload
       input: NexusGenInputs['PortfolioInput']; // PortfolioInput!
       profileID: string; // ID!
+    }
+    createReportJobPost: { // args
+      jobPostID: string; // ID!
+      message: string; // String!
+      userID: string; // ID!
     }
     createResume: { // args
       file?: NexusGenScalars['Upload'] | null; // Upload
@@ -1372,6 +1398,7 @@ export interface NexusGenAbstractTypeMembers {
   EmailPayload: "BADINPUT" | "NOTFOUND" | "user"
   FavouritePayload: "BADINPUT" | "Forbidden" | "favourite"
   JobPostPayload: "BADINPUT" | "Forbidden" | "Payment" | "jobpost"
+  MediaPayload: "BADINPUT" | "media"
   PortfolioPayload: "BADINPUT" | "portfolio"
   ResumePayload: "BADINPUT" | "resume"
   SchedulePayload: "BADINPUT" | "schedule"

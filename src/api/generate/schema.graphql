@@ -86,16 +86,20 @@ type JobPagination {
 
 union JobPostPayload = BADINPUT | Forbidden | Payment | jobpost
 
+union MediaPayload = BADINPUT | media
+
 type Mutation {
   Logout(userID: ID!): activityLogs
   addSkills: skills
   archiveJobPost(jobPostID: ID!): jobpost
   createAbout(input: AboutInput!, profileID: ID!): about
   createApplication(jobPostID: ID!, resumeID: ID!, userID: ID!): ApplicationPayload
+  createAvatar(file: Upload!, profileID: ID!): MediaPayload
   createFavourite(jobPostID: ID!, userID: ID!): FavouritePayload
   createJobPost(companyID: ID!, input: jobPostInput!, salary: salaryInput!, skills: [String]!): JobPostPayload
   createMessage(message: String!, receiverID: String!, senderID: String!): message
   createPortoflio(file: Upload, input: PortfolioInput!, profileID: ID!): PortfolioPayload
+  createReportJobPost(jobPostID: ID!, message: String!, userID: ID!): report
   createResume(file: Upload, profileID: ID!): ResumePayload
   createSchedule(input: ScheduleInput!, receiverID: String!, senderID: String!): SchedulePayload
   createSkills(input: SkillInput!): SkillPayload
@@ -432,6 +436,11 @@ type profile {
   phone: PhoneNumber
   profileID: ID
   updatedAt: DateTime
+}
+
+type report {
+  message: String
+  reportID: ID
 }
 
 type resetPassword {

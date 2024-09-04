@@ -83,3 +83,10 @@ export const FavouritePayload = unionType({
     t.members("favourite", "BADINPUT", "Forbidden");
   },
 });
+
+export const AvatarPayload = unionType({
+  name: "MediaPayload",
+  definition(t) {
+    t.members("media", "BADINPUT");
+  },
+});
