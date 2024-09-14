@@ -46,7 +46,10 @@ export const ApplicationMutation = extendType({
             status: "Pending",
             ATS: {
               create: {
-                score: await ATSMainFunc(resume.resume, jobPostDesc.description),
+                score: await ATSMainFunc(
+                  resume.resume,
+                  jobPostDesc.description
+                ),
               },
             },
             JobPost: {
@@ -64,6 +67,14 @@ export const ApplicationMutation = extendType({
                 resumeID,
               },
             },
+          },
+        });
+
+        await prisma.activityLogs.create({
+          data: {
+            title: "Created a Application",
+            description: `You sent an Application to ${jobPostDesc.title}`,
+            User: { connect: { userID } },
           },
         });
 

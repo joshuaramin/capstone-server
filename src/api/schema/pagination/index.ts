@@ -32,7 +32,7 @@ export const SkillsPagination = objectType({
   name: "SkillsPagination",
   definition(t) {
     t.list.field("item", {
-      type: "skills",
+    type: "skills",
     });
     t.int("totalPages");
     t.int("currentPage");
@@ -47,6 +47,62 @@ export const Applicant = objectType({
   definition(t) {
     t.list.field("item", {
       type: "application",
+    });
+    t.int("totalPages");
+    t.int("currentPage");
+    t.int("totalItems");
+    t.boolean("hasNextPage");
+    t.boolean("hasPrevPage");
+  },
+});
+
+export const ActivityLogsPagination = objectType({
+  name: "ActivityLogsPagination",
+  definition(t) {
+    t.list.field("item", {
+      type: "activityLogs",
+    });
+    t.int("totalPages");
+    t.int("currentPage");
+    t.int("totalItems");
+    t.boolean("hasNextPage");
+    t.boolean("hasPrevPage");
+  },
+});
+
+export const SchedulePagination = objectType({
+  name: "SchedulePagination",
+  definition(t) {
+    t.list.field("item", {
+      type: "schedule",
+    });
+    t.int("totalPages");
+    t.int("currentPage");
+    t.int("totalItems");
+    t.boolean("hasNextPage");
+    t.boolean("hasPrevPage");
+  },
+});
+
+export const ThemePagination = objectType({
+  name: "ThemePagination",
+  definition(t) {
+    t.list.field("item", {
+      type: "theme",
+    });
+    t.int("totalPages");
+    t.int("currentPage");
+    t.int("totalItems");
+    t.boolean("hasNextPage");
+    t.boolean("hasPrevPage");
+  },
+});
+
+export const FontPagination = objectType({
+  name: "FontPagination",
+  definition(t) {
+    t.list.field("item", {
+      type: "fonts",
     });
     t.int("totalPages");
     t.int("currentPage");

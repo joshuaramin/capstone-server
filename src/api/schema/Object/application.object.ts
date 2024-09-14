@@ -26,7 +26,11 @@ export const ApplicationObject = objectType({
       resolve: async ({ applicationID }) => {
         return await prisma.resume.findFirst({
           where: {
-            applicationID,
+            Application: {
+              some: {
+                applicationID,
+              },
+            },
           },
         });
       },

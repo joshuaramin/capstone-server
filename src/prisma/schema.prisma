@@ -35,6 +35,8 @@ model User {
   isArchive        Boolean            @default(false) @db.Boolean
   createdAt        DateTime           @default(now()) @db.Timestamp()
   updatedAt        DateTime           @default(now()) @updatedAt @db.Timestamp()
+  Theme            Theme[]
+  Font             Font[]
   Requirement      Requirements[]
   PassHistory      PasswordHash[]
   Application      Application[]
@@ -89,7 +91,7 @@ model Company {
   companyID    String             @id @default(cuid())
   companyName  String             @db.VarChar(300)
   slug         String             @db.VarChar(300)
-  description  String             @db.VarChar(300)
+  description  String             @db.VarChar(1000)
   location     String             @db.VarChar(300)
   companySize  String             @db.VarChar(300)
   verified     Boolean            @default(false) @db.Boolean
@@ -105,20 +107,27 @@ model Company {
 }
 
 model Profile {
-  profileID String      @id @default(cuid())
-  firstname String      @db.VarChar(256)
-  lastname  String      @db.VarChar(256)
-  phone     String?
-  birthday  DateTime?   @default(now()) @db.Date
-  createdAt DateTime    @default(now()) @db.Timestamp()
-  updatedAt DateTime    @default(now()) @updatedAt @db.Timestamp()
-  Avatar    Media?
-  Resume    Resume[]
-  Skills    Skills[]
-  Portfolio Portfolio[]
-  About     About?
-  User      User?       @relation(fields: [userID], references: [userID], onDelete: Cascade)
-  userID    String?     @unique
+  profileID  String      @id @default(cuid())
+  firstname  String      @db.VarChar(256)
+  lastname   String      @db.VarChar(256)
+  phone      String?
+  birthday   DateTime?   @default(now()) @db.Date
+  createdAt  DateTime    @default(now()) @db.Timestamp()
+  updatedAt  DateTime    @default(now()) @updatedAt @db.Timestamp()
+  Avatar     Media?      @relation("Avatar", fields: [avatarID], references: [mediaID])
+  avatarID   String?     @unique
+  Header     Media?      @relation("Header", fields: [headerID], references: [mediaID])
+  headerID   String?     @unique
+  Resume     Resume[]
+  Skills     Skills[]
+  Portfolio  Portfolio[]
+  Education  Education[]
+  theme      Theme[]
+  About      About?
+  User       User?       @relation(fields: [userID], references: [userID], onDelete: Cascade)
+  userID     String?     @unique
+  Font       Font?       @relation(fields: [fontFontID], references: [fontID])
+  fontFontID String?
 }
 
 model ResetPassword {
@@ -133,7 +142,7 @@ model ResetPassword {
 
 model About {
   aboutID   String   @id @default(cuid())
-  bio       String?  @db.VarChar(300)
+  bio       String?  @db.VarChar(1000)
   Skills    Skills[]
   createdAt DateTime @default(now()) @db.Timestamp()
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamp()
@@ -149,9 +158,10 @@ model Skills {
   About     About?      @relation(fields: [aboutID], references: [aboutID], onDelete: Cascade)
   aboutID   String?
   Portfolio Portfolio[]
-  Profile   Profile?    @relation(fields: [profileID], references: [profileID], onDelete: Cascade)
+  Profile   Profile[]
   profileID String?
   JobPost   JobPost[]
+  Education Education[]
 }
 
 model Media {
@@ -161,22 +171,24 @@ model Media {
   updatedAt   DateTime   @default(now()) @updatedAt @db.Timestamp()
   Portfolio   Portfolio? @relation(fields: [portfolioID], references: [portfolioID], onDelete: Cascade)
   portfolioID String?
-  Profile     Profile?   @relation(fields: [profileID], references: [profileID], onDelete: Cascade)
-  profileID   String?    @unique
   Company     Company?   @relation(fields: [companyID], references: [companyID])
   companyID   String?
+  Avatar      Profile?   @relation("Avatar")
+  Header      Profile?   @relation("Header")
 }
 
 model Portfolio {
   portfolioID    String   @id @default(cuid())
   title          String   @db.VarChar(300)
-  description    String   @db.VarChar(300)
+  description    String   @db.VarChar(1000)
   employmentType String   @db.VarChar(300)
   companyName    String   @db.VarChar(300)
   location       String   @db.VarChar(300)
   locationType   String   @db.VarChar(300) //Hybrid Onsite Work-from-home
-  startDate      DateTime @db.Date
-  endDate        DateTime @db.Date
+  startMonth     String   @db.VarChar(100)
+  startYear      String   @db.VarChar(100)
+  endMonth       String?  @db.VarChar(100)
+  endYear        String?  @db.VarChar(100)
   createdAt      DateTime @default(now()) @db.Timestamp()
   updatedAt      DateTime @default(now()) @updatedAt @db.Timestamp()
   Media          Media[]
@@ -185,16 +197,53 @@ model Portfolio {
   profileID      String?
 }
 
+model Theme {
+  themeID   String    @id @default(cuid())
+  theme     String
+  image     String
+  createdAt DateTime  @default(now()) @db.Timestamp()
+  updatedAt DateTime  @default(now()) @updatedAt @db.Timestamp()
+  Profile   Profile[]
+  User      User?     @relation(fields: [userID], references: [userID])
+  userID    String?
+}
+
+model Font {
+  fontID    String    @id @default(cuid())
+  font      String
+  image     String
+  createdAt DateTime  @default(now()) @db.Timestamp()
+  updatedAt DateTime  @default(now()) @updatedAt @db.Timestamp()
+  Profile   Profile[]
+  User      User?     @relation(fields: [userID], references: [userID])
+  userID    String?
+}
+
+model Education {
+  educationID String   @id @default(cuid())
+  school      String   @db.VarChar(500)
+  degree      String   @db.VarChar(200)
+  study       String   @db.VarChar(300)
+  startMonth  String   @db.VarChar(100)
+  startYear   String   @db.VarChar(100)
+  endMonth    String?  @db.VarChar(100)
+  endYear     String?  @db.VarChar(100)
+  createdAt   DateTime @default(now()) @db.Timestamp()
+  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamp()
+  Profile     Profile? @relation(fields: [profileID], references: [profileID])
+  profileID   String?
+  Skills      Skills[]
+}
+
 model Resume {
-  resumeID      String       @id @default(cuid())
-  title         String       @db.Text
-  resume        String       @db.Text
-  createdAt     DateTime     @default(now()) @db.Timestamp()
-  updatedAt     DateTime     @default(now()) @updatedAt @db.Timestamp()
-  Profile       Profile?     @relation(fields: [profileID], references: [profileID], onDelete: Cascade)
-  profileID     String?
-  Application   Application? @relation(fields: [applicationID], references: [applicationID], onDelete: Cascade)
-  applicationID String?      @unique
+  resumeID    String        @id @default(cuid())
+  title       String        @db.Text
+  resume      String        @db.Text
+  createdAt   DateTime      @default(now()) @db.Timestamp()
+  updatedAt   DateTime      @default(now()) @updatedAt @db.Timestamp()
+  Profile     Profile?      @relation(fields: [profileID], references: [profileID], onDelete: Cascade)
+  profileID   String?
+  Application Application[]
 }
 
 model PasswordHash {
@@ -226,6 +275,7 @@ model JobPost {
   status      String        @db.VarChar(200)
   isArchive   Boolean       @default(false)
   isOpen      String        @db.VarChar(200)
+  featured    Boolean       @default(false) @db.Boolean
   createdAt   DateTime      @default(now()) @db.Timestamp()
   updatedAt   DateTime      @default(now()) @updatedAt @db.Timestamp()
   Salary      Salary?

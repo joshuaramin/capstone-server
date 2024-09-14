@@ -3,7 +3,9 @@ import * as ActivityLogsQuery from "./activitylogs.query";
 import * as ApplicationQuery from "./application.query";
 import * as ApplicantScoreQuery from "./applicationscore.query";
 import * as CompanyQuery from "./company.query";
+import * as EducationQuery from "./education.query";
 import * as FavouriteQuery from "./favourite.query";
+import * as FontQuery from "./font.query";
 import * as JobPostQuery from "./jobpost.query";
 import * as MedieaQuery from "./media.query";
 import * as MessageQuery from "./message.query";
@@ -15,6 +17,7 @@ import * as ResetPassword from "./resetPassword";
 import * as ResumeQuery from "./resume.query";
 import * as ScheduleQuery from "./schedule.query";
 import * as SkillQuery from "./skills.query";
+import * as ThemeQuery from "./theme.query";
 import * as UserQuery from "./user.query";
 
 export {
@@ -23,7 +26,9 @@ export {
   ApplicantScoreQuery,
   ApplicationQuery,
   CompanyQuery,
+  EducationQuery,
   FavouriteQuery,
+  FontQuery,
   JobPostQuery,
   MedieaQuery,
   MessageQuery,
@@ -35,5 +40,6 @@ export {
   ResumeQuery,
   ScheduleQuery,
   SkillQuery,
+  ThemeQuery,
   UserQuery,
 };

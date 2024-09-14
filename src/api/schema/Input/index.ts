@@ -3,7 +3,7 @@ import { inputObjectType } from "nexus";
 export const SalaryInput = inputObjectType({
   name: "salaryInput",
   definition(t) {
-    t.nullable.int("fixed")
+    t.nullable.int("fixed");
     t.nullable.float("min");
     t.nullable.float("max");
     t.string("currency");
@@ -62,7 +62,7 @@ export const UserRecruiterInput = inputObjectType({
     t.string("companySize");
   },
 });
-  
+
 export const JobPostInput = inputObjectType({
   name: "jobPostInput",
   definition(t) {
@@ -70,11 +70,9 @@ export const JobPostInput = inputObjectType({
     t.string("description");
     t.string("location");
     t.string("duration");
-    t.string("status"),
-    t.string("isOpen")
+    t.string("status"), t.string("isOpen");
     t.list.string("JobType");
-    t.date("endDate");
-    t.string("experience")
+    t.string("experience");
   },
 });
 
@@ -92,5 +90,34 @@ export const RequirementInput = inputObjectType({
   name: "RequirementInput",
   definition(t) {
     t.string("type");
+  },
+});
+
+export const PortfolioInput = inputObjectType({
+  name: "PortfolioInput",
+  definition(t) {
+    t.string("companyName");
+    t.string("description");
+    t.string("employmentType");
+    t.string("startMonth");
+    t.string("startYear");
+    t.string("endMonth");
+    t.string("endYear");
+    t.string("location");
+    t.string("locationType");
+    t.string("title");
+  },
+});
+
+export const EducationInput = inputObjectType({
+  name: "EducationInput",
+  definition(t) {
+    t.string("school");
+    t.string("degree");
+    t.string("study");
+    t.string("startMonth");
+    t.string("startYear");
+    t.string("endMonth");
+    t.string("endYear");
   },
 });

@@ -1,5 +1,6 @@
 import { extendType, idArg, inputObjectType, nonNull, stringArg } from "nexus";
 import { prisma } from "../../helpers/server";
+import { ERROR_MESSAGE_BAD_INPUT } from "../../helpers/error";
 
 export const AboutInput = inputObjectType({
   name: "AboutInput",
@@ -12,10 +13,13 @@ export const AboutMutation = extendType({
   type: "Mutation",
   definition(t) {
     t.field("createAbout", {
-      type: "about",
+      type: "AboutPayload",
       args: { profileID: nonNull(idArg()), input: nonNull("AboutInput") },
       resolve: async (_, { input: { bio }, profileID }): Promise<any> => {
-        return await prisma.about.create({
+        if (!bio) {
+          return ERROR_MESSAGE_BAD_INPUT;
+        }
+        const about = await prisma.about.create({
           data: {
             bio,
             Profile: {
@@ -25,6 +29,26 @@ export const AboutMutation = extendType({
             },
           },
         });
+
+        const user = await prisma.user.findFirst({
+          where: { Profile: { profileID } },
+        });
+
+        await prisma.activityLogs.create({
+          data: {
+            title: "Created About",
+            description: "You created your about",
+            User: {
+              connect: {
+                userID: user.userID,
+              },
+            },
+          },
+        });
+        return {
+          __typename: "about",
+          ...about,
+        };
       },
     });
 
@@ -32,10 +56,59 @@ export const AboutMutation = extendType({
       type: "about",
       args: { aboutID: nonNull(idArg()), bio: nonNull(stringArg()) },
       resolve: async (_, { aboutID, bio }): Promise<any> => {
-        return await prisma.about.update({
+        const about = await prisma.about.update({
           data: { bio },
           where: { aboutID },
+          select: {
+            aboutID: true,
+            Profile: true,
+          },
         });
+
+        const user = await prisma.user.findFirst({
+          where: { Profile: { profileID: about.Profile.profileID } },
+        });
+
+        await prisma.activityLogs.create({
+          data: {
+            title: "Updated About",
+            description: "You updated your about",
+            User: {
+              connect: {
+                userID: user.userID,
+              },
+            },
+          },
+        });
+
+        return about;
+      },
+    });
+    t.field("deleteAbout", {
+      type: "about",
+      args: { aboutID: nonNull(idArg()) },
+      resolve: async (_, { aboutID }) => {
+        const about = await prisma.about.delete({
+          where: { aboutID },
+          select: {
+            aboutID: true,
+            Profile: true,
+          },
+        });
+
+        const user = await prisma.user.findFirst({
+          where: { Profile: { profileID: about.Profile.profileID } },
+        });
+
+        await prisma.activityLogs.create({
+          data: {
+            title: "Deleted About",
+            description: "You deleted you about",
+            User: { connect: { userID: user.userID } },
+          },
+        });
+
+        return about;
       },
     });
   },

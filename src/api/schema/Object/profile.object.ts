@@ -15,7 +15,19 @@ export const ProfileObject = objectType({
       type: "media",
       resolve: async ({ profileID }): Promise<any> => {
         return await prisma.media.findFirst({
-          where: { profileID },
+          where: { Avatar: { profileID } },
+        });
+      },
+    });
+    t.field("header", {
+      type: "media",
+      resolve: async ({ profileID }): Promise<any> => {
+        return await prisma.media.findFirst({
+          where: {
+            Header: {
+              profileID,
+            },
+          },
         });
       },
     });
@@ -24,6 +36,24 @@ export const ProfileObject = objectType({
       resolve: async ({ profileID }): Promise<any> => {
         return await prisma.about.findFirst({
           where: { profileID },
+        });
+      },
+    });
+    t.list.field("portfolio", {
+      type: "portfolio",
+      resolve: async ({ profileID }): Promise<any> => {
+        return await prisma.portfolio.findMany({
+          where: { profileID },
+        });
+      },
+    });
+    t.list.field("education", {
+      type: "education",
+      resolve: async ({ profileID }) => {
+        return await prisma.education.findMany({
+          where: {
+            profileID,
+          },
         });
       },
     });

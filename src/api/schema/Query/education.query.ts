@@ -1,14 +1,14 @@
 import { extendType, idArg, nonNull } from "nexus";
 import { prisma } from "../../helpers/server";
 
-export const PortfolioQuery = extendType({
+export const EducationQuery = extendType({
   type: "Query",
   definition(t) {
-    t.list.field("getPortfolioByProfileID", {
-      type: "portfolio",
+    t.list.field("getAllEducationByProfileId", {
+      type: "education",
       args: { profileID: nonNull(idArg()) },
       resolve: async (_, { profileID }): Promise<any> => {
-        return await prisma.portfolio.findMany({
+        return await prisma.education.findMany({
           where: {
             profileID,
           },
@@ -18,12 +18,12 @@ export const PortfolioQuery = extendType({
         });
       },
     });
-    t.field("getPortfolioById", {
-      type: "portfolio",
-      args: { portfolioID: nonNull(idArg()) },
-      resolve: async (_, { portfolioID }): Promise<any> => {
-        return await prisma.portfolio.findFirst({
-          where: { portfolioID },
+    t.field("getEducationById", {
+      type: "education",
+      args: { educationID: nonNull(idArg()) },
+      resolve: async (_, { educationID }): Promise<any> => {
+        return await prisma.education.findFirst({
+          where: { educationID },
         });
       },
     });

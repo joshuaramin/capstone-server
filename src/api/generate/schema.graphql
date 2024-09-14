@@ -6,6 +6,17 @@ input AboutInput {
   bio: String
 }
 
+union AboutPayload = BADINPUT | about
+
+type ActivityLogsPagination {
+  currentPage: Int
+  hasNextPage: Boolean
+  hasPrevPage: Boolean
+  item: [activityLogs]
+  totalItems: Int
+  totalPages: Int
+}
+
 type AlreadyExist implements Error {
   code: Int
   message: String
@@ -51,6 +62,18 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `dat
 """
 scalar DateTime
 
+input EducationInput {
+  degree: String
+  endMonth: String
+  endYear: String
+  school: String
+  startMonth: String
+  startYear: String
+  study: String
+}
+
+union EducationPayload = BADINPUT | education
+
 """
 A field whose value conforms to the standard internet email address format as specified in HTML Spec: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.
 """
@@ -69,6 +92,15 @@ type Expired implements Error {
 }
 
 union FavouritePayload = BADINPUT | Forbidden | favourite
+
+type FontPagination {
+  currentPage: Int
+  hasNextPage: Boolean
+  hasPrevPage: Boolean
+  item: [fonts]
+  totalItems: Int
+  totalPages: Int
+}
 
 type Forbidden implements Error {
   code: Int
@@ -90,44 +122,61 @@ union MediaPayload = BADINPUT | media
 
 type Mutation {
   Logout(userID: ID!): activityLogs
+  addProfileAvatar(file: Upload!, profileID: ID!): profile
+  addProfileHeader(file: Upload!, profileID: ID!): profile
+  addProfileThemnFonts(fontID: ID!, profileID: ID!, themeID: ID!): profile
+  addSkillToProfile(profileID: ID!, skills: [String]): profile
   addSkills: skills
   archiveJobPost(jobPostID: ID!): jobpost
-  createAbout(input: AboutInput!, profileID: ID!): about
+  createAbout(input: AboutInput!, profileID: ID!): AboutPayload
   createApplication(jobPostID: ID!, resumeID: ID!, userID: ID!): ApplicationPayload
   createAvatar(file: Upload!, profileID: ID!): MediaPayload
+  createEducationBackground(input: EducationInput!, profileID: ID!): EducationPayload
   createFavourite(jobPostID: ID!, userID: ID!): FavouritePayload
+  createFontFamily(file: Upload!, font: String!, userID: ID!): fonts
   createJobPost(companyID: ID!, input: jobPostInput!, salary: salaryInput!, skills: [String]!): JobPostPayload
   createMessage(message: String!, receiverID: String!, senderID: String!): message
-  createPortoflio(file: Upload, input: PortfolioInput!, profileID: ID!): PortfolioPayload
+  createPortfolio(input: PortfolioInput!, profileID: ID!, skills: [String]): PortfolioPayload
   createReportJobPost(jobPostID: ID!, message: String!, userID: ID!): report
   createResume(file: Upload, profileID: ID!): ResumePayload
   createSchedule(input: ScheduleInput!, receiverID: String!, senderID: String!): SchedulePayload
   createSkills(input: SkillInput!): SkillPayload
+  createTheme(file: Upload!, theme: String!, userID: ID!): theme
   createUserAdminAccount(input: UserInput!): UserPayload
-  createUserFreelancers(fileUpload: Upload!, input: UserFreelanceInput!, requirement: RequirementInput): UserPayload
+  createUserFreelancers(fileUpload: Upload!, input: UserFreelanceInput!, requirement: RequirementInput, skills: [String]!): UserPayload
   createUserRecruiter(file: Upload!, input: UserRecruiterInput!): UserPayload
+  deleteAbout(aboutID: ID!): about
+  deleteEducationBackground(educationID: ID!): education
   deleteFavourite(favouriteID: ID!): favourite
+  deleteFontFamily(fontID: ID!, userID: ID!): fonts
   deleteJobPost(jobPostID: ID!): jobpost
   deleteMedia(mediaID: ID!): media
-  deletePortoflio(portfolioID: ID!): portfolio
+  deletePortfolio(portfolioID: ID!): portfolio
+  deleteProfileAvatar(mediaID: ID!, profileID: ID!): profile
+  deleteProfileHeader(mediaID: ID!, profileID: ID!): profile
   deleteResume(resumeID: ID!): resume
   deleteSchedule(scheduleID: ID!): schedule
   deleteSkills(skillsID: ID!): skills
+  deleteTheme(themeID: ID!): theme
   deleteUserAccount(userID: ID!): user
   findMyEmailAddress(email: String!): EmailPayload
   generateJobPostApplicant(jobPostID: ID!): [jobpost]
   getMyResetPasswordLink(reset: String!): resetPasswordPayload
   login(email: String!, password: String!): CredentialsPayload
+  removedSkillToProfile(profileID: ID!, skillsID: ID!): profile
   updateAbout(aboutID: ID!, bio: String!): about
   updateApplicationStatus(applicationID: ID!, status: String!): application
   updateCompany(companyID: ID!, verified: Boolean!): company
+  updateEducationBackground(educationID: ID!, input: EducationInput): education
+  updateFontFamily(file: Upload, font: String!, fontID: String!): fonts
   updateJobPost(input: jobPostInput, jobPostID: ID!, salary: salaryInput, skills: [String]!): jobpost
   updateMessage(message: String!, messageID: String!): message
   updateNotification(notificationID: ID!): notification
-  updatePorfolio(input: PortfolioInput!, portfolioID: ID!): portfolio
+  updatePortfolio(input: PortfolioInput!, portfolioID: ID!, skills: [String]!): portfolio
   updateProfile(input: ProfileInput!, profileID: ID!): profile
   updateSchedule(input: ScheduleInput!, scheduleID: ID!): schedule
   updateSkills(input: SkillInput!, skillsID: ID!): skills
+  updateTheme(file: Upload, theme: String!, themeID: ID!): theme
   updateUserPasswordAccount(password: String!, userID: ID!): UserPayload
   verifyMyAccount(userID: ID!): user
 }
@@ -161,10 +210,12 @@ input PortfolioInput {
   companyName: String
   description: String
   employmentType: String
-  endDate: Date
+  endMonth: String
+  endYear: String
   location: String
   locationType: String
-  startDate: Date
+  startMonth: String
+  startYear: String
   title: String
 }
 
@@ -178,8 +229,11 @@ input ProfileInput {
 }
 
 type Query {
+  getAboutById(aboutID: ID!): about
   getAboutByProfileID(profileID: ID!): about
   getAllCompanies(input: PaginationInput!): [company]
+  getAllEducationByProfileId(profileID: ID!): [education]
+  getAllFonts(pagination: PaginationInput!, search: String): FontPagination
   getAllJobPost(input: PaginationInput!): [jobpost]
   getAllMediaProfile(pagination: PaginationInput!, profileID: ID!): [media]
   getAllMySaveJobs(userID: ID!): [favourite]
@@ -190,6 +244,7 @@ type Query {
   getApplicantJobPostByIdPagination(input: PaginationInput!, jobPostID: ID!): ApplicantPagination
   getApplicationByID(applicationID: ID!): application
   getCompanyByID(companyID: ID!): company
+  getEducationById(educationID: ID!): education
   getJobBoard(duration: [String], experience: [String], input: PaginationInput!, jobType: [String], orderBy: String, search: String, skills: [String]): JobPagination
   getJobPostById(jobPostID: ID!): jobpost
   getJobPostBySlug(slug: ID!): jobpost
@@ -199,6 +254,7 @@ type Query {
   getNotificationByID(notificationID: ID!): notification
   getNotificationByUserID(pagination: PaginationInput!, userID: ID!): [notification]
   getPersonalMessage(receiverID: ID!, senderID: ID!): [message]
+  getPortfolioById(portfolioID: ID!): portfolio
   getPortfolioByProfileID(profileID: ID!): [portfolio]
   getProfileByUser(userID: ID!): profile
   getScheduleById(scheduleID: ID!): schedule
@@ -206,7 +262,9 @@ type Query {
   getSearchBySkill(search: String!): [skills]
   getSearchByUser(search: String!): user
   getSimilarJobPost(input: PaginationInput!, jobPostID: ID!, skills: [String]!): [jobpost]
+  getSkillByProfileID(profileID: ID!): [skills]
   getSkillsByGroup: [skills]
+  getThemes(pagination: PaginationInput!, search: String): ThemePagination
   getUserAccountById(userID: ID!): user
   getUserActivityLogs(input: PaginationInput!, userID: ID!): [activityLogs]
   jobPagination(pagination: PaginationInput, search: String, userID: ID!): JobPagination
@@ -225,6 +283,15 @@ input ScheduleInput {
   link: String
   startDate: DateTime
   title: String
+}
+
+type SchedulePagination {
+  currentPage: Int
+  hasNextPage: Boolean
+  hasPrevPage: Boolean
+  item: [schedule]
+  totalItems: Int
+  totalPages: Int
 }
 
 union SchedulePayload = BADINPUT | schedule
@@ -248,6 +315,15 @@ type Subscription {
   getAllUser: [user]
   getMyCompanyJobPostSubscriptions(companyID: ID!): [jobpost]
   jobPost: [jobpost]
+}
+
+type ThemePagination {
+  currentPage: Int
+  hasNextPage: Boolean
+  hasPrevPage: Boolean
+  item: [theme]
+  totalItems: Int
+  totalPages: Int
 }
 
 """The `Upload` scalar type represents a file upload."""
@@ -337,6 +413,19 @@ type company {
   verified: Boolean
 }
 
+type education {
+  createdAt: DateTime
+  degree: String
+  educationID: ID
+  endMonth: String
+  endYear: String
+  school: String
+  startMonth: String
+  startYear: String
+  study: String
+  updatedAt: DateTime
+}
+
 type favourite {
   createdAt: DateTime
   favouriteID: ID
@@ -344,11 +433,18 @@ type favourite {
   user: user
 }
 
+type fonts {
+  createdAt: DateTime
+  font: String
+  fontID: ID
+  image: String
+  updatedAt: DateTime
+}
+
 input jobPostInput {
   JobType: [String]
   description: String
   duration: String
-  endDate: Date
   experience: String
   isOpen: String
   location: String
@@ -414,12 +510,16 @@ type portfolio {
   companyName: String
   createdAt: DateTime
   description: String
-  employementType: String
-  endDate: Date
+  employmentType: String
+  endMonth: String
+  endYear: String
   location: String
+  locationType: String
   media: [media]
   portfolioID: ID
-  startDate: Date
+  skills: [skills]
+  startMonth: String
+  startYear: String
   title: String
   updatedAt: DateTime
 }
@@ -429,11 +529,14 @@ type profile {
   avatar: media
   birthday: Date
   createdAt: DateTime
+  education: [education]
   firstname: String
   getMyResume: [resume]
   getMySkills: [skills]
+  header: media
   lastname: String
   phone: PhoneNumber
+  portfolio: [portfolio]
   profileID: ID
   updatedAt: DateTime
 }
@@ -508,6 +611,14 @@ type skills {
 type skillsGroup {
   count: Int
   skills: String
+}
+
+type theme {
+  createdAt: DateTime
+  image: String
+  theme: String
+  themeID: ID
+  updatedAt: DateTime
 }
 
 type token {

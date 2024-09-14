@@ -20,9 +20,23 @@ export const FavouriteMutation = extendType({
           where: { userID },
         });
 
+        const jobPost = await prisma.jobPost.findFirst({
+          where: {
+            jobPostID,
+          },
+        });
+
         if (user.verified === false) {
           return ERROR_MESSAGE_FORBIDDEN;
         }
+
+        await prisma.activityLogs.create({
+          data: {
+            title: "Added to Save Jobs",
+            description: `You added ${jobPost.title} in your save job list`,
+            User: { connect: { userID } },
+          },
+        });
 
         const result = await prisma.favourite.create({
           data: {
@@ -45,8 +59,24 @@ export const FavouriteMutation = extendType({
       type: "favourite",
       args: { favouriteID: nonNull(idArg()) },
       resolve: async (_, { favouriteID }): Promise<any> => {
-        return await prisma.favourite.delete({
+        const favourite = await prisma.favourite.delete({
           where: { favouriteID },
+          select: {
+            JobPost: true,
+            User: true
+          },
+        });
+
+        await prisma.activityLogs.create({
+          data: {
+            title: "Job Post Removed",
+            description: `You removed the ${favourite.JobPost.title} save job in your list`,
+            User: {
+              connect: {
+                userID: favourite.User.userID
+              }
+            }
+          },
         });
       },
     });

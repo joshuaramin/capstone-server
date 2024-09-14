@@ -1,30 +1,23 @@
-import { extendType, idArg, inputObjectType, nonNull } from "nexus";
+import {
+  extendType,
+  idArg,
+  inputObjectType,
+  list,
+  nonNull,
+  stringArg,
+} from "nexus";
 import { prisma } from "../../helpers/server";
 import { ERROR_MESSAGE_BAD_INPUT } from "../../helpers/error";
-
-export const PortfolioInput = inputObjectType({
-  name: "PortfolioInput",
-  definition(t) {
-    t.string("companyName");
-    t.string("description");
-    t.string("employmentType");
-    t.date("startDate");
-    t.string("location");
-    t.string("locationType");
-    t.date("endDate");
-    t.string("title");
-  },
-});
 
 export const PortfolioMutation = extendType({
   type: "Mutation",
   definition(t) {
-    t.field("createPortoflio", {
+    t.field("createPortfolio", {
       type: "PortfolioPayload",
       args: {
         profileID: nonNull(idArg()),
         input: nonNull("PortfolioInput"),
-        file: "Upload",
+        skills: list(stringArg()),
       },
 
       resolve: async (
@@ -35,44 +28,60 @@ export const PortfolioMutation = extendType({
             companyName,
             description,
             employmentType,
-            endDate,
             location,
             locationType,
-            startDate,
             title,
+            startMonth,
+            startYear,
+            endYear,
+            endMonth,
           },
-          file,
+          skills,
         }
       ): Promise<any> => {
-        const { createReadStream, filename } = await file;
-
         if (
           !companyName ||
-          !description ||
           !employmentType ||
-          !endDate ||
+          !startMonth ||
+          !startYear ||
           !location ||
           !locationType ||
-          !startDate ||
           !title
         ) {
           return ERROR_MESSAGE_BAD_INPUT;
         }
 
+        const user = await prisma.user.findFirst({
+          where: { Profile: { profileID } },
+        });
+
+        await prisma.activityLogs.create({
+          data: {
+            title: "Created Work Experience",
+            description: "You added a work experience",
+            User: {
+              connect: {
+                userID: user.userID,
+              },
+            },
+          },
+        });
         const portfolio = await prisma.portfolio.create({
           data: {
             companyName,
             description,
             employmentType,
-            endDate,
+            startMonth,
+            startYear,
+            endMonth,
+            endYear,
             location,
             locationType,
-            startDate,
             title,
-            Media: {
-              create: {
-                media: "",
-              },
+            Skills: {
+              connect: skills.map((skilled) => {
+                return { skills: skilled };
+              }),
             },
             Profile: {
               connect: {
@@ -83,35 +92,93 @@ export const PortfolioMutation = extendType({
         });
 
         return {
-          _typename: "portfolio",
+          __typename: "portfolio",
           ...portfolio,
         };
       },
     });
-    t.field("updatePorfolio", {
+    t.field("updatePortfolio", {
       type: "portfolio",
-      args: { portfolioID: nonNull(idArg()), input: nonNull("PortfolioInput") },
-      resolve: async (_, { portfolioID, input }): Promise<any> => {
+      args: {
+        portfolioID: nonNull(idArg()),
+        input: nonNull("PortfolioInput"),
+        skills: nonNull(list(stringArg())),
+      },
+      resolve: async (_, { portfolioID, input, skills }): Promise<any> => {
         if (!input) {
           return ERROR_MESSAGE_BAD_INPUT;
         }
-        return await prisma.portfolio.update({
+        const portfolio = await prisma.portfolio.update({
           data: {
             ...input,
+            Skills: {
+              connect: skills.map((skilled) => {
+                return { skills: skilled };
+              }),
+            },
           },
           where: {
             portfolioID,
           },
         });
+
+        const user = await prisma.user.findFirst({
+          where: {
+            Profile: {
+              Portfolio: {
+                some: { portfolioID },
+              },
+            },
+          },
+        });
+
+        await prisma.activityLogs.create({
+          data: {
+            title: "Updated Work Experience",
+            description: "You updated your work experience",
+            User: {
+              connect: { userID: user.userID },
+            },
+          },
+        });
+
+        return portfolio;
       },
     });
-    t.field("deletePortoflio", {
+    t.field("deletePortfolio", {
       type: "portfolio",
       args: { portfolioID: nonNull(idArg()) },
       resolve: async (_, { portfolioID }): Promise<any> => {
-        return await prisma.portfolio.delete({
+        const portfolio = await prisma.portfolio.delete({
           where: { portfolioID },
+          select: {
+            portfolioID: true,
+            title: true,
+            Profile: {
+              select: {
+                userID: true,
+              },
+            },
+          },
         });
+
+        const user = await prisma.user.findUnique({
+          where: {
+            userID: portfolio.Profile.userID,
+          },
+        });
+
+        await prisma.activityLogs.create({
+          data: {
+            title: "Deleted Work Experience",
+            description: "You removed your Work Experience",
+            User: {
+              connect: { userID: user.userID },
+            },
+          },
+        });
+
+        return portfolio;
       },
     });
   },

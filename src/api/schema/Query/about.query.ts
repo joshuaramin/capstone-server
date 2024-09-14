@@ -15,5 +15,14 @@ export const AboutQuery = extendType({
         });
       },
     });
+    t.field("getAboutById", {
+      type: "about",
+      args: { aboutID: nonNull(idArg()) },
+      resolve: async (_, { aboutID }): Promise<any> => {
+        return await prisma.about.findFirst({
+          where: { aboutID },
+        });
+      },
+    });
   },
 });

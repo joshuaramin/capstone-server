@@ -75,9 +75,14 @@ export const SkillsMutation = extendType({
       type: "skills",
 
       resolve: async (): Promise<any> => {
-        Skills.map(async (sk) => {
+        // Skills.map(async (sk) => {
+        //   return await prisma.skills.create({
+        //     data: { skills: sk },
+        //   });
+        // });
+        Skills.map(async ({ skills }) => {
           return await prisma.skills.create({
-            data: { skills: sk },
+            data: { skills },
           });
         });
       },

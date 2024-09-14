@@ -1,4 +1,4 @@
-import { extendType, idArg, nonNull, stringArg } from "nexus";
+import { extendType, idArg, list, nonNull, stringArg } from "nexus";
 import { prisma } from "../../helpers/server";
 import { ComparePass, PashBcrypt } from "../../helpers/hash";
 import jsonwebtoken from "jsonwebtoken";
@@ -183,6 +183,7 @@ export const UserMutation = extendType({
       args: {
         input: nonNull("UserFreelanceInput"),
         requirement: "RequirementInput",
+        skills: nonNull(list(stringArg())),
         fileUpload: nonNull("Upload"),
       },
       resolve: async (
@@ -191,6 +192,7 @@ export const UserMutation = extendType({
           input: { email, firstname, lastname, password },
           requirement: { type },
           fileUpload,
+          skills,
         }
       ): Promise<any> => {
         if (!email || !firstname || !lastname || !password) {
@@ -215,6 +217,11 @@ export const UserMutation = extendType({
               create: {
                 firstname,
                 lastname,
+                Skills: {
+                  connect: skills.map((skilled) => {
+                    return { skills: skilled };
+                  }),
+                },
               },
             },
             Requirement: {

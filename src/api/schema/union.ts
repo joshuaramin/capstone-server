@@ -90,3 +90,17 @@ export const AvatarPayload = unionType({
     t.members("media", "BADINPUT");
   },
 });
+
+export const EducationPayload = unionType({
+  name: "EducationPayload",
+  definition(t) {
+    t.members("education", "BADINPUT");
+  },
+});
+
+export const AboutPayload = unionType({
+  name: "AboutPayload",
+  definition(t) {
+    t.members("about", "BADINPUT");
+  },
+});

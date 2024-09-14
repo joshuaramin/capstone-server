@@ -136,8 +136,8 @@ export const JobPostQuery = extendType({
         if (jobType) {
           whereArr = {
             JobType: {
-              hasSome: jobType,
-            },
+              hasSome: jobType
+            }
           };
         }
 

@@ -1,4 +1,4 @@
-import { extendType, nonNull, stringArg } from "nexus";
+import { extendType, idArg, nonNull, stringArg } from "nexus";
 import { prisma } from "../../helpers/server";
 
 export const SkillQuery = extendType({
@@ -61,6 +61,15 @@ export const SkillQuery = extendType({
       resolve: async (): Promise<any> => {
         return await prisma.skills.groupBy({
           by: ["skillsID", "skills"],
+        });
+      },
+    });
+    t.list.field("getSkillByProfileID", {
+      type: "skills",
+      args: { profileID: nonNull(idArg()) },
+      resolve: async (_, { profileID }): Promise<any> => {
+        return await prisma.skills.findMany({
+          where: { Profile: { some: { profileID } } },
         });
       },
     });

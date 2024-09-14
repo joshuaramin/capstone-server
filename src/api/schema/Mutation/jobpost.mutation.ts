@@ -1,9 +1,7 @@
-import { booleanArg, extendType, idArg, list, nonNull, stringArg } from "nexus";
+import { extendType, idArg, list, nonNull, stringArg } from "nexus";
 import { prisma, pubsub } from "../../helpers/server";
-import {
-  ERROR_MESSAGE_BAD_INPUT,
-  ERROR_MESSAGE_FORBIDDEN,
-} from "../../helpers/error";
+import { add } from "date-fns";
+import { ERROR_MESSAGE_BAD_INPUT } from "../../helpers/error";
 import { Slugify } from "../../helpers/slugify";
 
 export const JobPostMutation = extendType({
@@ -24,7 +22,6 @@ export const JobPostMutation = extendType({
           input: {
             title,
             description,
-            endDate,
             JobType,
             location,
             duration,
@@ -39,7 +36,6 @@ export const JobPostMutation = extendType({
         if (
           !title ||
           !description ||
-          !endDate ||
           !JobType ||
           !location ||
           !status ||
@@ -58,105 +54,188 @@ export const JobPostMutation = extendType({
           },
         });
 
-        if (company.User.plan === "Basic" && company.JobPost.length === 5) {
-          return {
-            __typename: "Payment",
-            code: "402",
-            message:
-              "You don't have any posts remaining. Please upgrade your plan to the Pro version.",
-          };
-        }
-
-
         await prisma.activityLogs.create({
           data: {
-            title: "Create Job Post", 
-            description: "",
+            title: "Create Job Post",
+            description: "You created a Job post",
             User: {
               connect: {
-                 userID: company.userID
-              }
-            }
+                userID: company.userID,
+              },
+            },
+          },
+        });
+
+        if (company.User.plan === "BASIC") {
+          if (fixed) {
+            const job = await prisma.jobPost.create({
+              data: {
+                title,
+                description,
+                endDate: add(new Date(Date.now()), {
+                  days: 21,
+                }),
+                location,
+                duration,
+                experience,
+                featured: false,
+                status,
+                isOpen,
+                slug: Slugify(title),
+                Salary: {
+                  create: {
+                    fixed,
+                    currency,
+                  },
+                },
+                JobType,
+                Company: {
+                  connect: {
+                    companyID,
+                  },
+                },
+                Skills: {
+                  connect: skills.map((skill) => {
+                    return { skills: skill };
+                  }) as any,
+                },
+              },
+            });
+
+            pubsub.publish("createJobPostToMyCompany", job);
+
+            return {
+              __typename: "jobpost",
+              ...job,
+            };
+          } else {
+            const job = await prisma.jobPost.create({
+              data: {
+                title,
+                description,
+                endDate: add(new Date(Date.now()), {
+                  days: 21,
+                }),
+                location,
+                duration,
+                experience,
+                featured: false,
+                isOpen,
+                status,
+                slug: Slugify(title),
+                Salary: {
+                  create: {
+                    min,
+                    max,
+                    currency,
+                  },
+                },
+                JobType,
+                Company: {
+                  connect: {
+                    companyID,
+                  },
+                },
+                Skills: {
+                  connect: skills.map((skill) => {
+                    return { skills: skill };
+                  }) as any,
+                },
+              },
+            });
+
+            pubsub.publish("createJobPostToMyCompany", job);
+
+            return {
+              __typename: "jobpost",
+              ...job,
+            };
           }
-        })
-
-        if (fixed) {
-          const job = await prisma.jobPost.create({
-            data: {
-              title,
-              description,
-              endDate,
-              location,
-              duration,
-              experience,
-              status,
-              isOpen,
-              slug: Slugify(title),
-              Salary: {
-                create: {
-                  fixed,
-                  currency,
-                },
-              },
-              JobType,
-              Company: {
-                connect: {
-                  companyID,
-                },
-              },
-              Skills: {
-                connect: skills.map((skill) => {
-                  return { skills: skill };
-                }) as any,
-              },
-            },
-          });
-
-          pubsub.publish("createJobPostToMyCompany", job);
-
-          return {
-            __typename: "jobpost",
-            ...job,
-          };
         } else {
-          const job = await prisma.jobPost.create({
-            data: {
-              title,
-              description,
-              endDate,
-              location,
-              duration,
-              experience,
-              isOpen,
-              status,
-              slug: Slugify(title),
-              Salary: {
-                create: {
-                  min,
-                  max,
-                  currency,
+          if (fixed) {
+            const job = await prisma.jobPost.create({
+              data: {
+                title,
+                description,
+                endDate: add(new Date(Date.now()), {
+                  days: 90,
+                }),
+                location,
+                duration,
+                experience,
+                status,
+                isOpen,
+                slug: Slugify(title),
+                featured: true,
+                Salary: {
+                  create: {
+                    fixed,
+                    currency,
+                  },
+                },
+                JobType,
+                Company: {
+                  connect: {
+                    companyID,
+                  },
+                },
+                Skills: {
+                  connect: skills.map((skill) => {
+                    return { skills: skill };
+                  }) as any,
                 },
               },
-              JobType,
-              Company: {
-                connect: {
-                  companyID,
+            });
+
+            pubsub.publish("createJobPostToMyCompany", job);
+
+            return {
+              __typename: "jobpost",
+              ...job,
+            };
+          } else {
+            const job = await prisma.jobPost.create({
+              data: {
+                title,
+                description,
+                endDate: add(new Date(Date.now()), {
+                  days: 90,
+                }),
+                location,
+                duration,
+                experience,
+                featured: true,
+                isOpen,
+                status,
+                slug: Slugify(title),
+                Salary: {
+                  create: {
+                    min,
+                    max,
+                    currency,
+                  },
+                },
+                JobType,
+                Company: {
+                  connect: {
+                    companyID,
+                  },
+                },
+                Skills: {
+                  connect: skills.map((skill) => {
+                    return { skills: skill };
+                  }) as any,
                 },
               },
-              Skills: {
-                connect: skills.map((skill) => {
-                  return { skills: skill };
-                }) as any,
-              },
-            },
-          });
+            });
 
-          pubsub.publish("createJobPostToMyCompany", job);
+            pubsub.publish("createJobPostToMyCompany", job);
 
-          return {
-            __typename: "jobpost",
-            ...job,
-          };
+            return {
+              __typename: "jobpost",
+              ...job,
+            };
+          }
         }
       },
     });
@@ -177,7 +256,6 @@ export const JobPostMutation = extendType({
             description,
             JobType,
             duration,
-            endDate,
             experience,
             location,
             status,
@@ -194,7 +272,6 @@ export const JobPostMutation = extendType({
               description,
               JobType,
               duration,
-              endDate,
               experience,
               location,
               isOpen,
@@ -228,7 +305,6 @@ export const JobPostMutation = extendType({
               description,
               JobType,
               duration,
-              endDate,
               experience,
               location,
               slug: Slugify(title),
