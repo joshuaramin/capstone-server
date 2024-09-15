@@ -96,5 +96,24 @@ export const ApplicationMutation = extendType({
         });
       },
     });
+    t.list.field("generateApplicantByJobPostID", {
+      type: "application",
+      args: {
+        jobPostID: nonNull(idArg()),
+        startDate: nonNull(stringArg()),
+        endDate: nonNull(stringArg()),
+      },
+      resolve: async (_, { jobPostID, startDate, endDate }): Promise<any> => {
+        return await prisma.application.findMany({
+          where: {
+            jobPostID,
+            createdAt: {
+              gte: new Date(startDate),
+              lte: new Date(endDate),
+            },
+          },
+        });
+      },
+    });
   },
 });

@@ -586,6 +586,7 @@ export interface NexusGenFieldTypes {
     deleteTheme: NexusGenRootTypes['theme'] | null; // theme
     deleteUserAccount: NexusGenRootTypes['user'] | null; // user
     findMyEmailAddress: NexusGenRootTypes['EmailPayload'] | null; // EmailPayload
+    generateApplicantByJobPostID: Array<NexusGenRootTypes['application'] | null> | null; // [application]
     generateJobPostApplicant: Array<NexusGenRootTypes['jobpost'] | null> | null; // [jobpost]
     getMyResetPasswordLink: NexusGenRootTypes['resetPasswordPayload'] | null; // resetPasswordPayload
     login: NexusGenRootTypes['CredentialsPayload'] | null; // CredentialsPayload
@@ -844,6 +845,7 @@ export interface NexusGenFieldTypes {
     phone: NexusGenScalars['PhoneNumber'] | null; // PhoneNumber
     portfolio: Array<NexusGenRootTypes['portfolio'] | null> | null; // [portfolio]
     profileID: string | null; // ID
+    skills: Array<NexusGenRootTypes['skills'] | null> | null; // [skills]
     updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
   }
   report: { // field return type
@@ -1021,6 +1023,7 @@ export interface NexusGenFieldTypeNames {
     deleteTheme: 'theme'
     deleteUserAccount: 'user'
     findMyEmailAddress: 'EmailPayload'
+    generateApplicantByJobPostID: 'application'
     generateJobPostApplicant: 'jobpost'
     getMyResetPasswordLink: 'resetPasswordPayload'
     login: 'CredentialsPayload'
@@ -1279,6 +1282,7 @@ export interface NexusGenFieldTypeNames {
     phone: 'PhoneNumber'
     portfolio: 'portfolio'
     profileID: 'ID'
+    skills: 'skills'
     updatedAt: 'DateTime'
   }
   report: { // field return type name
@@ -1513,6 +1517,11 @@ export interface NexusGenArgTypes {
     findMyEmailAddress: { // args
       email: string; // String!
     }
+    generateApplicantByJobPostID: { // args
+      endDate: string; // String!
+      jobPostID: string; // ID!
+      startDate: string; // String!
+    }
     generateJobPostApplicant: { // args
       jobPostID: string; // ID!
     }
@@ -1634,6 +1643,7 @@ export interface NexusGenArgTypes {
     getApplicantJobPostByIdPagination: { // args
       input: NexusGenInputs['PaginationInput']; // PaginationInput!
       jobPostID: string; // ID!
+      search?: string | null; // String
     }
     getApplicationByID: { // args
       applicationID: string; // ID!

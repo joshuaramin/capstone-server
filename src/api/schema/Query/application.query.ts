@@ -1,4 +1,4 @@
-import { extendType, idArg, nonNull } from "nexus";
+import { extendType, idArg, nonNull, stringArg } from "nexus";
 import { prisma } from "../../helpers/server";
 
 export const ApplicationQuery = extendType({
@@ -6,16 +6,50 @@ export const ApplicationQuery = extendType({
   definition(t) {
     t.field("getApplicantJobPostByIdPagination", {
       type: "ApplicantPagination",
-      args: { input: nonNull("PaginationInput"), jobPostID: nonNull(idArg()) },
+      args: {
+        input: nonNull("PaginationInput"),
+        jobPostID: nonNull(idArg()),
+        search: stringArg(),
+      },
       resolve: async (
         _,
-        { input: { take, page }, jobPostID }
+        { input: { take, page }, jobPostID, search }
       ): Promise<any> => {
-        const getJobPostApplicant = await prisma.application.findMany({
-          where: {
-            jobPostID,
-          },
-        });
+        let whereArr: any = {
+          jobPostID,
+        };
+
+        if (search) {
+          whereArr.User = {
+            OR: [
+              {
+                email: {
+                  contains: search,
+                  mode: "insensitive",
+                },
+              },
+              {
+                Profile: {
+                  firstname: {
+                    contains: search,
+                    mode: "insensitive",
+                  },
+                  lastname: {
+                    contains: search,
+                    mode: "insensitive",
+                  },
+                },
+              },
+            ],
+          };
+        }
+
+        let queryParams = {
+          where: whereArr,
+        };
+        const getJobPostApplicant = await prisma.application.findMany(
+          queryParams
+        );
 
         const offset = (page - 1) * take;
         const item = getJobPostApplicant.slice(offset, offset + take);

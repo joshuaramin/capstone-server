@@ -160,6 +160,7 @@ type Mutation {
   deleteTheme(themeID: ID!): theme
   deleteUserAccount(userID: ID!): user
   findMyEmailAddress(email: String!): EmailPayload
+  generateApplicantByJobPostID(endDate: String!, jobPostID: ID!, startDate: String!): [application]
   generateJobPostApplicant(jobPostID: ID!): [jobpost]
   getMyResetPasswordLink(reset: String!): resetPasswordPayload
   login(email: String!, password: String!): CredentialsPayload
@@ -241,7 +242,7 @@ type Query {
   getAllSchedule(input: PaginationInput): [schedule]
   getAllSkill(input: PaginationInput): [skills]
   getAllUserAccountByRole(input: PaginationInput, role: roleEnum): [user]
-  getApplicantJobPostByIdPagination(input: PaginationInput!, jobPostID: ID!): ApplicantPagination
+  getApplicantJobPostByIdPagination(input: PaginationInput!, jobPostID: ID!, search: String): ApplicantPagination
   getApplicationByID(applicationID: ID!): application
   getCompanyByID(companyID: ID!): company
   getEducationById(educationID: ID!): education
@@ -538,6 +539,7 @@ type profile {
   phone: PhoneNumber
   portfolio: [portfolio]
   profileID: ID
+  skills: [skills]
   updatedAt: DateTime
 }
 

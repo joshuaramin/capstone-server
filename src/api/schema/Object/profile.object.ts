@@ -11,6 +11,18 @@ export const ProfileObject = objectType({
     t.date("birthday");
     t.datetime("createdAt");
     t.datetime("updatedAt");
+    t.list.field("skills", {
+      type: "skills",
+      resolve: async ({ profileID }): Promise<any> => {
+        return await prisma.skills.findMany({
+          where: {
+            Profile: {
+              some: { profileID },
+            },
+          },
+        });
+      },
+    });
     t.field("avatar", {
       type: "media",
       resolve: async ({ profileID }): Promise<any> => {
