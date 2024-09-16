@@ -6,6 +6,13 @@ import {
   ERROR_MESSAGE_FORBIDDEN,
 } from "../../helpers/error";
 import { ATSMainFunc } from "../../helpers/ats";
+import {
+  ApplicantHired,
+  ApplicantInterview,
+  ApplicantPending,
+  ApplicantReject,
+  ApplicantReview,
+} from "../../helpers/sendgrid";
 
 export const ApplicationMutation = extendType({
   type: "Mutation",
@@ -88,12 +95,56 @@ export const ApplicationMutation = extendType({
       type: "application",
       args: { applicationID: nonNull(idArg()), status: nonNull(stringArg()) },
       resolve: async (_, { applicationID, status }): Promise<any> => {
-        return await prisma.application.update({
+        const applicant = await prisma.application.update({
           where: { applicationID },
           data: {
             status,
           },
+          include: {
+            User: {
+              include: {
+                Profile: true,
+              },
+            },
+            JobPost: {
+              include: {
+                Company: true,
+              },
+            },
+          },
         });
+
+        if (status === "Pending") {
+          ApplicantPending(
+            applicant.User.email,
+            `${applicant.User.Profile.firstname} ${applicant.User.Profile.lastname}`,
+            `${applicant.JobPost.title}`,
+            `${applicant.JobPost.Company.companyName}`
+          );
+        } else if (status == "Review") {
+          ApplicantReview(
+            applicant.User.email,
+            `${applicant.User.Profile.firstname} ${applicant.User.Profile.lastname}`,
+            `${applicant.JobPost.title}`,
+            `${applicant.JobPost.Company.companyName}`
+          );
+        } else if (status === "Hired") {
+          ApplicantHired(
+            applicant.User.email,
+            `${applicant.User.Profile.firstname} ${applicant.User.Profile.lastname}`,
+            `${applicant.JobPost.title}`,
+            `${applicant.JobPost.Company.companyName}`
+          );
+        } else if (status === "Rejected") {
+          ApplicantReject(
+            applicant.User.email,
+            `${applicant.User.Profile.firstname} ${applicant.User.Profile.lastname}`,
+            `${applicant.JobPost.title}`,
+            `${applicant.JobPost.Company.companyName}`
+          );
+        }
+
+        return applicant;
       },
     });
     t.list.field("generateApplicantByJobPostID", {

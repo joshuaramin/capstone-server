@@ -63,7 +63,7 @@ export const FavouriteMutation = extendType({
           where: { favouriteID },
           select: {
             JobPost: true,
-            User: true
+            User: true,
           },
         });
 
@@ -73,11 +73,13 @@ export const FavouriteMutation = extendType({
             description: `You removed the ${favourite.JobPost.title} save job in your list`,
             User: {
               connect: {
-                userID: favourite.User.userID
-              }
-            }
+                userID: favourite.User.userID,
+              },
+            },
           },
         });
+
+        return favourite;
       },
     });
   },

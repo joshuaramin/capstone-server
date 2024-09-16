@@ -705,6 +705,704 @@ export async function ResetPasswordLink(
   );
 }
 
+export async function ApplicantPending(
+  email: string,
+  fullname: string,
+  jobType: string,
+  companyName: string
+) {
+  return emailTemplate(
+    email,
+    "Your Application Has Been Submitted",
+    `<!DOCTYPE html>
+<html lang="en" xmlns:v="urn:schemas-microsoft-com:vml">
+<head>
+  <meta charset="utf-8">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
+  <!--[if mso]>
+      <noscript>
+        <xml>
+          <o:OfficeDocumentSettings
+            xmlns:o="urn:schemas-microsoft-com:office:office"
+          >
+            <o:PixelsPerInch>96</o:PixelsPerInch>
+          </o:OfficeDocumentSettings>
+        </xml>
+      </noscript>
+      <style>
+        td,
+        th,
+        div,
+        p,
+        a,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          font-family: "Segoe UI", sans-serif;
+          mso-line-height-rule: exactly;
+        }
+      </style>
+    <![endif]-->
+  <title>Submitted Application</title>
+  <style>
+    .leading-8 {
+      line-height: 32px !important
+    }
+    @media (max-width: 600px) {
+      .sm-px-0 {
+        padding-left: 0 !important;
+        padding-right: 0 !important
+      }
+      .sm-px-4 {
+        padding-left: 16px !important;
+        padding-right: 16px !important
+      }
+      .sm-px-6 {
+        padding-left: 24px !important;
+        padding-right: 24px !important
+      }
+      .sm-py-8 {
+        padding-top: 32px !important;
+        padding-bottom: 32px !important
+      }
+      .sm-leading-8 {
+        line-height: 32px !important
+      }
+    }
+  </style>
+</head>
+<body style="margin: 0; width: 100%; background-color: #f1f5f9; padding: 0; -webkit-font-smoothing: antialiased; word-break: break-word">
+  <div role="article" aria-roledescription="email" aria-label="Submitted Application" lang="en">
+    <div class="sm-px-4" style="background-color: #e2e8f0; font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif">
+      <table align="center" cellpadding="0" cellspacing="0" role="none">
+        <tr>
+          <td style="width: 600px; max-width: 100%">
+            <table style="width: 100%;" cellpadding="0" cellspacing="0" role="none">
+              <tr>
+                <td class="sm-py-8 sm-px-6" style="padding: 48px; text-align: center">
+                  <a href="http://localhost:3000">
+                    <img src="http://cdn.mcauto-images-production.sendgrid.net/c19fbca0252c8257/aa48b7bb-ae11-47bc-b675-9622627de953/500x500.png" width="120" style="max-width: 100%; vertical-align: middle" alt="">
+                  </a>
+                </td>
+              </tr>
+              <tr>
+                <table style="width: 100%;" cellpadding="0" cellspacing="0" role="none">
+                  <td class="sm-px-6" style="border-radius: 8px; background-color: #fffffe; padding: 40px 48px">
+                    <p style="color: #000001">Dear ${fullname},</p>
+                    <p style="color: #000001;">
+                      Thank you for applying for the<b>${jobType}</b> position at
+                      <b>${companyName}!</b> We’re thrilled to receive your
+                      application and appreciate the time and effort you’ve
+                      invested in pursuing this opportunity with us.:
+                    </p>
+                    <p style="color: #000001;">
+                      Our team will begin the review process soon, and we’ll keep
+                      you updated every step of the way. In the meantime, if you
+                      have any questions or need further information, please don’t
+                      hesitate to reach out to us. We’re here to help and ensure
+                      your experience with us is as smooth as possible.
+                    </p>
+                    <p style="color: #000001;">Best Regards,</p>
+                    <p style="color: #000001;">The BeeHired Team</p>
+                  </td>
+                </table>
+              </tr>
+              <tr>
+                <td class="sm-px-0" style="width: 100%; padding-left: 24px; padding-right: 24px; text-align: left">
+                  <table style="width: 100%;" cellpadding="0" cellspacing="0" role="none"></table>
+                </td>
+              </tr>
+              <tr role="separator">
+                <td class="sm-leading-8" style="line-height: 48px">&zwj;</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</body>
+</html>`
+  );
+}
+
+export async function ApplicantReview(
+  email: string,
+  fullname: string,
+  jobType: string,
+  companyName: string
+) {
+  return emailTemplate(
+    email,
+    "Your Application is Under Review",
+    `<!DOCTYPE html>
+<html lang="en" xmlns:v="urn:schemas-microsoft-com:vml">
+<head>
+  <meta charset="utf-8">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
+  <!--[if mso]>
+      <noscript>
+        <xml>
+          <o:OfficeDocumentSettings
+            xmlns:o="urn:schemas-microsoft-com:office:office"
+          >
+            <o:PixelsPerInch>96</o:PixelsPerInch>
+          </o:OfficeDocumentSettings>
+        </xml>
+      </noscript>
+      <style>
+        td,
+        th,
+        div,
+        p,
+        a,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          font-family: "Segoe UI", sans-serif;
+          mso-line-height-rule: exactly;
+        }
+      </style>
+    <![endif]-->
+  <title>Submitted Application</title>
+  <style>
+    .leading-8 {
+      line-height: 32px !important
+    }
+    @media (max-width: 600px) {
+      .sm-px-0 {
+        padding-left: 0 !important;
+        padding-right: 0 !important
+      }
+      .sm-px-4 {
+        padding-left: 16px !important;
+        padding-right: 16px !important
+      }
+      .sm-px-6 {
+        padding-left: 24px !important;
+        padding-right: 24px !important
+      }
+      .sm-py-8 {
+        padding-top: 32px !important;
+        padding-bottom: 32px !important
+      }
+      .sm-leading-8 {
+        line-height: 32px !important
+      }
+    }
+  </style>
+</head>
+<body style="margin: 0; width: 100%; background-color: #f1f5f9; padding: 0; -webkit-font-smoothing: antialiased; word-break: break-word">
+  <div role="article" aria-roledescription="email" aria-label="Submitted Application" lang="en">
+    <div class="sm-px-4" style="background-color: #e2e8f0; font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif">
+      <table align="center" cellpadding="0" cellspacing="0" role="none">
+        <tr>
+          <td style="width: 600px; max-width: 100%">
+            <table style="width: 100%;" cellpadding="0" cellspacing="0" role="none">
+              <tr>
+                <td class="sm-py-8 sm-px-6" style="padding: 48px; text-align: center">
+                  <a href="http://localhost:3000">
+                    <img src="http://cdn.mcauto-images-production.sendgrid.net/c19fbca0252c8257/aa48b7bb-ae11-47bc-b675-9622627de953/500x500.png" width="120" style="max-width: 100%; vertical-align: middle" alt="">
+                  </a>
+                </td>
+              </tr>
+              <tr>
+                <table style="width: 100%;" cellpadding="0" cellspacing="0" role="none">
+                  <td class="sm-px-6" style="border-radius: 8px; background-color: #fffffe; padding: 40px 48px">
+                    <p style="color: #000001">Dear ${fullname},</p>
+                    <p style="color: #000001;">
+                      We wanted to let you know that your application for the <b>${jobType}</b> position at <b>${companyName}</b> is currently under review.
+                    </p>
+                    <p style="color: #000001;">
+                      Our hiring team is working diligently to review all
+                      candidates to identify the best match for the role. This
+                      process may take some time as we want to ensure a thorough
+                      evaluation. Rest assured, we’ll keep you informed every step
+                      of the way.
+                    </p>
+                    <p style="color: #000001;">
+                      Our hiring team is working diligently to review all
+                      candidates to identify the best match for the role. This
+                      process may take some time as we want to ensure a thorough
+                      evaluation. Rest assured, we’ll keep you informed every step
+                      of the way.</p>
+                    <p></p>
+                    <p style="color: #000001;">
+                      We appreciate your patience and continued interest in joining <b>${companyName}</b>. If you have any questions or need further assistance, feel free to contact our support team at beehired.careers@gmail.com
+                    </p>
+                    <p style="color: #000001;">Best Regards,</p>
+                    <p style="color: #000001;">The BeeHired Team</p>
+                  </td>
+                </table>
+              </tr>
+              <tr>
+                <td class="sm-px-0" style="width: 100%; padding-left: 24px; padding-right: 24px; text-align: left">
+                  <table style="width: 100%;" cellpadding="0" cellspacing="0" role="none"></table>
+                </td>
+              </tr>
+              <tr role="separator">
+                <td class="sm-leading-8" style="line-height: 48px">&zwj;</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</body>
+</html>`
+  );
+}
+
+export async function ApplicantHired(
+  email: string,
+  jobtype: string,
+  companyName: string,
+  fullname: string
+) {
+  return emailTemplate(
+    email,
+    `Congratulations, You’ve Been Hired for the ${jobtype} Position!`,
+    `<!DOCTYPE html>
+<html lang="en" xmlns:v="urn:schemas-microsoft-com:vml">
+<head>
+  <meta charset="utf-8">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
+  <!--[if mso]>
+      <noscript>
+        <xml>
+          <o:OfficeDocumentSettings
+            xmlns:o="urn:schemas-microsoft-com:office:office"
+          >
+            <o:PixelsPerInch>96</o:PixelsPerInch>
+          </o:OfficeDocumentSettings>
+        </xml>
+      </noscript>
+      <style>
+        td,
+        th,
+        div,
+        p,
+        a,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          font-family: "Segoe UI", sans-serif;
+          mso-line-height-rule: exactly;
+        }
+      </style>
+    <![endif]-->
+  <title>Submitted Application</title>
+  <style>
+    .leading-8 {
+      line-height: 32px !important
+    }
+    @media (max-width: 600px) {
+      .sm-px-0 {
+        padding-left: 0 !important;
+        padding-right: 0 !important
+      }
+      .sm-px-4 {
+        padding-left: 16px !important;
+        padding-right: 16px !important
+      }
+      .sm-px-6 {
+        padding-left: 24px !important;
+        padding-right: 24px !important
+      }
+      .sm-py-8 {
+        padding-top: 32px !important;
+        padding-bottom: 32px !important
+      }
+      .sm-leading-8 {
+        line-height: 32px !important
+      }
+    }
+  </style>
+</head>
+<body style="margin: 0; width: 100%; background-color: #f1f5f9; padding: 0; -webkit-font-smoothing: antialiased; word-break: break-word">
+  <div role="article" aria-roledescription="email" aria-label="Submitted Application" lang="en">
+    <div class="sm-px-4" style="background-color: #e2e8f0; font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif">
+      <table align="center" cellpadding="0" cellspacing="0" role="none">
+        <tr>
+          <td style="width: 600px; max-width: 100%">
+            <table style="width: 100%;" cellpadding="0" cellspacing="0" role="none">
+              <tr>
+                <td class="sm-py-8 sm-px-6" style="padding: 48px; text-align: center">
+                  <a href="http://localhost:3000">
+                    <img src="http://cdn.mcauto-images-production.sendgrid.net/c19fbca0252c8257/aa48b7bb-ae11-47bc-b675-9622627de953/500x500.png" width="120" style="max-width: 100%; vertical-align: middle" alt="">
+                  </a>
+                </td>
+              </tr>
+              <tr>
+                <table style="width: 100%;" cellpadding="0" cellspacing="0" role="none">
+                  <td class="sm-px-6" style="border-radius: 8px; background-color: #fffffe; padding: 40px 48px">
+                    <p style="color: #000001">Dear ${fullname},</p>
+                    <p style="color: #000001;">Welcome to the team!</p>
+                    <p style="color: #000001;">
+                      We are happy to welcome you to <b>${companyName}!</b> Your
+                      skills, experience, and passion truly stood out during the
+                      selection process, and we are confident that you will be a
+                      great addition to the company
+                    </p>
+                    <p style="color: #000001;">
+                      Attached is your official offer letter, which includes all
+                      the details about your new role. We encourage you to review
+                      the document thoroughly.
+                    </p>
+                    <p style="color: #000001;">
+                      Thank you for choosing to take the next step in your career
+                      with <b>${companyName}</b>. We are excited to see the impact you
+                      will make and to support your growth within our company.
+                    </p>
+                    <p style="color: #000001;">
+                      Please respond to this email to confirm your acceptance, and
+                      feel free to reach out if you have any questions or need any
+                      further clarification.
+                    </p>
+                    <p style="color: #000001;">Best Regards,</p>
+                    <p style="color: #000001;">The BeeHired Team</p>
+                  </td>
+                </table>
+              </tr>
+              <tr>
+                <td class="sm-px-0" style="width: 100%; padding-left: 24px; padding-right: 24px; text-align: left">
+                  <table style="width: 100%;" cellpadding="0" cellspacing="0" role="none"></table>
+                </td>
+              </tr>
+              <tr role="separator">
+                <td class="sm-leading-8" style="line-height: 48px">&zwj;</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</body>
+</html>`
+  );
+}
+
+export async function ApplicantInterview(
+  email: string,
+  fullname: string,
+  jobType: string,
+  companyName: string
+) {
+  return emailTemplate(
+    email,
+    `Virtual Interview Scheduled for ${jobType} Position 
+`,
+    `<!DOCTYPE html>
+<html lang="en" xmlns:v="urn:schemas-microsoft-com:vml">
+<head>
+  <meta charset="utf-8">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
+  <!--[if mso]>
+      <noscript>
+        <xml>
+          <o:OfficeDocumentSettings
+            xmlns:o="urn:schemas-microsoft-com:office:office"
+          >
+            <o:PixelsPerInch>96</o:PixelsPerInch>
+          </o:OfficeDocumentSettings>
+        </xml>
+      </noscript>
+      <style>
+        td,
+        th,
+        div,
+        p,
+        a,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          font-family: "Segoe UI", sans-serif;
+          mso-line-height-rule: exactly;
+        }
+      </style>
+    <![endif]-->
+  <title>Submitted Application</title>
+  <style>
+    .leading-8 {
+      line-height: 32px !important
+    }
+    @media (max-width: 600px) {
+      .sm-px-0 {
+        padding-left: 0 !important;
+        padding-right: 0 !important
+      }
+      .sm-px-4 {
+        padding-left: 16px !important;
+        padding-right: 16px !important
+      }
+      .sm-px-6 {
+        padding-left: 24px !important;
+        padding-right: 24px !important
+      }
+      .sm-py-8 {
+        padding-top: 32px !important;
+        padding-bottom: 32px !important
+      }
+      .sm-leading-8 {
+        line-height: 32px !important
+      }
+    }
+  </style>
+</head>
+<body style="margin: 0; width: 100%; background-color: #f1f5f9; padding: 0; -webkit-font-smoothing: antialiased; word-break: break-word">
+  <div role="article" aria-roledescription="email" aria-label="Submitted Application" lang="en">
+    <div class="sm-px-4" style="background-color: #e2e8f0; font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif">
+      <table align="center" cellpadding="0" cellspacing="0" role="none">
+        <tr>
+          <td style="width: 600px; max-width: 100%">
+            <table style="width: 100%;" cellpadding="0" cellspacing="0" role="none">
+              <tr>
+                <td class="sm-py-8 sm-px-6" style="padding: 48px; text-align: center">
+                  <a href="http://localhost:3000">
+                    <img src="http://cdn.mcauto-images-production.sendgrid.net/c19fbca0252c8257/aa48b7bb-ae11-47bc-b675-9622627de953/500x500.png" width="120" style="max-width: 100%; vertical-align: middle" alt="">
+                  </a>
+                </td>
+              </tr>
+              <tr>
+                <table style="width: 100%;" cellpadding="0" cellspacing="0" role="none">
+                  <td class="sm-px-6" style="border-radius: 8px; background-color: #fffffe; padding: 40px 48px">
+                    <p style="color: #000001">Dear ${fullname},</p>
+                    <p style="color: #000001;">
+                      We’re excited to move forward with your application for the
+                      <b>[Job Title]</b> position at <b>${companyName}!</b> We
+                      would like to schedule a virtual interview with you and our
+                      team to learn more about your qualifications and how you
+                      could contribute to our company.
+                    </p>
+                    <p style="color: #000001;">
+                      Please reply to this email to confirm your availability for
+                      the proposed time. If this time doesn’t work for you, kindly
+                      suggest alternative dates and times that suit your schedule,
+                      and we will coordinate with our team.
+                    </p>
+                    <div>
+                      <p style="font-weight: 700; color: #000001">Interview Preparation:</p>
+                      <div style="padding-left: 4px; padding-right: 4px">
+                        <ul>
+                          <li style="color: #000001;">
+                            Ensure you have a stable internet connection and a
+                            quiet space for the interview.
+                          </li>
+                          <li style="color: #000001;">
+                            Test the meeting link before the scheduled time to
+                            avoid any technical issues.
+                          </li>
+                          <li style="color: #000001;">
+                            Have your resume and any relevant documents ready to
+                            discuss.
+                          </li>
+                          <li style="color: #000001;">
+                            Prepare any questions you may have about the role or
+                            our company.
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                    <p style="color: #000001;">
+                      We’re looking forward to your response and to getting to
+                      know you better!
+                    </p>
+                    <p style="color: #000001;">Best Regards,</p>
+                    <p style="color: #000001;">The BeeHired Team</p>
+                  </td>
+                </table>
+              </tr>
+              <tr>
+                <td class="sm-px-0" style="width: 100%; padding-left: 24px; padding-right: 24px; text-align: left">
+                  <table style="width: 100%;" cellpadding="0" cellspacing="0" role="none"></table>
+                </td>
+              </tr>
+              <tr role="separator">
+                <td class="sm-leading-8" style="line-height: 48px">&zwj;</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</body>
+</html>`
+  );
+}
+
+export async function ApplicantReject(
+  email: string,
+  fullname: string,
+  jobType: string,
+  companyName: string
+) {
+  return emailTemplate(
+    email,
+    `Thank You for Your Application `,
+    `<!DOCTYPE html>
+<html lang="en" xmlns:v="urn:schemas-microsoft-com:vml">
+<head>
+  <meta charset="utf-8">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
+  <!--[if mso]>
+      <noscript>
+        <xml>
+          <o:OfficeDocumentSettings
+            xmlns:o="urn:schemas-microsoft-com:office:office"
+          >
+            <o:PixelsPerInch>96</o:PixelsPerInch>
+          </o:OfficeDocumentSettings>
+        </xml>
+      </noscript>
+      <style>
+        td,
+        th,
+        div,
+        p,
+        a,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          font-family: "Segoe UI", sans-serif;
+          mso-line-height-rule: exactly;
+        }
+      </style>
+    <![endif]-->
+  <title>Submitted Application</title>
+  <style>
+    .leading-8 {
+      line-height: 32px !important
+    }
+    @media (max-width: 600px) {
+      .sm-px-0 {
+        padding-left: 0 !important;
+        padding-right: 0 !important
+      }
+      .sm-px-4 {
+        padding-left: 16px !important;
+        padding-right: 16px !important
+      }
+      .sm-px-6 {
+        padding-left: 24px !important;
+        padding-right: 24px !important
+      }
+      .sm-py-8 {
+        padding-top: 32px !important;
+        padding-bottom: 32px !important
+      }
+      .sm-leading-8 {
+        line-height: 32px !important
+      }
+    }
+  </style>
+</head>
+<body style="margin: 0; width: 100%; background-color: #f1f5f9; padding: 0; -webkit-font-smoothing: antialiased; word-break: break-word">
+  <div role="article" aria-roledescription="email" aria-label="Submitted Application" lang="en">
+    <div class="sm-px-4" style="background-color: #e2e8f0; font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif">
+      <table align="center" cellpadding="0" cellspacing="0" role="none">
+        <tr>
+          <td style="width: 600px; max-width: 100%">
+            <table style="width: 100%;" cellpadding="0" cellspacing="0" role="none">
+              <tr>j
+                <td class="sm-py-8 sm-px-6" style="padding: 48px; text-align: center">
+                  <a href="http://localhost:3000">
+                    <img src="http://cdn.mcauto-images-production.sendgrid.net/c19fbca0252c8257/aa48b7bb-ae11-47bc-b675-9622627de953/500x500.png" width="120" style="max-width: 100%; vertical-align: middle" alt="">
+                  </a>
+                </td>
+              </tr>
+              <tr>
+                <table style="width: 100%;" cellpadding="0" cellspacing="0" role="none">
+                  <td class="sm-px-6" style="border-radius: 8px; background-color: #fffffe; padding: 40px 48px">
+                    <p style="color: #000001">Dear ${fullname},</p>
+                    <p style="color: #000001;">
+                      Thank you for taking the time to apply for the <b>${jobType}</b>
+                      position at <b>${companyName}</b>. We truly appreciate the effort
+                      you put into your application and the interest you’ve shown
+                      in joining our company.
+                    </p>
+                    <p style="color: #000001;">
+                      After careful consideration, we’ve decided to move forward
+                      with another candidate whose experience more closely aligns
+                      with our current needs. Please know that this decision was
+                      not easy, as we received applications from many qualified
+                      individuals like yourself.
+                    </p>
+                    <p style="color: #000001;">
+                      While we won’t be moving forward together at this time, we
+                      were genuinely impressed by your background and encourage
+                      you to keep an eye on our future openings. We believe you
+                      have much to offer, and we’d love to stay connected for any
+                      upcoming opportunities that better match your unique skills
+                      and experience.
+                    </p>
+                    <p style="color: #000001;">
+                      We wish you all the best in your job search and hope to
+                      cross paths again in the future
+                    </p>
+                    <p style="color: #000001;"></p>
+                    Thank you once again for your interest in <b>${companyName}!</b>
+                    <p></p>
+                    <p style="color: #000001;">Warm regards,</p>
+                    <p style="color: #000001;">The BeeHired Team</p>
+                  </td>
+                </table>
+              </tr>
+              <tr>
+                <td class="sm-px-0" style="width: 100%; padding-left: 24px; padding-right: 24px; text-align: left">
+                  <table style="width: 100%;" cellpadding="0" cellspacing="0" role="none"></table>
+                </td>
+              </tr>
+              <tr role="separator">
+                <td class="sm-leading-8" style="line-height: 48px">&zwj;</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</body>
+</html>`
+  );
+}
 export async function OTPEmail(receiver: string) {
   return emailTemplate(receiver, "One-Time Password", "");
 }
