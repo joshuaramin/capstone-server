@@ -98,10 +98,14 @@ export const EducationMutation = extendType({
       resolve: async (_, { educationID }): Promise<any> => {
         const education = await prisma.education.delete({
           where: { educationID },
+          select: {
+            Profile: true,
+            educationID: true
+          },
         });
 
         const user = await prisma.user.findFirst({
-          where: { Profile: { Education: { some: { educationID } } } },
+          where: { Profile: { profileID: education.Profile.profileID } },
         });
 
         await prisma.activityLogs.create({

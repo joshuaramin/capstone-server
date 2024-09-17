@@ -98,16 +98,8 @@ export const ProfileMutation = extendType({
       type: "profile",
       args: { profileID: nonNull(idArg()), mediaID: nonNull(idArg()) },
       resolve: async (_, { profileID, mediaID }): Promise<any> => {
-        await prisma.media.delete({
+        const media = await prisma.media.delete({
           where: { mediaID },
-        });
-        const prof = await prisma.profile.update({
-          where: { profileID },
-          data: {
-            Header: {
-              delete: { mediaID },
-            },
-          },
         });
 
         const user = await prisma.user.findFirst({
@@ -124,7 +116,7 @@ export const ProfileMutation = extendType({
           },
         });
 
-        return prof;
+        return media;
       },
     });
     t.field("addProfileHeader", {
@@ -237,16 +229,8 @@ export const ProfileMutation = extendType({
       type: "profile",
       args: { profileID: nonNull(idArg()), mediaID: nonNull(idArg()) },
       resolve: async (_, { profileID, mediaID }): Promise<any> => {
-        await prisma.media.delete({
+        const media = await prisma.media.delete({
           where: { mediaID },
-        });
-        const prof = await prisma.profile.update({
-          where: { profileID },
-          data: {
-            Header: {
-              delete: { mediaID },
-            },
-          },
         });
 
         const user = await prisma.user.findFirst({
@@ -263,7 +247,7 @@ export const ProfileMutation = extendType({
           },
         });
 
-        return prof;
+        return media;
       },
     });
   },
