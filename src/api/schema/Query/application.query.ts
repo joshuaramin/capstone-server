@@ -75,5 +75,17 @@ export const ApplicationQuery = extendType({
         });
       },
     });
+
+    t.field("getMyApplication", {
+      type: "ApplicantPagination",
+      args: { userID: nonNull(idArg()), input: nonNull("PaginationInput") },
+      resolve: async (_, { userID }): Promise<any> => {
+        return await prisma.application.findMany({
+          where: {
+            userID,
+          },
+        });
+      },
+    });
   },
 });

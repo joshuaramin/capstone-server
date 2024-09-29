@@ -1,5 +1,5 @@
 import sendgrid from "@sendgrid/mail";
-
+import { format } from "date-fns";
 sendgrid.setApiKey(process.env.SGMAIL);
 
 const emailTemplate = (
@@ -1109,7 +1109,10 @@ export async function ApplicantInterview(
   email: string,
   fullname: string,
   jobType: string,
-  companyName: string
+  companyName: string,
+  startDate: string,
+  startTime: string,
+  meetingLink: string
 ) {
   return emailTemplate(
     email,
@@ -1199,11 +1202,22 @@ export async function ApplicantInterview(
                     <p style="color: #000001">Dear ${fullname},</p>
                     <p style="color: #000001;">
                       We’re excited to move forward with your application for the
-                      <b>[Job Title]</b> position at <b>${companyName}!</b> We
+                      <b>${jobType}</b> position at <b>${companyName}!</b> We
                       would like to schedule a virtual interview with you and our
                       team to learn more about your qualifications and how you
                       could contribute to our company.
                     </p>
+                    <div>
+                      <p style="font-weight: 700; color: #000001">Interview Details:</p>
+                      <p style="color: #000001;"><b>Date:</b> ${format(
+                        new Date(startDate),
+                        "MMMM dd, yyyy"
+                      )}</p>
+                      <p style="color: #000001;"><b>Time:</b> ${startTime}</p>
+                      <p style="color: #000001;">
+                        <b>Virtual Meeting Link:</b> ${meetingLink}
+                      </p>
+                    </div>
                     <p style="color: #000001;">
                       Please reply to this email to confirm your availability for
                       the proposed time. If this time doesn’t work for you, kindly
@@ -1211,7 +1225,7 @@ export async function ApplicantInterview(
                       and we will coordinate with our team.
                     </p>
                     <div>
-                      <p style="font-weight: 700; color: #000001">Interview Preparation:</p>
+                      <p style="font-weight: 700; color: #000001;">Interview Preparation:</p>
                       <div style="padding-left: 4px; padding-right: 4px">
                         <ul>
                           <li style="color: #000001;">

@@ -21,6 +21,10 @@ declare global {
      */
     email<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "EmailAddress";
     /**
+     * The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+     */
+    json<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "JSON";
+    /**
      * A field whose value conforms to the standard E.164 format as specified in: https://en.wikipedia.org/wiki/E.164. Basically this is +17895551234.
      */
     phone<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "PhoneNumber";
@@ -44,6 +48,10 @@ declare global {
      * A field whose value conforms to the standard internet email address format as specified in HTML Spec: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.
      */
     email<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "EmailAddress";
+    /**
+     * The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+     */
+    json<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "JSON";
     /**
      * A field whose value conforms to the standard E.164 format as specified in: https://en.wikipedia.org/wiki/E.164. Basically this is +17895551234.
      */
@@ -106,9 +114,11 @@ export interface NexusGenInputs {
   }
   ScheduleInput: { // input type
     description?: string | null; // String
-    endDate?: NexusGenScalars['DateTime'] | null; // DateTime
-    link?: string | null; // String
-    startDate?: NexusGenScalars['DateTime'] | null; // DateTime
+    duration?: number | null; // Int
+    endDate?: NexusGenScalars['Date'] | null; // Date
+    endTime?: string | null; // String
+    startDate?: NexusGenScalars['Date'] | null; // Date
+    startTime?: string | null; // String
     title?: string | null; // String
   }
   SkillInput: { // input type
@@ -168,6 +178,7 @@ export interface NexusGenScalars {
   Date: any
   DateTime: any
   EmailAddress: any
+  JSON: any
   PhoneNumber: any
   Upload: any
 }
@@ -443,6 +454,16 @@ export interface NexusGenObjects {
     count?: number | null; // Int
     skills?: string | null; // String
   }
+  social: { // root type
+    Github?: string | null; // String
+    Web?: string | null; // String
+    X?: string | null; // String
+    createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
+    facebook?: string | null; // String
+    instagram?: string | null; // String
+    socialID?: string | null; // ID
+    updatedAt?: NexusGenScalars['DateTime'] | null; // DateTime
+  }
   theme: { // root type
     createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
     image?: string | null; // String
@@ -465,6 +486,31 @@ export interface NexusGenObjects {
     userID?: string | null; // ID
     verified?: boolean | null; // Boolean
   }
+  zoom: { // root type
+    access_token?: string | null; // String
+    api_url?: string | null; // String
+    expires_in?: number | null; // Int
+    scope?: string | null; // String
+    token_type?: string | null; // String
+  }
+  zoom_meeting: { // root type
+    created_at?: string | null; // String
+    duration?: number | null; // Int
+    encrypted_password?: string | null; // String
+    h323_password?: string | null; // String
+    host_id?: string | null; // String
+    id?: number | null; // Int
+    join_url?: string | null; // String
+    password?: string | null; // String
+    pstn_password?: string | null; // String
+    start_time?: string | null; // String
+    start_url?: string | null; // String
+    status?: string | null; // String
+    timezone?: string | null; // String
+    topic?: string | null; // String
+    type?: string | null; // String
+    uuid?: string | null; // String
+  }
 }
 
 export interface NexusGenInterfaces {
@@ -473,7 +519,7 @@ export interface NexusGenInterfaces {
 
 export interface NexusGenUnions {
   AboutPayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['about'];
-  ApplicationPayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['Forbidden'] | NexusGenRootTypes['application'];
+  ApplicationPayload: NexusGenRootTypes['AlreadyExist'] | NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['Forbidden'] | NexusGenRootTypes['application'];
   CredentialsPayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['CredentialsInvalid'] | NexusGenRootTypes['NOTFOUND'] | NexusGenRootTypes['token'];
   EducationPayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['education'];
   EmailPayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['NOTFOUND'] | NexusGenRootTypes['user'];
@@ -484,6 +530,7 @@ export interface NexusGenUnions {
   ResumePayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['resume'];
   SchedulePayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['schedule'];
   SkillPayload: NexusGenRootTypes['AlreadyExist'] | NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['skills'];
+  SocialPayload: NexusGenRootTypes['AlreadyExist'] | NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['social'];
   UserPayload: NexusGenRootTypes['AlreadyExist'] | NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['PasswordAlreadyExist'] | NexusGenRootTypes['user'];
   resetPasswordPayload: NexusGenRootTypes['Expired'] | NexusGenRootTypes['NOTFOUND'] | NexusGenRootTypes['resetPassword'];
   salaryPayload: NexusGenRootTypes['BADINPUT'] | NexusGenRootTypes['salary'];
@@ -567,6 +614,7 @@ export interface NexusGenFieldTypes {
     createResume: NexusGenRootTypes['ResumePayload'] | null; // ResumePayload
     createSchedule: NexusGenRootTypes['SchedulePayload'] | null; // SchedulePayload
     createSkills: NexusGenRootTypes['SkillPayload'] | null; // SkillPayload
+    createSocialLink: NexusGenRootTypes['social'] | null; // social
     createTheme: NexusGenRootTypes['theme'] | null; // theme
     createUserAdminAccount: NexusGenRootTypes['UserPayload'] | null; // UserPayload
     createUserFreelancers: NexusGenRootTypes['UserPayload'] | null; // UserPayload
@@ -603,9 +651,12 @@ export interface NexusGenFieldTypes {
     updateProfile: NexusGenRootTypes['profile'] | null; // profile
     updateSchedule: NexusGenRootTypes['schedule'] | null; // schedule
     updateSkills: NexusGenRootTypes['skills'] | null; // skills
+    updateSocialLink: NexusGenRootTypes['social'] | null; // social
     updateTheme: NexusGenRootTypes['theme'] | null; // theme
     updateUserPasswordAccount: NexusGenRootTypes['UserPayload'] | null; // UserPayload
     verifyMyAccount: NexusGenRootTypes['user'] | null; // user
+    zoom_access: NexusGenRootTypes['zoom'] | null; // zoom
+    zoom_meeting: NexusGenRootTypes['zoom_meeting'] | null; // zoom_meeting
   }
   NOTFOUND: { // field return type
     code: number | null; // Int
@@ -627,7 +678,9 @@ export interface NexusGenFieldTypes {
     getAllFonts: NexusGenRootTypes['FontPagination'] | null; // FontPagination
     getAllJobPost: Array<NexusGenRootTypes['jobpost'] | null> | null; // [jobpost]
     getAllMediaProfile: Array<NexusGenRootTypes['media'] | null> | null; // [media]
+    getAllMyMessage: Array<NexusGenRootTypes['message'] | null> | null; // [message]
     getAllMySaveJobs: Array<NexusGenRootTypes['favourite'] | null> | null; // [favourite]
+    getAllMySocialLink: NexusGenRootTypes['social'] | null; // social
     getAllResumyByProfileID: Array<NexusGenRootTypes['resume'] | null> | null; // [resume]
     getAllSchedule: Array<NexusGenRootTypes['schedule'] | null> | null; // [schedule]
     getAllSkill: Array<NexusGenRootTypes['skills'] | null> | null; // [skills]
@@ -639,6 +692,8 @@ export interface NexusGenFieldTypes {
     getJobBoard: NexusGenRootTypes['JobPagination'] | null; // JobPagination
     getJobPostById: NexusGenRootTypes['jobpost'] | null; // jobpost
     getJobPostBySlug: NexusGenRootTypes['jobpost'] | null; // jobpost
+    getListofMessage: Array<NexusGenRootTypes['user'] | null> | null; // [user]
+    getMyApplication: NexusGenRootTypes['ApplicantPagination'] | null; // ApplicantPagination
     getMyCompanyByUserID: NexusGenRootTypes['company'] | null; // company
     getMyCompanyJobPost: Array<NexusGenRootTypes['jobpost'] | null> | null; // [jobpost]
     getMyFavouriteJobPost: NexusGenRootTypes['favourite'] | null; // favourite
@@ -648,6 +703,7 @@ export interface NexusGenFieldTypes {
     getPortfolioById: NexusGenRootTypes['portfolio'] | null; // portfolio
     getPortfolioByProfileID: Array<NexusGenRootTypes['portfolio'] | null> | null; // [portfolio]
     getProfileByUser: NexusGenRootTypes['profile'] | null; // profile
+    getScheduleByDate: Array<NexusGenRootTypes['schedule'] | null> | null; // [schedule]
     getScheduleById: NexusGenRootTypes['schedule'] | null; // schedule
     getSearchByCompanyName: NexusGenRootTypes['company'] | null; // company
     getSearchBySkill: Array<NexusGenRootTypes['skills'] | null> | null; // [skills]
@@ -658,6 +714,7 @@ export interface NexusGenFieldTypes {
     getThemes: NexusGenRootTypes['ThemePagination'] | null; // ThemePagination
     getUserAccountById: NexusGenRootTypes['user'] | null; // user
     getUserActivityLogs: Array<NexusGenRootTypes['activityLogs'] | null> | null; // [activityLogs]
+    getUserProfileById: NexusGenRootTypes['profile'] | null; // profile
     jobPagination: NexusGenRootTypes['JobPagination'] | null; // JobPagination
     skillsPagination: NexusGenRootTypes['SkillsPagination'] | null; // SkillsPagination
   }
@@ -794,9 +851,10 @@ export interface NexusGenFieldTypes {
   }
   message: { // field return type
     createdAt: NexusGenScalars['DateTime'] | null; // DateTime
+    media: NexusGenRootTypes['media'] | null; // media
     message: string | null; // String
     messageID: string | null; // ID
-    receivedUser: NexusGenRootTypes['message'] | null; // message
+    receivedUser: NexusGenRootTypes['user'] | null; // user
     receiverID: string | null; // String
     sendUser: NexusGenRootTypes['user'] | null; // user
     senderID: string | null; // String
@@ -838,14 +896,16 @@ export interface NexusGenFieldTypes {
     createdAt: NexusGenScalars['DateTime'] | null; // DateTime
     education: Array<NexusGenRootTypes['education'] | null> | null; // [education]
     firstname: string | null; // String
+    getMyFont: NexusGenRootTypes['fonts'] | null; // fonts
     getMyResume: Array<NexusGenRootTypes['resume'] | null> | null; // [resume]
-    getMySkills: Array<NexusGenRootTypes['skills'] | null> | null; // [skills]
+    getMyTheme: NexusGenRootTypes['theme'] | null; // theme
     header: NexusGenRootTypes['media'] | null; // media
     lastname: string | null; // String
     phone: NexusGenScalars['PhoneNumber'] | null; // PhoneNumber
     portfolio: Array<NexusGenRootTypes['portfolio'] | null> | null; // [portfolio]
     profileID: string | null; // ID
     skills: Array<NexusGenRootTypes['skills'] | null> | null; // [skills]
+    social: Array<NexusGenRootTypes['social'] | null> | null; // [social]
     updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
   }
   report: { // field return type
@@ -896,6 +956,16 @@ export interface NexusGenFieldTypes {
     count: number | null; // Int
     skills: string | null; // String
   }
+  social: { // field return type
+    Github: string | null; // String
+    Web: string | null; // String
+    X: string | null; // String
+    createdAt: NexusGenScalars['DateTime'] | null; // DateTime
+    facebook: string | null; // String
+    instagram: string | null; // String
+    socialID: string | null; // ID
+    updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
+  }
   theme: { // field return type
     createdAt: NexusGenScalars['DateTime'] | null; // DateTime
     image: string | null; // String
@@ -915,14 +985,42 @@ export interface NexusGenFieldTypes {
     getMyCompany: NexusGenRootTypes['company'] | null; // company
     getMyLogs: Array<NexusGenRootTypes['activityLogs'] | null> | null; // [activityLogs]
     getMyNotification: Array<NexusGenRootTypes['notification'] | null> | null; // [notification]
+    messages: Array<NexusGenRootTypes['message'] | null> | null; // [message]
     myProfile: NexusGenRootTypes['profile'] | null; // profile
     password: string | null; // String
     passwordHash: Array<NexusGenRootTypes['password'] | null> | null; // [password]
     plan: string | null; // String
+    receiverList: Array<NexusGenRootTypes['message'] | null> | null; // [message]
     role: string | null; // String
+    senderList: Array<NexusGenRootTypes['message'] | null> | null; // [message]
     updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
     userID: string | null; // ID
     verified: boolean | null; // Boolean
+  }
+  zoom: { // field return type
+    access_token: string | null; // String
+    api_url: string | null; // String
+    expires_in: number | null; // Int
+    scope: string | null; // String
+    token_type: string | null; // String
+  }
+  zoom_meeting: { // field return type
+    created_at: string | null; // String
+    duration: number | null; // Int
+    encrypted_password: string | null; // String
+    h323_password: string | null; // String
+    host_id: string | null; // String
+    id: number | null; // Int
+    join_url: string | null; // String
+    password: string | null; // String
+    pstn_password: string | null; // String
+    start_time: string | null; // String
+    start_url: string | null; // String
+    status: string | null; // String
+    timezone: string | null; // String
+    topic: string | null; // String
+    type: string | null; // String
+    uuid: string | null; // String
   }
   Error: { // field return type
     code: number | null; // Int
@@ -1004,6 +1102,7 @@ export interface NexusGenFieldTypeNames {
     createResume: 'ResumePayload'
     createSchedule: 'SchedulePayload'
     createSkills: 'SkillPayload'
+    createSocialLink: 'social'
     createTheme: 'theme'
     createUserAdminAccount: 'UserPayload'
     createUserFreelancers: 'UserPayload'
@@ -1040,9 +1139,12 @@ export interface NexusGenFieldTypeNames {
     updateProfile: 'profile'
     updateSchedule: 'schedule'
     updateSkills: 'skills'
+    updateSocialLink: 'social'
     updateTheme: 'theme'
     updateUserPasswordAccount: 'UserPayload'
     verifyMyAccount: 'user'
+    zoom_access: 'zoom'
+    zoom_meeting: 'zoom_meeting'
   }
   NOTFOUND: { // field return type name
     code: 'Int'
@@ -1064,7 +1166,9 @@ export interface NexusGenFieldTypeNames {
     getAllFonts: 'FontPagination'
     getAllJobPost: 'jobpost'
     getAllMediaProfile: 'media'
+    getAllMyMessage: 'message'
     getAllMySaveJobs: 'favourite'
+    getAllMySocialLink: 'social'
     getAllResumyByProfileID: 'resume'
     getAllSchedule: 'schedule'
     getAllSkill: 'skills'
@@ -1076,6 +1180,8 @@ export interface NexusGenFieldTypeNames {
     getJobBoard: 'JobPagination'
     getJobPostById: 'jobpost'
     getJobPostBySlug: 'jobpost'
+    getListofMessage: 'user'
+    getMyApplication: 'ApplicantPagination'
     getMyCompanyByUserID: 'company'
     getMyCompanyJobPost: 'jobpost'
     getMyFavouriteJobPost: 'favourite'
@@ -1085,6 +1191,7 @@ export interface NexusGenFieldTypeNames {
     getPortfolioById: 'portfolio'
     getPortfolioByProfileID: 'portfolio'
     getProfileByUser: 'profile'
+    getScheduleByDate: 'schedule'
     getScheduleById: 'schedule'
     getSearchByCompanyName: 'company'
     getSearchBySkill: 'skills'
@@ -1095,6 +1202,7 @@ export interface NexusGenFieldTypeNames {
     getThemes: 'ThemePagination'
     getUserAccountById: 'user'
     getUserActivityLogs: 'activityLogs'
+    getUserProfileById: 'profile'
     jobPagination: 'JobPagination'
     skillsPagination: 'SkillsPagination'
   }
@@ -1231,9 +1339,10 @@ export interface NexusGenFieldTypeNames {
   }
   message: { // field return type name
     createdAt: 'DateTime'
+    media: 'media'
     message: 'String'
     messageID: 'ID'
-    receivedUser: 'message'
+    receivedUser: 'user'
     receiverID: 'String'
     sendUser: 'user'
     senderID: 'String'
@@ -1275,14 +1384,16 @@ export interface NexusGenFieldTypeNames {
     createdAt: 'DateTime'
     education: 'education'
     firstname: 'String'
+    getMyFont: 'fonts'
     getMyResume: 'resume'
-    getMySkills: 'skills'
+    getMyTheme: 'theme'
     header: 'media'
     lastname: 'String'
     phone: 'PhoneNumber'
     portfolio: 'portfolio'
     profileID: 'ID'
     skills: 'skills'
+    social: 'social'
     updatedAt: 'DateTime'
   }
   report: { // field return type name
@@ -1333,6 +1444,16 @@ export interface NexusGenFieldTypeNames {
     count: 'Int'
     skills: 'String'
   }
+  social: { // field return type name
+    Github: 'String'
+    Web: 'String'
+    X: 'String'
+    createdAt: 'DateTime'
+    facebook: 'String'
+    instagram: 'String'
+    socialID: 'ID'
+    updatedAt: 'DateTime'
+  }
   theme: { // field return type name
     createdAt: 'DateTime'
     image: 'String'
@@ -1352,14 +1473,42 @@ export interface NexusGenFieldTypeNames {
     getMyCompany: 'company'
     getMyLogs: 'activityLogs'
     getMyNotification: 'notification'
+    messages: 'message'
     myProfile: 'profile'
     password: 'String'
     passwordHash: 'password'
     plan: 'String'
+    receiverList: 'message'
     role: 'String'
+    senderList: 'message'
     updatedAt: 'DateTime'
     userID: 'ID'
     verified: 'Boolean'
+  }
+  zoom: { // field return type name
+    access_token: 'String'
+    api_url: 'String'
+    expires_in: 'Int'
+    scope: 'String'
+    token_type: 'String'
+  }
+  zoom_meeting: { // field return type name
+    created_at: 'String'
+    duration: 'Int'
+    encrypted_password: 'String'
+    h323_password: 'String'
+    host_id: 'String'
+    id: 'Int'
+    join_url: 'String'
+    password: 'String'
+    pstn_password: 'String'
+    start_time: 'String'
+    start_url: 'String'
+    status: 'String'
+    timezone: 'String'
+    topic: 'String'
+    type: 'String'
+    uuid: 'String'
   }
   Error: { // field return type name
     code: 'Int'
@@ -1425,7 +1574,8 @@ export interface NexusGenArgTypes {
       skills: Array<string | null>; // [String]!
     }
     createMessage: { // args
-      message: string; // String!
+      file?: Array<NexusGenScalars['Upload'] | null> | null; // [Upload]
+      message?: string | null; // String
       receiverID: string; // String!
       senderID: string; // String!
     }
@@ -1444,12 +1594,22 @@ export interface NexusGenArgTypes {
       profileID: string; // ID!
     }
     createSchedule: { // args
+      actkn: string; // String!
+      applicantID: string; // ID!
       input: NexusGenInputs['ScheduleInput']; // ScheduleInput!
       receiverID: string; // String!
       senderID: string; // String!
     }
     createSkills: { // args
       input: NexusGenInputs['SkillInput']; // SkillInput!
+    }
+    createSocialLink: { // args
+      Github?: string | null; // String
+      Web?: string | null; // String
+      X?: string | null; // String
+      facebook?: string | null; // String
+      instagram?: string | null; // String
+      profileID: string; // ID!
     }
     createTheme: { // args
       file: NexusGenScalars['Upload']; // Upload!
@@ -1587,6 +1747,14 @@ export interface NexusGenArgTypes {
       input: NexusGenInputs['SkillInput']; // SkillInput!
       skillsID: string; // ID!
     }
+    updateSocialLink: { // args
+      Github?: string | null; // String
+      Web?: string | null; // String
+      X?: string | null; // String
+      facebook?: string | null; // String
+      instagram?: string | null; // String
+      socialID: string; // ID!
+    }
     updateTheme: { // args
       file?: NexusGenScalars['Upload'] | null; // Upload
       theme: string; // String!
@@ -1598,6 +1766,11 @@ export interface NexusGenArgTypes {
     }
     verifyMyAccount: { // args
       userID: string; // ID!
+    }
+    zoom_meeting: { // args
+      duration: number; // Int!
+      start_time: string; // String!
+      topic: string; // String!
     }
   }
   Query: {
@@ -1624,8 +1797,14 @@ export interface NexusGenArgTypes {
       pagination: NexusGenInputs['PaginationInput']; // PaginationInput!
       profileID: string; // ID!
     }
+    getAllMyMessage: { // args
+      userID: string; // ID!
+    }
     getAllMySaveJobs: { // args
       userID: string; // ID!
+    }
+    getAllMySocialLink: { // args
+      profileID: string; // ID!
     }
     getAllResumyByProfileID: { // args
       profileID: string; // ID!
@@ -1657,6 +1836,7 @@ export interface NexusGenArgTypes {
     getJobBoard: { // args
       duration?: Array<string | null> | null; // [String]
       experience?: Array<string | null> | null; // [String]
+      filter: string; // String!
       input: NexusGenInputs['PaginationInput']; // PaginationInput!
       jobType?: Array<string | null> | null; // [String]
       orderBy?: string | null; // String
@@ -1668,6 +1848,14 @@ export interface NexusGenArgTypes {
     }
     getJobPostBySlug: { // args
       slug: string; // ID!
+    }
+    getListofMessage: { // args
+      search?: string | null; // String
+      senderID: string; // String!
+    }
+    getMyApplication: { // args
+      input: NexusGenInputs['PaginationInput']; // PaginationInput!
+      userID: string; // ID!
     }
     getMyCompanyByUserID: { // args
       userID: string; // ID!
@@ -1698,6 +1886,10 @@ export interface NexusGenArgTypes {
       profileID: string; // ID!
     }
     getProfileByUser: { // args
+      userID: string; // ID!
+    }
+    getScheduleByDate: { // args
+      date: string; // String!
       userID: string; // ID!
     }
     getScheduleById: { // args
@@ -1731,6 +1923,9 @@ export interface NexusGenArgTypes {
       input: NexusGenInputs['PaginationInput']; // PaginationInput!
       userID: string; // ID!
     }
+    getUserProfileById: { // args
+      profileID: string; // ID!
+    }
     jobPagination: { // args
       pagination?: NexusGenInputs['PaginationInput'] | null; // PaginationInput
       search?: string | null; // String
@@ -1750,7 +1945,7 @@ export interface NexusGenArgTypes {
 
 export interface NexusGenAbstractTypeMembers {
   AboutPayload: "BADINPUT" | "about"
-  ApplicationPayload: "BADINPUT" | "Forbidden" | "application"
+  ApplicationPayload: "AlreadyExist" | "BADINPUT" | "Forbidden" | "application"
   CredentialsPayload: "BADINPUT" | "CredentialsInvalid" | "NOTFOUND" | "token"
   EducationPayload: "BADINPUT" | "education"
   EmailPayload: "BADINPUT" | "NOTFOUND" | "user"
@@ -1761,6 +1956,7 @@ export interface NexusGenAbstractTypeMembers {
   ResumePayload: "BADINPUT" | "resume"
   SchedulePayload: "BADINPUT" | "schedule"
   SkillPayload: "AlreadyExist" | "BADINPUT" | "skills"
+  SocialPayload: "AlreadyExist" | "BADINPUT" | "social"
   UserPayload: "AlreadyExist" | "BADINPUT" | "PasswordAlreadyExist" | "user"
   resetPasswordPayload: "Expired" | "NOTFOUND" | "resetPassword"
   salaryPayload: "BADINPUT" | "salary"

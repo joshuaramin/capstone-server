@@ -15,9 +15,11 @@ export const ScheduleInput = inputObjectType({
   definition(t) {
     t.string("title");
     t.string("description");
-    t.datetime("startDate");
-    t.datetime("endDate");
-    t.string("link");
+    t.date("startDate");
+    t.date("endDate");
+    t.string("startTime");
+    t.string("endTime");
+    t.int("duration");
   },
 });
 

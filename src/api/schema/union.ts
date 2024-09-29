@@ -10,7 +10,7 @@ export const UserUnion = unionType({
 export const ApplicationPayload = unionType({
   name: "ApplicationPayload",
   definition(t) {
-    t.members("application", "Forbidden", "BADINPUT");
+    t.members("application", "Forbidden", "BADINPUT", "AlreadyExist");
   },
 });
 
@@ -102,5 +102,12 @@ export const AboutPayload = unionType({
   name: "AboutPayload",
   definition(t) {
     t.members("about", "BADINPUT");
+  },
+});
+
+export const SocialPayload = unionType({
+  name: "SocialPayload",
+  definition(t) {
+    t.members("social", "BADINPUT", "AlreadyExist");
   },
 });

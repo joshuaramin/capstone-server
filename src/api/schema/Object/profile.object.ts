@@ -77,11 +77,29 @@ export const ProfileObject = objectType({
         });
       },
     });
-    t.list.field("getMySkills", {
-      type: "skills",
-      resolve: async ({ profileID }): Promise<any> => {
-        return await prisma.skills.findMany({
+    t.list.field("social", {
+      type: "social",
+      resolve: async ({ profileID }) => {
+        return await prisma.social.findMany({
           where: { profileID },
+        });
+      },
+    });
+    t.field("getMyTheme", {
+      type: "theme",
+      resolve: async ({ profileID }) => {
+        return await prisma.theme.findFirst({
+          where: {
+            Profile: { some: { profileID } },
+          },
+        });
+      },
+    });
+    t.field("getMyFont", {
+      type: "fonts",
+      resolve: async ({ profileID }) => {
+        return await prisma.font.findFirst({
+          where: { Profile: { some: { profileID } } },
         });
       },
     });

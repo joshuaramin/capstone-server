@@ -51,8 +51,18 @@ model User {
   Organizer        ProjectOrganizer[]
   Favourite        Favourite[]
   ResetPassword    ResetPassword[]
+  Zoom             zintegration?
   Profile          Profile?
   Company          Company?
+}
+
+model zintegration {
+  integrationID String  @id @default(cuid())
+  accountID     String  @db.Text
+  clientID      String  @db.Text
+  secretID      String  @db.Text
+  User          User?   @relation(fields: [userID], references: [userID])
+  userID        String? @unique
 }
 
 model Requirements {
@@ -78,9 +88,10 @@ model Notification {
 
 model Message {
   messageID  String   @id @default(cuid())
-  message    String
+  message    String?
   senderID   String
   receiverID String
+  Media      Media[]
   createdAt  DateTime @default(now()) @db.Timestamp()
   updatedAt  DateTime @default(now()) @updatedAt @db.Timestamp()
   sender     User     @relation("SentMessage", fields: [senderID], references: [userID], onDelete: Cascade)
@@ -123,11 +134,25 @@ model Profile {
   Portfolio  Portfolio[]
   Education  Education[]
   theme      Theme[]
+  Social     Social?
   About      About?
   User       User?       @relation(fields: [userID], references: [userID], onDelete: Cascade)
   userID     String?     @unique
   Font       Font?       @relation(fields: [fontFontID], references: [fontID])
   fontFontID String?
+}
+
+model Social {
+  socialID  String   @id @default(cuid())
+  instagram String?
+  facebook  String?
+  Github    String?
+  X         String?
+  Web       String?
+  createdAt DateTime @default(now()) @db.Timestamp()
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp()
+  Profile   Profile? @relation(fields: [profileID], references: [profileID])
+  profileID String?  @unique
 }
 
 model ResetPassword {
@@ -175,6 +200,7 @@ model Media {
   companyID   String?
   Avatar      Profile?   @relation("Avatar")
   Header      Profile?   @relation("Header")
+  Message     Message[]
 }
 
 model Portfolio {
@@ -353,9 +379,9 @@ model ApplicationScore {
 model Schedule {
   scheduleID  String   @id @default(cuid())
   title       String   @db.VarChar(300)
-  description String?  @db.VarChar(300)
-  startDate   DateTime @db.Timestamp()
-  endDate     DateTime @db.Timestamp()
+  description String?  @db.VarChar(1000)
+  startDate   DateTime @db.Date
+  endDate     DateTime @db.Date
   link        String   @db.Text
   createdAt   DateTime @default(now()) @db.Timestamp()
   updatedAt   DateTime @default(now()) @updatedAt @db.Timestamp()

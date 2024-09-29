@@ -1,4 +1,5 @@
 import {
+  booleanArg,
   extendType,
   idArg,
   intArg,
@@ -81,6 +82,7 @@ export const JobPostQuery = extendType({
         jobType: list(stringArg()),
         experience: list(stringArg()),
         duration: list(stringArg()),
+        filter: nonNull(stringArg()),
       },
       resolve: async (
         _,
@@ -92,6 +94,7 @@ export const JobPostQuery = extendType({
           experience,
           duration,
           orderBy,
+          filter,
         }
       ): Promise<any> => {
         let whereArr: any = {
@@ -136,20 +139,31 @@ export const JobPostQuery = extendType({
         if (jobType) {
           whereArr = {
             JobType: {
-              hasSome: jobType
-            }
+              hasSome: jobType,
+            },
           };
         }
 
-        if (skills) {
-          whereArr = {
-            Skills: {
-              some: {
-                skills: {
-                  in: skills,
+        if (filter === "Best Match") {
+          if (skills) {
+            whereArr = {
+              Skills: {
+                some: {
+                  skills: {
+                    in: skills,
+                  },
                 },
               },
+            };
+          }
+        } else if (filter === "Featured") {
+          whereArr = {
+            Company: {
+              User: {
+                plan: "PRO",
+              },
             },
+            featured: true,
           };
         }
 

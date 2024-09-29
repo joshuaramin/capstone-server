@@ -18,6 +18,7 @@ import * as ResumeQuery from "./resume.query";
 import * as ScheduleQuery from "./schedule.query";
 import * as SkillQuery from "./skills.query";
 import * as ThemeQuery from "./theme.query";
+import * as SocialQuery from "./social.query";
 import * as UserQuery from "./user.query";
 
 export {
@@ -41,5 +42,6 @@ export {
   ScheduleQuery,
   SkillQuery,
   ThemeQuery,
+  SocialQuery,
   UserQuery,
 };

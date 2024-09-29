@@ -66,6 +66,47 @@ export const UserObject = objectType({
         });
       },
     });
+    t.list.field("receiverList", {
+      type: "message",
+      resolve: async ({ userID }) => {
+        return await prisma.message.findMany({
+          where: {
+            sender: {
+              userID,
+            },
+          },
+        });
+      },
+    });
+    t.list.field("senderList", {
+      type: "message",
+      resolve: async ({ userID }) => {
+        return await prisma.message.findMany({
+          where: {
+            receiver: {
+              userID,
+            },
+          },
+        });
+      },
+    });
+    t.list.field("messages", {
+      type: "message",
+      resolve: async ({ userID }): Promise<any> => {
+        return await prisma.message.findFirst({
+          where: {
+            OR: [
+              {
+                senderID: userID,
+              },
+              {
+                receiverID: userID,
+              },
+            ],
+          },
+        });
+      },
+    });
   },
 });
 

@@ -1,5 +1,7 @@
-import { extendType, nonNull, stringArg } from "nexus";
+import { extendType, list, nonNull, stringArg } from "nexus";
 import { prisma } from "../../helpers/server";
+import { id } from "date-fns/locale";
+import { uploader } from "../../helpers/cloudinary";
 
 export const MessageMutation = extendType({
   type: "Mutation",
@@ -7,18 +9,40 @@ export const MessageMutation = extendType({
     t.field("createMessage", {
       type: "message",
       args: {
-        message: nonNull(stringArg()),
+        message: stringArg(),
         senderID: nonNull(stringArg()),
         receiverID: nonNull(stringArg()),
+        file: list("Upload"),
       },
-      resolve: async (_, { message, receiverID, senderID }): Promise<any> => {
-        return await prisma.message.create({
-          data: {
-            message,
-            senderID,
-            receiverID,
-          },
-        });
+      resolve: async (
+        _,
+        { message, receiverID, senderID, file }
+      ): Promise<any> => {
+        if (file) {
+          file.map(async (upload) => {
+            const { createReadStream, filename } = await upload;
+
+            return await prisma.message.create({
+              data: {
+                Media: {
+                  create: {
+                    media: await uploader(createReadStream()),
+                  },
+                },
+                senderID,
+                receiverID,
+              },
+            });
+          });
+        } else {
+          return await prisma.message.create({
+            data: {
+              message,
+              senderID,
+              receiverID,
+            },
+          });
+        }
       },
     });
     t.field("updateMessage", {

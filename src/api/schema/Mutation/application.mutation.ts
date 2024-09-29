@@ -47,6 +47,25 @@ export const ApplicationMutation = extendType({
           where: { jobPostID },
         });
 
+        const applied = await prisma.jobPost.findUnique({
+          where: {
+            jobPostID,
+            Application: {
+              some: {
+                userID,
+              },
+            },
+          },
+        });
+
+        if (applied) {
+          return {
+            __typename: "AlreadyExist",
+            code: 400,
+            message: "Application already exist",
+          };
+        }
+
         const application = await prisma.application.create({
           data: {
             id: generateRandom(8),

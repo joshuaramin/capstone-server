@@ -15,5 +15,16 @@ export const ProfileQuery = extendType({
         });
       },
     });
+    t.field("getUserProfileById", {
+      type: "profile",
+      args: { profileID: nonNull(idArg()) },
+      resolve: async (_, { profileID }) => {
+        return await prisma.profile.findFirst({
+          where: {
+            profileID,
+          },
+        });
+      },
+    });
   },
 });

@@ -21,6 +21,9 @@ import * as ScheduleObject from "./schedule.object";
 import * as SkillObject from "./skills.object";
 import * as ThemeObject from "./theme.object";
 import * as UserObject from "./user.object";
+import * as SocialObject from "./social.object";
+import * as ZoomObject from "./zoom.object";
+
 export {
   AboutObject,
   ActivityLogsObject,
@@ -45,4 +48,6 @@ export {
   SkillObject,
   ThemeObject,
   UserObject,
+  SocialObject,
+  ZoomObject,
 };
