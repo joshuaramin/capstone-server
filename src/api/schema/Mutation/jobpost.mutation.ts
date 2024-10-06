@@ -1,5 +1,5 @@
 import { extendType, idArg, list, nonNull, stringArg } from "nexus";
-import { prisma, pubsub } from "../../helpers/server";
+import { prisma } from "../../helpers/server";
 import { add } from "date-fns";
 import { ERROR_MESSAGE_BAD_INPUT } from "../../helpers/error";
 import { Slugify } from "../../helpers/slugify";
@@ -26,8 +26,6 @@ export const JobPostMutation = extendType({
             location,
             duration,
             experience,
-            status,
-            isOpen,
           },
           salary: { min, max, currency, fixed },
           skills,
@@ -38,7 +36,6 @@ export const JobPostMutation = extendType({
           !description ||
           !JobType ||
           !location ||
-          !status ||
           !duration ||
           !currency
         ) {
@@ -79,8 +76,8 @@ export const JobPostMutation = extendType({
                 duration,
                 experience,
                 featured: false,
-                status,
-                isOpen,
+                status: "Published",
+                isOpen: "Open",
                 slug: Slugify(title),
                 Salary: {
                   create: {
@@ -102,7 +99,6 @@ export const JobPostMutation = extendType({
               },
             });
 
-            pubsub.publish("createJobPostToMyCompany", job);
 
             return {
               __typename: "jobpost",
@@ -120,8 +116,8 @@ export const JobPostMutation = extendType({
                 duration,
                 experience,
                 featured: false,
-                isOpen,
-                status,
+                status: "Published",
+                isOpen: "Open",
                 slug: Slugify(title),
                 Salary: {
                   create: {
@@ -144,7 +140,6 @@ export const JobPostMutation = extendType({
               },
             });
 
-            pubsub.publish("createJobPostToMyCompany", job);
 
             return {
               __typename: "jobpost",
@@ -163,8 +158,8 @@ export const JobPostMutation = extendType({
                 location,
                 duration,
                 experience,
-                status,
-                isOpen,
+                status: "Published",
+                isOpen: "Open",
                 slug: Slugify(title),
                 featured: true,
                 Salary: {
@@ -187,7 +182,6 @@ export const JobPostMutation = extendType({
               },
             });
 
-            pubsub.publish("createJobPostToMyCompany", job);
 
             return {
               __typename: "jobpost",
@@ -205,8 +199,8 @@ export const JobPostMutation = extendType({
                 duration,
                 experience,
                 featured: true,
-                isOpen,
-                status,
+                status: "Published",
+                isOpen: "Open",
                 slug: Slugify(title),
                 Salary: {
                   create: {
@@ -228,8 +222,6 @@ export const JobPostMutation = extendType({
                 },
               },
             });
-
-            pubsub.publish("createJobPostToMyCompany", job);
 
             return {
               __typename: "jobpost",

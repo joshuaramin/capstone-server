@@ -741,7 +741,7 @@ export interface NexusGenFieldTypes {
     getUserAccountById: NexusGenRootTypes['user'] | null; // user
     getUserActivityLogs: Array<NexusGenRootTypes['activityLogs'] | null> | null; // [activityLogs]
     getUserProfileById: NexusGenRootTypes['profile'] | null; // profile
-    getUserProjectOrganizer: Array<NexusGenRootTypes['ProjectOrganizerPagination'] | null> | null; // [ProjectOrganizerPagination]
+    getUserProjectOrganizer: NexusGenRootTypes['ProjectOrganizerPagination'] | null; // ProjectOrganizerPagination
     jobPagination: NexusGenRootTypes['JobPagination'] | null; // JobPagination
     skillsPagination: NexusGenRootTypes['SkillsPagination'] | null; // SkillsPagination
   }

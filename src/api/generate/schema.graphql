@@ -292,7 +292,7 @@ type Query {
   getUserAccountById(userID: ID!): user
   getUserActivityLogs(input: PaginationInput!, userID: ID!): [activityLogs]
   getUserProfileById(profileID: ID!): profile
-  getUserProjectOrganizer(input: PaginationInput!, userID: ID!): [ProjectOrganizerPagination]
+  getUserProjectOrganizer(input: PaginationInput!, userID: ID!): ProjectOrganizerPagination
   jobPagination(pagination: PaginationInput, search: String, userID: ID!): JobPagination
   skillsPagination(input: PaginationInput!, search: String!): SkillsPagination
 }
