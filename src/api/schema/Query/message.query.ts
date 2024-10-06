@@ -21,59 +21,28 @@ export const MessageQuery = extendType({
         });
       },
     });
+
     t.list.field("getListofMessage", {
-      type: "user",
-      args: { search: stringArg(), senderID: nonNull(stringArg()) },
-      resolve: async (_, { senderID, search }): Promise<any> => {
-        const message = await prisma.message.findMany({
+      type: "message",
+      args: { userID: nonNull(idArg()) },
+      resolve: async (_, { userID }) => {
+        return await prisma.message.findMany({
           where: {
-            OR: [
-              {
-                sender: {
-                  userID: senderID,
-                },
-              },
-              {
-                receiver: {
-                  userID: senderID,
-                },
-              },
-            ],
+            OR: [{ senderID: userID }, { receiverID: userID }],
+
+            NOT: [{ senderID: userID }],
           },
-          select: {
-            senderID: true,
-            receiver: true,
+          include: {
+            sender: true,
           },
-          distinct: "senderID",
+          distinct: ["receiverID", "senderID"],
+          orderBy: {
+            createdAt: "desc",
+          },
         });
-
-        const sendersIDs = message.map((message) => message.senderID);
-
-        let whereArr: any = {
-          userID: {
-            in: sendersIDs,
-          },
-        };
-        if (search) {
-          whereArr.Profile = {
-            OR: [
-              {
-                firstname: search,
-              },
-              {
-                lastname: search,
-              },
-            ],
-          };
-        }
-
-        let queryParams = {
-          where: whereArr,
-        };
-
-        return await prisma.user.findMany(queryParams);
       },
     });
+
     t.list.field("getAllMyMessage", {
       type: "message",
       args: { userID: nonNull(idArg()) },

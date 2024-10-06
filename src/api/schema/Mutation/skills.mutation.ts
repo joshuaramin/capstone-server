@@ -71,19 +71,18 @@ export const SkillsMutation = extendType({
         };
       },
     });
-    t.field("addSkills", {
+    t.list.field("addSkills", {
       type: "skills",
 
       resolve: async (): Promise<any> => {
-        // Skills.map(async (sk) => {
-        //   return await prisma.skills.create({
-        //     data: { skills: sk },
-        //   });
-        // });
-        Skills.map(async ({ skills }) => {
-          return await prisma.skills.create({
-            data: { skills },
-          });
+
+        await prisma.skills.createMany({
+          data: Skills.map(({ skills }) => {
+            return {
+              skills,
+            };
+          }),
+          skipDuplicates: true,
         });
       },
     });

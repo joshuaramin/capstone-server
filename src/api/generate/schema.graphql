@@ -131,7 +131,7 @@ type Mutation {
   addProfileHeader(file: Upload!, profileID: ID!): profile
   addProfileThemnFonts(fontID: ID!, profileID: ID!, themeID: ID!): profile
   addSkillToProfile(profileID: ID!, skills: [String]): profile
-  addSkills: skills
+  addSkills: [skills]
   archiveJobPost(jobPostID: ID!): jobpost
   createAbout(input: AboutInput!, profileID: ID!): AboutPayload
   createApplication(jobPostID: ID!, resumeID: ID!, userID: ID!): ApplicationPayload
@@ -264,12 +264,12 @@ type Query {
   getApplicantJobPostByIdPagination(input: PaginationInput!, jobPostID: ID!, search: String): ApplicantPagination
   getApplicationByID(applicationID: ID!): application
   getCompanyByID(companyID: ID!): company
-  getCompanyProjects(companyID: ID!, input: PaginationInput!): [ProjectOrganizerPagination]
+  getCompanyProjects(companyID: ID!, input: PaginationInput!, status: String!): [ProjectOrganizerPagination]
   getEducationById(educationID: ID!): education
   getJobBoard(duration: [String], experience: [String], filter: String!, input: PaginationInput!, jobType: [String], orderBy: String, search: String, skills: [String]): JobPagination
   getJobPostById(jobPostID: ID!): jobpost
   getJobPostBySlug(slug: ID!): jobpost
-  getListofMessage(search: String, senderID: String!): [user]
+  getListofMessage(userID: ID!): [message]
   getMyApplication(input: PaginationInput!, status: String!, userID: ID!): ApplicantPagination
   getMyCompanyByUserID(userID: ID!): company
   getMyCompanyJobPost(pagination: PaginationInput, userID: ID!): [jobpost]
@@ -292,7 +292,7 @@ type Query {
   getUserAccountById(userID: ID!): user
   getUserActivityLogs(input: PaginationInput!, userID: ID!): [activityLogs]
   getUserProfileById(profileID: ID!): profile
-  getUserProjectOrganizer(input: PaginationInput!, userID: ID!): ProjectOrganizerPagination
+  getUserProjectOrganizer(input: PaginationInput!, status: String!, userID: ID!): ProjectOrganizerPagination
   jobPagination(pagination: PaginationInput, search: String, userID: ID!): JobPagination
   skillsPagination(input: PaginationInput!, search: String!): SkillsPagination
 }
@@ -573,11 +573,13 @@ type profile {
 
 type project {
   amount: Float
+  company: company
   createdAt: DateTime
   endDate: DateTime
   projectOrganizerID: ID
   startDate: DateTime
   status: String
+  title: String
   updatedAt: DateTime
 }
 

@@ -191,6 +191,7 @@ export const ApplicationMutation = extendType({
 
           await prisma.projectOrganizer.create({
             data: {
+              title: applicant.JobPost.title,
               amount:
                 applicant.JobPost.Salary.fixed ?? applicant.JobPost.Salary.min,
               startDate: new Date(Date.now()),

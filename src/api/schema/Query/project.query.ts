@@ -1,4 +1,4 @@
-import { extendType, idArg, nonNull } from "nexus";
+import { extendType, idArg, nonNull, stringArg } from "nexus";
 import { prisma } from "../../helpers/server";
 
 export const ProjectOrganizerQuery = extendType({
@@ -6,11 +6,22 @@ export const ProjectOrganizerQuery = extendType({
   definition(t) {
     t.field("getUserProjectOrganizer", {
       type: "ProjectOrganizerPagination",
-      args: { userID: nonNull(idArg()), input: nonNull("PaginationInput") },
-      resolve: async (_, { userID, input: { page, take } }): Promise<any> => {
+      args: {
+        userID: nonNull(idArg()),
+        input: nonNull("PaginationInput"),
+        status: nonNull(stringArg()),
+      },
+      resolve: async (
+        _,
+        { userID, input: { page, take }, status }
+      ): Promise<any> => {
         const project = await prisma.projectOrganizer.findMany({
           where: {
             userID,
+            status,
+          },
+          orderBy: {
+            createdAt: "desc",
           },
         });
 
@@ -29,14 +40,22 @@ export const ProjectOrganizerQuery = extendType({
     });
     t.list.field("getCompanyProjects", {
       type: "ProjectOrganizerPagination",
-      args: { companyID: nonNull(idArg()), input: nonNull("PaginationInput") },
+      args: {
+        companyID: nonNull(idArg()),
+        input: nonNull("PaginationInput"),
+        status: nonNull(stringArg()),
+      },
       resolve: async (
         _,
-        { companyID, input: { page, take } }
+        { companyID, input: { page, take }, status }
       ): Promise<any> => {
         const project = await prisma.projectOrganizer.findMany({
           where: {
             companyID,
+            status,
+          },
+          orderBy: {
+            createdAt: "desc",
           },
         });
 

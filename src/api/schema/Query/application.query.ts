@@ -95,6 +95,9 @@ export const ApplicationQuery = extendType({
           include: {
             JobPost: true,
           },
+          orderBy: {
+            createdAt: "desc",
+          },
         });
 
         const offset = (page - 1) * take;

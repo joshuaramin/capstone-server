@@ -99,7 +99,6 @@ export const JobPostMutation = extendType({
               },
             });
 
-
             return {
               __typename: "jobpost",
               ...job,
@@ -139,7 +138,6 @@ export const JobPostMutation = extendType({
                 },
               },
             });
-
 
             return {
               __typename: "jobpost",
@@ -181,7 +179,6 @@ export const JobPostMutation = extendType({
                 },
               },
             });
-
 
             return {
               __typename: "jobpost",
@@ -257,6 +254,19 @@ export const JobPostMutation = extendType({
           skills,
         }
       ): Promise<any> => {
+        const jobpost = await prisma.jobPost.findUnique({
+          where: {
+            jobPostID,
+          },
+          include: {
+            Company: {
+              include: {
+                User: true,
+              },
+            },
+          },
+        });
+
         if (fixed) {
           const fixedPrice = await prisma.jobPost.update({
             data: {
@@ -319,6 +329,17 @@ export const JobPostMutation = extendType({
               jobPostID,
             },
           });
+          await prisma.activityLogs.create({
+            data: {
+              title: "Create Job Post",
+              description: "You created a Job post",
+              User: {
+                connect: {
+                  userID: jobpost.Company.User.userID,
+                },
+              },
+            },
+          });
 
           return {
             __typename: "jobpost",
@@ -331,12 +352,34 @@ export const JobPostMutation = extendType({
       type: "jobpost",
       args: { jobPostID: nonNull(idArg()) },
       resolve: async (_, { jobPostID }): Promise<any> => {
-        return await prisma.jobPost.update({
+        const jobpost = await prisma.jobPost.update({
           data: { isArchive: true },
           where: {
             jobPostID,
           },
+          include: {
+            Company: {
+              include: {
+                User: true,
+              },
+            },
+          },
         });
+        await prisma.activityLogs.create({
+          data: {
+            title: "Archived Job Post",
+            description: "You created archive a Job post",
+            User: {
+              connect: {
+                userID: jobpost.Company.User.userID,
+              },
+            },
+          },
+        });
+
+        return {
+          ...jobpost,
+        };
       },
     });
     t.field("deleteJobPost", {

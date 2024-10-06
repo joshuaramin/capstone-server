@@ -970,9 +970,9 @@ export async function ApplicantReview(
 
 export async function ApplicantHired(
   email: string,
+  fullname: string,
   jobtype: string,
   companyName: string,
-  fullname: string
 ) {
   return emailTemplate(
     email,
