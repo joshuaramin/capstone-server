@@ -1,6 +1,5 @@
 import { extendType, idArg, nonNull, stringArg } from "nexus";
 import { prisma } from "../../helpers/server";
-import { ERROR_MESSAGE_BAD_INPUT } from "../../helpers/error";
 import axios from "axios";
 import { ApplicantInterview } from "../../helpers/sendgrid";
 
@@ -36,7 +35,6 @@ export const ScheduleMutation = extendType({
         },
         { req, res }
       ): Promise<any> => {
-        console.log(req);
         if (!startDate) {
           return {
             __typename: "BADINPUT",
@@ -103,6 +101,8 @@ export const ScheduleMutation = extendType({
             link: data.join_url,
             startDate,
             endDate,
+            startTime,
+            endTime,
             description,
             title,
             senderID,
@@ -118,13 +118,27 @@ export const ScheduleMutation = extendType({
           },
         });
 
+
         ApplicantInterview(
           `${schedule.receiver.email}`,
           `${schedule.receiver.Profile.firstname} ${schedule.receiver.Profile.lastname}`,
           `${application.JobPost.title}`,
           `${application.JobPost.Company.companyName}`,
-          `${startDate}`,`${startTime}`, `${schedule.link}`
+          `${startDate}`,
+          `${startTime}`,
+          `${schedule.link}`
         );
+        await prisma.activityLogs.create({
+          data: {
+            title: "Creaed Calendar Schedule",
+            description: "You have created a calendar schedule for interview",
+            User: {
+              connect: {
+                userID: senderID,
+              },
+            },
+          },
+        });
 
         return {
           __typename: "schedule",
@@ -132,7 +146,7 @@ export const ScheduleMutation = extendType({
         };
       },
     });
-    t.field("updateSchedule", {
+    t.field("updateSchedule", {     
       type: "schedule",
       args: { scheduleID: nonNull(idArg()), input: nonNull("ScheduleInput") },
       resolve: async (_, { scheduleID, input }): Promise<any> => {

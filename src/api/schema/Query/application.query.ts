@@ -78,13 +78,36 @@ export const ApplicationQuery = extendType({
 
     t.field("getMyApplication", {
       type: "ApplicantPagination",
-      args: { userID: nonNull(idArg()), input: nonNull("PaginationInput") },
-      resolve: async (_, { userID }): Promise<any> => {
-        return await prisma.application.findMany({
+      args: {
+        userID: nonNull(idArg()),
+        input: nonNull("PaginationInput"),
+        status: nonNull(stringArg()),
+      },
+      resolve: async (
+        _,
+        { userID, input: { take, page }, status }
+      ): Promise<any> => {
+        const applicant = await prisma.application.findMany({
           where: {
             userID,
+            status,
+          },
+          include: {
+            JobPost: true,
           },
         });
+
+        const offset = (page - 1) * take;
+        const item = applicant.slice(offset, offset + take);
+
+        return {
+          item,
+          totalPages: Math.ceil(applicant.length / take),
+          totalItems: applicant.length,
+          currentPage: page,
+          hasNextPage: page < Math.ceil(applicant.length / take),
+          hasPrevPage: page > 1,
+        };
       },
     });
   },

@@ -21,7 +21,6 @@ import * as GraphQLScalars from "./api/schema/scalars";
 import * as GraphQLQuery from "./api/schema/Query/index";
 import * as GraphQLMutation from "./api/schema/Mutation/index";
 import * as GraphQLObject from "./api/schema/Object/index";
-import * as GraphQLSubscriptions from "./api/schema/Subscriptions/index";
 import * as GraphQLError from "./api/schema/errorHandling";
 import * as GraphQLUnion from "./api/schema/union";
 import * as GraphQLInterface from "./api/schema/Interface/interface";
@@ -42,7 +41,6 @@ import { graphqlUploadExpress } from "graphql-upload-ts";
       GraphQLObject,
       GraphQLQuery,
       GraphQLMutation,
-      GraphQLSubscriptions,
       GraphQLError,
       GraphQLUnion,
       GraphQLInterface,

@@ -32,7 +32,7 @@ export const SkillsPagination = objectType({
   name: "SkillsPagination",
   definition(t) {
     t.list.field("item", {
-    type: "skills",
+      type: "skills",
     });
     t.int("totalPages");
     t.int("currentPage");
@@ -103,6 +103,20 @@ export const FontPagination = objectType({
   definition(t) {
     t.list.field("item", {
       type: "fonts",
+    });
+    t.int("totalPages");
+    t.int("currentPage");
+    t.int("totalItems");
+    t.boolean("hasNextPage");
+    t.boolean("hasPrevPage");
+  },
+});
+
+export const ProjectOrganizerPagination = objectType({
+  name: "ProjectOrganizerPagination",
+  definition(t) {
+    t.list.field("item", {
+      type: "project",
     });
     t.int("totalPages");
     t.int("currentPage");

@@ -96,6 +96,17 @@ export const ApplicationMutation = extendType({
           },
         });
 
+        await prisma.notification.create({
+          data: {
+            title: `You Submitted your application to ${jobPostDesc.title}`,
+            User: {
+              connect: {
+                userID,
+              },
+            },
+          },
+        });
+
         await prisma.activityLogs.create({
           data: {
             title: "Created a Application",
@@ -128,6 +139,7 @@ export const ApplicationMutation = extendType({
             JobPost: {
               include: {
                 Company: true,
+                Salary: true,
               },
             },
           },
@@ -147,6 +159,17 @@ export const ApplicationMutation = extendType({
             `${applicant.JobPost.title}`,
             `${applicant.JobPost.Company.companyName}`
           );
+
+          await prisma.notification.create({
+            data: {
+              title: `Your Application is on the Under Review`,
+              User: {
+                connect: {
+                  userID: applicant.userID,
+                },
+              },
+            },
+          });
         } else if (status === "Hired") {
           ApplicantHired(
             applicant.User.email,
@@ -154,6 +177,37 @@ export const ApplicationMutation = extendType({
             `${applicant.JobPost.title}`,
             `${applicant.JobPost.Company.companyName}`
           );
+
+          await prisma.notification.create({
+            data: {
+              title: `Congratulation, You are hired at ${applicant.JobPost.title}`,
+              User: {
+                connect: {
+                  userID: applicant.userID,
+                },
+              },
+            },
+          });
+
+          await prisma.projectOrganizer.create({
+            data: {
+              amount:
+                applicant.JobPost.Salary.fixed ?? applicant.JobPost.Salary.min,
+              startDate: new Date(Date.now()),
+              endDate: new Date(Date.now()),
+              status: "Not Started",
+              Company: {
+                connect: {
+                  companyID: applicant.JobPost.companyID,
+                },
+              },
+              User: {
+                connect: {
+                  userID: applicant.userID,
+                },
+              },
+            },
+          });
         } else if (status === "Rejected") {
           ApplicantReject(
             applicant.User.email,
@@ -161,6 +215,16 @@ export const ApplicationMutation = extendType({
             `${applicant.JobPost.title}`,
             `${applicant.JobPost.Company.companyName}`
           );
+          await prisma.notification.create({
+            data: {
+              title: `Your Application at ${applicant.JobPost.title} is Declined`,
+              User: {
+                connect: {
+                  userID: applicant.userID,
+                },
+              },
+            },
+          });
         }
 
         return applicant;

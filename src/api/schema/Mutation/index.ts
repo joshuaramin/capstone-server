@@ -1,7 +1,6 @@
 import * as AboutMutation from "./about.mutation";
 import * as ActivityLogsMutation from "./activitylogs.mutation";
 import * as ApplicationMutation from "./application.mutation";
-import * as ApplicantScoreMutation from "./applicationscore.mutation";
 import * as CompanyMutation from "./company.mutation";
 import * as EducationMutation from "./education.mutation";
 import * as FavouriteMutation from "./favourite.mutation";
@@ -25,7 +24,6 @@ import * as Zoom from "./zoom.mutation";
 export {
   AboutMutation,
   ActivityLogsMutation,
-  ApplicantScoreMutation,
   ApplicationMutation,
   CompanyMutation,
   EducationMutation,

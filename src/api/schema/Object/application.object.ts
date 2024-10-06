@@ -43,5 +43,19 @@ export const ApplicationObject = objectType({
         });
       },
     });
+    t.field("jobPost", {
+      type: "jobpost",
+      resolve: async ({ applicationID }): Promise<any> => {
+        return await prisma.jobPost.findFirst({
+          where: {
+            Application: {
+              some: {
+                applicationID,
+              },
+            },
+          },
+        });
+      },
+    });
   },
 });

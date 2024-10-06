@@ -79,6 +79,7 @@ model Requirements {
 
 model Notification {
   notificationID String   @id @default(cuid())
+  title          String   @db.VarChar(300)
   read           Boolean  @default(false) @db.Boolean
   createdAt      DateTime @default(now()) @db.Timestamp()
   updatedAt      DateTime @default(now()) @updatedAt @db.Timestamp()
@@ -381,14 +382,16 @@ model Schedule {
   title       String   @db.VarChar(300)
   description String?  @db.VarChar(1000)
   startDate   DateTime @db.Date
-  endDate     DateTime @db.Date
-  link        String   @db.Text
-  createdAt   DateTime @default(now()) @db.Timestamp()
-  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamp()
-  senderID    String
-  receiverID  String
-  sender      User     @relation(name: "ScheduleSender", fields: [senderID], references: [userID], onDelete: Cascade)
-  receiver    User     @relation(name: "ScheduleReceiver", fields: [receiverID], references: [userID], onDelete: Cascade)
+  startTime  String   @db.VarChar(50)
+  endTime    String   @db.VarChar(50)
+  endDate    DateTime @db.Date
+  link       String   @db.Text
+  createdAt  DateTime @default(now()) @db.Timestamp()
+  updatedAt  DateTime @default(now()) @updatedAt @db.Timestamp()
+  senderID   String
+  receiverID String
+  sender     User     @relation(name: "ScheduleSender", fields: [senderID], references: [userID], onDelete: Cascade)
+  receiver   User     @relation(name: "ScheduleReceiver", fields: [receiverID], references: [userID], onDelete: Cascade)
 }
 
 model Review {

@@ -48,5 +48,15 @@ export const CompanyObject = objectType({
         });
       },
     });
+    t.list.field("companyProject", {
+      type: "project",
+      resolve: async ({ companyID }) => {
+        return await prisma.projectOrganizer.findMany({
+          where: {
+            companyID,
+          },
+        });
+      },
+    });
   },
 });

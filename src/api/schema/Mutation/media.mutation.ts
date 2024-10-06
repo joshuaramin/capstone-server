@@ -28,7 +28,6 @@ export const MediaMutation = extendType({
         const media = await prisma.media.create({
           data: {
             media: await uploader(createReadStream()),
-            
           },
         });
 

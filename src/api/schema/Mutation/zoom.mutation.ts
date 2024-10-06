@@ -8,7 +8,7 @@ export const ZoomMutation = extendType({
       type: "zoom",
       resolve: async (_, __, { req, res }): Promise<any> => {
         const { data } = await axios.post(
-          `https://zoom.us/oauth/token?grant_type=account_credentials&account_id=${process.env.ZOOM_ACCOUNT_ID}}`,
+          `https://zoom.us/oauth/token?grant_type=account_credentials&account_id=p7qd2Ir8RamiUL3zxa-rKw`,
           null,
           {
             headers: {
@@ -31,21 +31,6 @@ export const ZoomMutation = extendType({
         return {
           ...data,
         };
-      },
-    });
-    t.field("zoom_meeting", {
-      type: "zoom_meeting",
-      args: {
-        topic: nonNull(stringArg()),
-        start_time: nonNull(stringArg()),
-        duration: nonNull(intArg()),
-      },
-      resolve: async (
-        _,
-        { topic, duration, start_time },
-        { req, res }
-      ): Promise<any> => {
-        console.log(req.cookies);
       },
     });
   },

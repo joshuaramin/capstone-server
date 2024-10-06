@@ -107,6 +107,16 @@ export const UserObject = objectType({
         });
       },
     });
+    t.list.field("projectOrganizer", {
+      type: "project",
+      resolve: async ({ userID }) => {
+        return await prisma.projectOrganizer.findMany({
+          where: {
+            userID,
+          },
+        });
+      },
+    });
   },
 });
 
