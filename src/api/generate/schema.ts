@@ -710,7 +710,7 @@ export interface NexusGenFieldTypes {
     getAllResumyByProfileID: Array<NexusGenRootTypes['resume'] | null> | null; // [resume]
     getAllSchedule: Array<NexusGenRootTypes['schedule'] | null> | null; // [schedule]
     getAllSkill: Array<NexusGenRootTypes['skills'] | null> | null; // [skills]
-    getAllUserAccountByRole: Array<NexusGenRootTypes['user'] | null> | null; // [user]
+    getAllUserAccountByRole: NexusGenRootTypes['UserPagination'] | null; // UserPagination
     getApplicantJobPostByIdPagination: NexusGenRootTypes['ApplicantPagination'] | null; // ApplicantPagination
     getApplicationByID: NexusGenRootTypes['application'] | null; // application
     getCompanyByID: NexusGenRootTypes['company'] | null; // company
@@ -734,7 +734,6 @@ export interface NexusGenFieldTypes {
     getScheduleById: NexusGenRootTypes['schedule'] | null; // schedule
     getSearchByCompanyName: NexusGenRootTypes['company'] | null; // company
     getSearchBySkill: Array<NexusGenRootTypes['skills'] | null> | null; // [skills]
-    getSearchByUser: NexusGenRootTypes['user'] | null; // user
     getSimilarJobPost: Array<NexusGenRootTypes['jobpost'] | null> | null; // [jobpost]
     getSkillByProfileID: Array<NexusGenRootTypes['skills'] | null> | null; // [skills]
     getSkillsByGroup: Array<NexusGenRootTypes['skills'] | null> | null; // [skills]
@@ -1219,7 +1218,7 @@ export interface NexusGenFieldTypeNames {
     getAllResumyByProfileID: 'resume'
     getAllSchedule: 'schedule'
     getAllSkill: 'skills'
-    getAllUserAccountByRole: 'user'
+    getAllUserAccountByRole: 'UserPagination'
     getApplicantJobPostByIdPagination: 'ApplicantPagination'
     getApplicationByID: 'application'
     getCompanyByID: 'company'
@@ -1243,7 +1242,6 @@ export interface NexusGenFieldTypeNames {
     getScheduleById: 'schedule'
     getSearchByCompanyName: 'company'
     getSearchBySkill: 'skills'
-    getSearchByUser: 'user'
     getSimilarJobPost: 'jobpost'
     getSkillByProfileID: 'skills'
     getSkillsByGroup: 'skills'
@@ -1854,6 +1852,7 @@ export interface NexusGenArgTypes {
       profileID: string; // ID!
     }
     getAllMyMessage: { // args
+      search?: string | null; // String
       userID: string; // ID!
     }
     getAllMySaveJobs: { // args
@@ -1873,7 +1872,8 @@ export interface NexusGenArgTypes {
     }
     getAllUserAccountByRole: { // args
       input?: NexusGenInputs['PaginationInput'] | null; // PaginationInput
-      role?: NexusGenEnums['roleEnum'] | null; // roleEnum
+      role?: string | null; // String
+      search?: string | null; // String
     }
     getApplicantJobPostByIdPagination: { // args
       input: NexusGenInputs['PaginationInput']; // PaginationInput!
@@ -1911,6 +1911,7 @@ export interface NexusGenArgTypes {
       slug: string; // ID!
     }
     getListofMessage: { // args
+      search?: string | null; // String
       userID: string; // ID!
     }
     getMyApplication: { // args
@@ -1960,9 +1961,6 @@ export interface NexusGenArgTypes {
       search: string; // String!
     }
     getSearchBySkill: { // args
-      search: string; // String!
-    }
-    getSearchByUser: { // args
       search: string; // String!
     }
     getSimilarJobPost: { // args

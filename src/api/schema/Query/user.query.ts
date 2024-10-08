@@ -12,45 +12,46 @@ export const PaginationInput = inputObjectType({
 export const UserQuery = extendType({
   type: "Query",
   definition(t) {
-    t.list.field("getAllUserAccountByRole", {
-      type: "user",
-      args: { input: "PaginationInput", role: "roleEnum" },
-      resolve: async (_, { input: { take, page }, role }): Promise<any> => {
+    t.field("getAllUserAccountByRole", {
+      type: "UserPagination",
+      args: {
+        input: "PaginationInput",
+        role: stringArg(),
+        search: stringArg(),
+      },
+      resolve: async (
+        _,
+        { input: { take, page }, role, search }
+      ): Promise<any> => {
         const result = await prisma.user.findMany({
           where: {
-            role,
+            role: role as any,
+            Profile: {
+              firstname: {
+                contains: search,
+                mode: "insensitive",
+              },
+              lastname: {
+                contains: search,
+                mode: "insensitive",
+              },
+            },
           },
           take: take,
           skip: take * (page - 1),
         });
 
-        return result;
-      },
-    });
-    t.field("getSearchByUser", {
-      type: "user",
-      args: { search: nonNull(stringArg()) },
-      resolve: async (_, { search }): Promise<any> => {
-        return await prisma.user.findMany({
-          where: {
-            Profile: {
-              OR: [
-                {
-                  firstname: {
-                    contains: search,
-                    mode: "insensitive",
-                  },
-                },
-                {
-                  lastname: {
-                    contains: search,
-                    mode: "insensitive",
-                  },
-                },
-              ],
-            },
-          },
-        });
+        const offset = (page - 1) * take;
+        const item = result.slice(offset, offset + take);
+
+        return {
+          item,
+          totalPages: Math.ceil(result.length / take),
+          totalItems: result.length,
+          currentPage: page,
+          hasNextPage: page < Math.ceil(result.length / take),
+          hasPrevPage: page > 1,
+        };
       },
     });
     t.field("getUserAccountById", {

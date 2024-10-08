@@ -24,12 +24,27 @@ export const MessageQuery = extendType({
 
     t.list.field("getListofMessage", {
       type: "message",
-      args: { userID: nonNull(idArg()) },
-      resolve: async (_, { userID }) => {
+      args: { userID: nonNull(idArg()), search: stringArg() },
+      resolve: async (_, { userID, search }) => {
         return await prisma.message.findMany({
           where: {
             OR: [{ senderID: userID }, { receiverID: userID }],
-
+            sender: {
+              Profile: {
+                OR: [
+                  {
+                    firstname: {
+                      contains: search,
+                      mode: "insensitive",
+                    },
+                    lastname: {
+                      contains: search,
+                      mode: "insensitive",
+                    },
+                  },
+                ],
+              },
+            },
             NOT: [{ senderID: userID }],
           },
           include: {
@@ -45,11 +60,29 @@ export const MessageQuery = extendType({
 
     t.list.field("getAllMyMessage", {
       type: "message",
-      args: { userID: nonNull(idArg()) },
-      resolve: async (_, { userID }): Promise<any> => {
+      args: { userID: nonNull(idArg()), search: stringArg() },
+      resolve: async (_, { userID, search }): Promise<any> => {
         return await prisma.message.findMany({
           where: {
             OR: [{ senderID: userID }, { receiverID: userID }],
+            receiver: {
+              Profile: {
+                OR: [
+                  {
+                    firstname: {
+                      contains: search,
+                      mode: "insensitive",
+                    },
+                  },
+                  {
+                    lastname: {
+                      contains: search,
+                      mode: "insensitive",
+                    },
+                  },
+                ],
+              },
+            },
             NOT: [{ receiverID: userID }],
           },
           orderBy: {

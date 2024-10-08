@@ -254,13 +254,13 @@ type Query {
   getAllFonts(pagination: PaginationInput!, search: String): FontPagination
   getAllJobPost(input: PaginationInput!): [jobpost]
   getAllMediaProfile(pagination: PaginationInput!, profileID: ID!): [media]
-  getAllMyMessage(userID: ID!): [message]
+  getAllMyMessage(search: String, userID: ID!): [message]
   getAllMySaveJobs(userID: ID!): [favourite]
   getAllMySocialLink(profileID: ID!): social
   getAllResumyByProfileID(profileID: ID!): [resume]
   getAllSchedule(input: PaginationInput): [schedule]
   getAllSkill(input: PaginationInput): [skills]
-  getAllUserAccountByRole(input: PaginationInput, role: roleEnum): [user]
+  getAllUserAccountByRole(input: PaginationInput, role: String, search: String): UserPagination
   getApplicantJobPostByIdPagination(input: PaginationInput!, jobPostID: ID!, search: String): ApplicantPagination
   getApplicationByID(applicationID: ID!): application
   getCompanyByID(companyID: ID!): company
@@ -269,7 +269,7 @@ type Query {
   getJobBoard(duration: [String], experience: [String], filter: String!, input: PaginationInput!, jobType: [String], orderBy: String, search: String, skills: [String]): JobPagination
   getJobPostById(jobPostID: ID!): jobpost
   getJobPostBySlug(slug: ID!): jobpost
-  getListofMessage(userID: ID!): [message]
+  getListofMessage(search: String, userID: ID!): [message]
   getMyApplication(input: PaginationInput!, status: String!, userID: ID!): ApplicantPagination
   getMyCompanyByUserID(userID: ID!): company
   getMyCompanyJobPost(pagination: PaginationInput, userID: ID!): [jobpost]
@@ -284,7 +284,6 @@ type Query {
   getScheduleById(scheduleID: ID!): schedule
   getSearchByCompanyName(search: String!): company
   getSearchBySkill(search: String!): [skills]
-  getSearchByUser(search: String!): user
   getSimilarJobPost(input: PaginationInput!, jobPostID: ID!, skills: [String]!): [jobpost]
   getSkillByProfileID(profileID: ID!): [skills]
   getSkillsByGroup: [skills]
