@@ -17,6 +17,7 @@ import * as ProjectOrganizer from "./project.object";
 import * as ReportObject from "./report.object";
 import * as ResetPassword from "./resetPasswordLink";
 import * as ResumeObject from "./resume.object";
+import * as Requirement from "./requirements.object";
 import * as Salary from "./salary.object";
 import * as ScheduleObject from "./schedule.object";
 import * as SkillObject from "./skills.object";
@@ -45,6 +46,7 @@ export {
   ReportObject,
   ResetPassword,
   ResumeObject,
+  Requirement,
   Salary,
   ScheduleObject,
   SkillObject,

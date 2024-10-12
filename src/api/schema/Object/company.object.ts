@@ -11,6 +11,16 @@ export const CompanyObject = objectType({
     t.string("location");
     t.boolean("verified");
     t.string("companySize");
+    t.list.field("requirements", {
+      type: "requirement",
+      resolve: async ({ companyID }) => {
+        return await prisma.requirements.findMany({
+          where: {
+            companyID,
+          },
+        });
+      },
+    });
     t.field("logo", {
       type: "media",
       resolve: async ({ companyID }): Promise<any> => {

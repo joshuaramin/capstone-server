@@ -208,6 +208,14 @@ export interface NexusGenObjects {
     code?: number | null; // Int
     message?: string | null; // String
   }
+  CompaniesPagination: { // root type
+    currentPage?: number | null; // Int
+    hasNextPage?: boolean | null; // Boolean
+    hasPrevPage?: boolean | null; // Boolean
+    item?: Array<NexusGenRootTypes['company'] | null> | null; // [company]
+    totalItems?: number | null; // Int
+    totalPages?: number | null; // Int
+  }
   CredentialsInvalid: { // root type
     code?: number | null; // Int
     message?: string | null; // String
@@ -428,6 +436,13 @@ export interface NexusGenObjects {
     message?: string | null; // String
     reportID?: string | null; // ID
   }
+  requirement: { // root type
+    createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
+    requirement?: string | null; // String
+    requirementID?: string | null; // ID
+    type?: string | null; // String
+    updatedAt?: NexusGenScalars['DateTime'] | null; // DateTime
+  }
   resetPassword: { // root type
     createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
     expiredAt?: NexusGenScalars['DateTime'] | null; // DateTime
@@ -584,6 +599,14 @@ export interface NexusGenFieldTypes {
     code: number | null; // Int
     message: string | null; // String
   }
+  CompaniesPagination: { // field return type
+    currentPage: number | null; // Int
+    hasNextPage: boolean | null; // Boolean
+    hasPrevPage: boolean | null; // Boolean
+    item: Array<NexusGenRootTypes['company'] | null> | null; // [company]
+    totalItems: number | null; // Int
+    totalPages: number | null; // Int
+  }
   CredentialsInvalid: { // field return type
     code: number | null; // Int
     message: string | null; // String
@@ -699,7 +722,7 @@ export interface NexusGenFieldTypes {
   Query: { // field return type
     getAboutById: NexusGenRootTypes['about'] | null; // about
     getAboutByProfileID: NexusGenRootTypes['about'] | null; // about
-    getAllCompanies: Array<NexusGenRootTypes['company'] | null> | null; // [company]
+    getAllCompanies: NexusGenRootTypes['CompaniesPagination'] | null; // CompaniesPagination
     getAllEducationByProfileId: Array<NexusGenRootTypes['education'] | null> | null; // [education]
     getAllFonts: NexusGenRootTypes['FontPagination'] | null; // FontPagination
     getAllJobPost: Array<NexusGenRootTypes['jobpost'] | null> | null; // [jobpost]
@@ -715,6 +738,7 @@ export interface NexusGenFieldTypes {
     getApplicationByID: NexusGenRootTypes['application'] | null; // application
     getCompanyByID: NexusGenRootTypes['company'] | null; // company
     getCompanyProjects: Array<NexusGenRootTypes['ProjectOrganizerPagination'] | null> | null; // [ProjectOrganizerPagination]
+    getCompanySlug: NexusGenRootTypes['company'] | null; // company
     getEducationById: NexusGenRootTypes['education'] | null; // education
     getJobBoard: NexusGenRootTypes['JobPagination'] | null; // JobPagination
     getJobPostById: NexusGenRootTypes['jobpost'] | null; // jobpost
@@ -817,6 +841,7 @@ export interface NexusGenFieldTypes {
     jobPost: Array<NexusGenRootTypes['jobpost'] | null> | null; // [jobpost]
     location: string | null; // String
     logo: NexusGenRootTypes['media'] | null; // media
+    requirements: Array<NexusGenRootTypes['requirement'] | null> | null; // [requirement]
     slug: string | null; // String
     user: NexusGenRootTypes['user'] | null; // user
     verified: boolean | null; // Boolean
@@ -946,6 +971,13 @@ export interface NexusGenFieldTypes {
   report: { // field return type
     message: string | null; // String
     reportID: string | null; // ID
+  }
+  requirement: { // field return type
+    createdAt: NexusGenScalars['DateTime'] | null; // DateTime
+    requirement: string | null; // String
+    requirementID: string | null; // ID
+    type: string | null; // String
+    updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
   }
   resetPassword: { // field return type
     createdAt: NexusGenScalars['DateTime'] | null; // DateTime
@@ -1092,6 +1124,14 @@ export interface NexusGenFieldTypeNames {
     code: 'Int'
     message: 'String'
   }
+  CompaniesPagination: { // field return type name
+    currentPage: 'Int'
+    hasNextPage: 'Boolean'
+    hasPrevPage: 'Boolean'
+    item: 'company'
+    totalItems: 'Int'
+    totalPages: 'Int'
+  }
   CredentialsInvalid: { // field return type name
     code: 'Int'
     message: 'String'
@@ -1207,7 +1247,7 @@ export interface NexusGenFieldTypeNames {
   Query: { // field return type name
     getAboutById: 'about'
     getAboutByProfileID: 'about'
-    getAllCompanies: 'company'
+    getAllCompanies: 'CompaniesPagination'
     getAllEducationByProfileId: 'education'
     getAllFonts: 'FontPagination'
     getAllJobPost: 'jobpost'
@@ -1223,6 +1263,7 @@ export interface NexusGenFieldTypeNames {
     getApplicationByID: 'application'
     getCompanyByID: 'company'
     getCompanyProjects: 'ProjectOrganizerPagination'
+    getCompanySlug: 'company'
     getEducationById: 'education'
     getJobBoard: 'JobPagination'
     getJobPostById: 'jobpost'
@@ -1325,6 +1366,7 @@ export interface NexusGenFieldTypeNames {
     jobPost: 'jobpost'
     location: 'String'
     logo: 'media'
+    requirements: 'requirement'
     slug: 'String'
     user: 'user'
     verified: 'Boolean'
@@ -1454,6 +1496,13 @@ export interface NexusGenFieldTypeNames {
   report: { // field return type name
     message: 'String'
     reportID: 'ID'
+  }
+  requirement: { // field return type name
+    createdAt: 'DateTime'
+    requirement: 'String'
+    requirementID: 'ID'
+    type: 'String'
+    updatedAt: 'DateTime'
   }
   resetPassword: { // field return type name
     createdAt: 'DateTime'
@@ -1765,7 +1814,6 @@ export interface NexusGenArgTypes {
     }
     updateCompany: { // args
       companyID: string; // ID!
-      verified: boolean; // Boolean!
     }
     updateEducationBackground: { // args
       educationID: string; // ID!
@@ -1836,6 +1884,7 @@ export interface NexusGenArgTypes {
     }
     getAllCompanies: { // args
       input: NexusGenInputs['PaginationInput']; // PaginationInput!
+      search?: string | null; // String
     }
     getAllEducationByProfileId: { // args
       profileID: string; // ID!
@@ -1890,6 +1939,9 @@ export interface NexusGenArgTypes {
       companyID: string; // ID!
       input: NexusGenInputs['PaginationInput']; // PaginationInput!
       status: string; // String!
+    }
+    getCompanySlug: { // args
+      slug: string; // String!
     }
     getEducationById: { // args
       educationID: string; // ID!

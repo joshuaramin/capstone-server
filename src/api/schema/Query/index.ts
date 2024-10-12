@@ -11,7 +11,7 @@ import * as MessageQuery from "./message.query";
 import * as NotificationQuery from "./notification.query";
 import * as PortfolioQuery from "./portfolio.query";
 import * as ProfileQuery from "./profile.query";
-import * as ProjectOrganizer from './project.query'
+import * as ProjectOrganizer from "./project.query";
 import * as ResetPassword from "./resetPassword";
 import * as ResumeQuery from "./resume.query";
 import * as ScheduleQuery from "./schedule.query";

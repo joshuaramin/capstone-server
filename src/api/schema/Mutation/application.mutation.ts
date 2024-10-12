@@ -28,7 +28,11 @@ export const ApplicationMutation = extendType({
         //check if the user is verified
 
         if (!resumeID) {
-          return ERROR_MESSAGE_BAD_INPUT;
+          return {
+            __typename: "BADINPUT",
+            code: 400,
+            message: "You need to submit a resume",
+          };
         }
 
         const users = await prisma.user.findUnique({
@@ -46,6 +50,14 @@ export const ApplicationMutation = extendType({
         const jobPostDesc = await prisma.jobPost.findUnique({
           where: { jobPostID },
         });
+
+        if (new Date(jobPostDesc.endDate) < new Date()) {
+          return {
+            __typename: "BADINPUT",
+            message: "The application period has ended.",
+            code: 400,
+          };
+        }
 
         const applied = await prisma.jobPost.findUnique({
           where: {

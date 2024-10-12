@@ -38,6 +38,15 @@ type BADINPUT implements Error {
   message: String
 }
 
+type CompaniesPagination {
+  currentPage: Int
+  hasNextPage: Boolean
+  hasPrevPage: Boolean
+  item: [company]
+  totalItems: Int
+  totalPages: Int
+}
+
 input CompanyInput {
   companyName: String
   companySize: String
@@ -173,7 +182,7 @@ type Mutation {
   removedSkillToProfile(profileID: ID!, skillsID: ID!): profile
   updateAbout(aboutID: ID!, bio: String!): about
   updateApplicationStatus(applicationID: ID!, status: String!): application
-  updateCompany(companyID: ID!, verified: Boolean!): company
+  updateCompany(companyID: ID!): company
   updateEducationBackground(educationID: ID!, input: EducationInput): education
   updateFontFamily(file: Upload, font: String!, fontID: String!): fonts
   updateJobPost(input: jobPostInput, jobPostID: ID!, salary: salaryInput, skills: [String]!): jobpost
@@ -249,7 +258,7 @@ type ProjectOrganizerPagination {
 type Query {
   getAboutById(aboutID: ID!): about
   getAboutByProfileID(profileID: ID!): about
-  getAllCompanies(input: PaginationInput!): [company]
+  getAllCompanies(input: PaginationInput!, search: String): CompaniesPagination
   getAllEducationByProfileId(profileID: ID!): [education]
   getAllFonts(pagination: PaginationInput!, search: String): FontPagination
   getAllJobPost(input: PaginationInput!): [jobpost]
@@ -265,6 +274,7 @@ type Query {
   getApplicationByID(applicationID: ID!): application
   getCompanyByID(companyID: ID!): company
   getCompanyProjects(companyID: ID!, input: PaginationInput!, status: String!): [ProjectOrganizerPagination]
+  getCompanySlug(slug: String!): company
   getEducationById(educationID: ID!): education
   getJobBoard(duration: [String], experience: [String], filter: String!, input: PaginationInput!, jobType: [String], orderBy: String, search: String, skills: [String]): JobPagination
   getJobPostById(jobPostID: ID!): jobpost
@@ -433,6 +443,7 @@ type company {
   jobPost: [jobpost]
   location: String
   logo: media
+  requirements: [requirement]
   slug: String
   user: user
   verified: Boolean
@@ -585,6 +596,14 @@ type project {
 type report {
   message: String
   reportID: ID
+}
+
+type requirement {
+  createdAt: DateTime
+  requirement: String
+  requirementID: ID
+  type: String
+  updatedAt: DateTime
 }
 
 type resetPassword {

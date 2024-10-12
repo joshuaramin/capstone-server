@@ -20,7 +20,7 @@ export const CompanyMutation = extendType({
     });
     t.field("updateCompany", {
       type: "company",
-      args: { companyID: nonNull(idArg()), verified: nonNull(booleanArg()) },
+      args: { companyID: nonNull(idArg()) },
       resolve: async (_, { companyID }): Promise<any> => {
         return await prisma.company.update({
           where: { companyID },

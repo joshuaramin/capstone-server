@@ -4,13 +4,43 @@ import { prisma } from "../../helpers/server";
 export const CompanyQuery = extendType({
   type: "Query",
   definition(t) {
-    t.list.field("getAllCompanies", {
-      type: "company",
-      args: { input: nonNull("PaginationInput") },
-      resolve: async (_, { input: { page, take } }): Promise<any> => {
-        return await prisma.company.findMany({
+    t.field("getAllCompanies", {
+      type: "CompaniesPagination",
+      args: { input: nonNull("PaginationInput"), search: stringArg() },
+      resolve: async (_, { input: { page, take }, search }): Promise<any> => {
+        const result = await prisma.company.findMany({
           take,
           skip: take * (page - 1),
+          where: {
+            companyName: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        });
+
+        const offset = (page - 1) * take;
+
+        const item = result.slice(offset, offset + take);
+
+        return {
+          item,
+          totalPages: Math.ceil(result.length / take),
+          totalItems: result.length,
+          currentPage: page,
+          hasNextPage: page < Math.ceil(result.length / take),
+          hasPrevPage: page > 1,
+        };
+      },
+    });
+    t.field("getCompanySlug", {
+      type: "company",
+      args: { slug: nonNull(stringArg()) },
+      resolve: async (_, { slug }) => {
+        return await prisma.company.findFirst({
+          where: {
+            slug,
+          },
         });
       },
     });
