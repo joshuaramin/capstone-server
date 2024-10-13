@@ -179,6 +179,7 @@ type Mutation {
   generateJobPostApplicant(jobPostID: ID!): [jobpost]
   getMyResetPasswordLink(reset: String!): resetPasswordPayload
   login(email: String!, password: String!): CredentialsPayload
+  markallNotificationAsRead(userID: ID!): notification
   removedSkillToProfile(profileID: ID!, skillsID: ID!): profile
   updateAbout(aboutID: ID!, bio: String!): about
   updateApplicationStatus(applicationID: ID!, status: String!): application
@@ -202,6 +203,11 @@ type Mutation {
 type NOTFOUND implements Error {
   code: Int
   message: String
+}
+
+type NotificationPagination {
+  cursor: String
+  notification: [notification]
 }
 
 input PaginationInput {
@@ -285,7 +291,7 @@ type Query {
   getMyCompanyJobPost(pagination: PaginationInput, userID: ID!): [jobpost]
   getMyFavouriteJobPost(jobPostID: ID!, userID: ID!): favourite
   getNotificationByID(notificationID: ID!): notification
-  getNotificationByUserID(pagination: PaginationInput!, userID: ID!): [notification]
+  getNotificationByUserID(cursor: String, limit: Int, userID: ID!): NotificationPagination
   getPersonalMessage(receiverID: ID!, senderID: ID!): [message]
   getPortfolioById(portfolioID: ID!): portfolio
   getPortfolioByProfileID(profileID: ID!): [portfolio]
@@ -533,6 +539,7 @@ type notification {
   createdAt: DateTime
   notificationID: ID
   read: Boolean
+  title: String
   updatedAt: DateTime
 }
 

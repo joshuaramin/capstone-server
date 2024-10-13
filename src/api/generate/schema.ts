@@ -249,6 +249,10 @@ export interface NexusGenObjects {
     code?: number | null; // Int
     message?: string | null; // String
   }
+  NotificationPagination: { // root type
+    cursor?: string | null; // String
+    notification?: Array<NexusGenRootTypes['notification'] | null> | null; // [notification]
+  }
   PasswordAlreadyExist: { // root type
     code?: number | null; // Int
     message?: string | null; // String
@@ -390,6 +394,7 @@ export interface NexusGenObjects {
     createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
     notificationID?: string | null; // ID
     read?: boolean | null; // Boolean
+    title?: string | null; // String
     updatedAt?: NexusGenScalars['DateTime'] | null; // DateTime
   }
   password: { // root type
@@ -680,6 +685,7 @@ export interface NexusGenFieldTypes {
     generateJobPostApplicant: Array<NexusGenRootTypes['jobpost'] | null> | null; // [jobpost]
     getMyResetPasswordLink: NexusGenRootTypes['resetPasswordPayload'] | null; // resetPasswordPayload
     login: NexusGenRootTypes['CredentialsPayload'] | null; // CredentialsPayload
+    markallNotificationAsRead: NexusGenRootTypes['notification'] | null; // notification
     removedSkillToProfile: NexusGenRootTypes['profile'] | null; // profile
     updateAbout: NexusGenRootTypes['about'] | null; // about
     updateApplicationStatus: NexusGenRootTypes['application'] | null; // application
@@ -702,6 +708,10 @@ export interface NexusGenFieldTypes {
   NOTFOUND: { // field return type
     code: number | null; // Int
     message: string | null; // String
+  }
+  NotificationPagination: { // field return type
+    cursor: string | null; // String
+    notification: Array<NexusGenRootTypes['notification'] | null> | null; // [notification]
   }
   PasswordAlreadyExist: { // field return type
     code: number | null; // Int
@@ -749,7 +759,7 @@ export interface NexusGenFieldTypes {
     getMyCompanyJobPost: Array<NexusGenRootTypes['jobpost'] | null> | null; // [jobpost]
     getMyFavouriteJobPost: NexusGenRootTypes['favourite'] | null; // favourite
     getNotificationByID: NexusGenRootTypes['notification'] | null; // notification
-    getNotificationByUserID: Array<NexusGenRootTypes['notification'] | null> | null; // [notification]
+    getNotificationByUserID: NexusGenRootTypes['NotificationPagination'] | null; // NotificationPagination
     getPersonalMessage: Array<NexusGenRootTypes['message'] | null> | null; // [message]
     getPortfolioById: NexusGenRootTypes['portfolio'] | null; // portfolio
     getPortfolioByProfileID: Array<NexusGenRootTypes['portfolio'] | null> | null; // [portfolio]
@@ -913,6 +923,7 @@ export interface NexusGenFieldTypes {
     createdAt: NexusGenScalars['DateTime'] | null; // DateTime
     notificationID: string | null; // ID
     read: boolean | null; // Boolean
+    title: string | null; // String
     updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
   }
   password: { // field return type
@@ -1205,6 +1216,7 @@ export interface NexusGenFieldTypeNames {
     generateJobPostApplicant: 'jobpost'
     getMyResetPasswordLink: 'resetPasswordPayload'
     login: 'CredentialsPayload'
+    markallNotificationAsRead: 'notification'
     removedSkillToProfile: 'profile'
     updateAbout: 'about'
     updateApplicationStatus: 'application'
@@ -1227,6 +1239,10 @@ export interface NexusGenFieldTypeNames {
   NOTFOUND: { // field return type name
     code: 'Int'
     message: 'String'
+  }
+  NotificationPagination: { // field return type name
+    cursor: 'String'
+    notification: 'notification'
   }
   PasswordAlreadyExist: { // field return type name
     code: 'Int'
@@ -1274,7 +1290,7 @@ export interface NexusGenFieldTypeNames {
     getMyCompanyJobPost: 'jobpost'
     getMyFavouriteJobPost: 'favourite'
     getNotificationByID: 'notification'
-    getNotificationByUserID: 'notification'
+    getNotificationByUserID: 'NotificationPagination'
     getPersonalMessage: 'message'
     getPortfolioById: 'portfolio'
     getPortfolioByProfileID: 'portfolio'
@@ -1438,6 +1454,7 @@ export interface NexusGenFieldTypeNames {
     createdAt: 'DateTime'
     notificationID: 'ID'
     read: 'Boolean'
+    title: 'String'
     updatedAt: 'DateTime'
   }
   password: { // field return type name
@@ -1800,6 +1817,9 @@ export interface NexusGenArgTypes {
       email: string; // String!
       password: string; // String!
     }
+    markallNotificationAsRead: { // args
+      userID: string; // ID!
+    }
     removedSkillToProfile: { // args
       profileID: string; // ID!
       skillsID: string; // ID!
@@ -1986,7 +2006,8 @@ export interface NexusGenArgTypes {
       notificationID: string; // ID!
     }
     getNotificationByUserID: { // args
-      pagination: NexusGenInputs['PaginationInput']; // PaginationInput!
+      cursor?: string | null; // String
+      limit?: number | null; // Int
       userID: string; // ID!
     }
     getPersonalMessage: { // args

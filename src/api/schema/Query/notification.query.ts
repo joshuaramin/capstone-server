@@ -1,24 +1,45 @@
-import { extendType, idArg, nonNull } from "nexus";
+import { extendType, idArg, intArg, nonNull, stringArg } from "nexus";
 import { prisma } from "../../helpers/server";
 
 export const NotificationQuery = extendType({
   type: "Query",
   definition(t) {
-    t.list.field("getNotificationByUserID", {
-      type: "notification",
+    t.field("getNotificationByUserID", {
+      type: "NotificationPagination",
       args: {
         userID: nonNull(idArg()),
-        pagination: nonNull("PaginationInput"),
+        cursor: stringArg(),
+        limit: intArg(),
       },
-      resolve: async (
-        _,
-        { userID, pagination: { take, page } }
-      ): Promise<any> => {
-        return await prisma.notification.findMany({
-          where: { userID },
-          take,
-          skip: take * (page - 1),
+      resolve: async (_, { userID, cursor, limit }): Promise<any> => {
+        const queryLimit = Math.min(limit, 10);
+        const notif = await prisma.notification.findMany({
+          where: {
+            userID,
+          },
+          take: queryLimit + 1,
+          ...(cursor && {
+            cursor: {
+              notificationID: cursor,
+            },
+            skip: 1,
+          }),
+          orderBy: {
+            createdAt: "desc",
+          },
         });
+
+        let nextCursor;
+
+        if (notif.length > queryLimit) {
+          const nextNotif = notif.pop();
+          nextCursor = nextNotif!.notificationID.toString();
+        }
+
+        return {
+          notification: notif,
+          cursor,
+        };
       },
     });
     t.field("getNotificationByID", {

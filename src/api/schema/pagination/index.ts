@@ -140,3 +140,13 @@ export const ProjectOrganizerPagination = objectType({
     t.boolean("hasPrevPage");
   },
 });
+
+export const NotificationPagination = objectType({
+  name: "NotificationPagination",
+  definition(t) {
+    t.list.field("notification", {
+      type: "notification",
+    }),
+      t.string("cursor");
+  },
+});

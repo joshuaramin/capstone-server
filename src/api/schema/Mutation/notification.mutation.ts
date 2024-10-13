@@ -14,5 +14,20 @@ export const NotificationMutation = extendType({
         });
       },
     });
+    t.field("markallNotificationAsRead", {
+      type: "notification",
+      args: { userID: nonNull(idArg()) },
+      resolve: async (_, { userID }): Promise<any> => {
+        return await prisma.notification.updateMany({
+          data: {
+            read: true,
+          },
+          where: {
+            userID,
+            read: false,
+          },
+        });
+      },
+    });
   },
 });
