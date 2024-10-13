@@ -144,32 +144,26 @@ export const JobPostQuery = extendType({
           };
         }
 
-        if (filter === "Best Match") {
-          if (skills) {
-            whereArr = {
-              Skills: {
-                some: {
-                  skills: {
-                    in: skills,
-                  },
+        if (skills) {
+          whereArr = {
+            Skills: {
+              some: {
+                skills: {
+                  in: skills,
                 },
               },
-            };
-          }
-        } else if (filter === "Featured") {
-          whereArr = {
-            Company: {
-              User: {
-                plan: "PRO",
-              },
             },
-            featured: true,
           };
         }
 
         let queryParams = {
           where: whereArr,
-          orderBy: ordersBy,
+          orderBy: [
+            {
+              featured: "desc",
+            },
+            ordersBy,
+          ],
         };
 
         const getAllJobs = await prisma.jobPost.findMany(queryParams);
