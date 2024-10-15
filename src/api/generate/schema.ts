@@ -294,6 +294,9 @@ export interface NexusGenObjects {
     totalItems?: number | null; // Int
     totalPages?: number | null; // Int
   }
+  UnReadNotification: { // root type
+    unreadNotification?: number | null; // Int
+  }
   UserPagination: { // root type
     currentPage?: number | null; // Int
     hasNextPage?: boolean | null; // Boolean
@@ -648,6 +651,7 @@ export interface NexusGenFieldTypes {
     addSkillToProfile: NexusGenRootTypes['profile'] | null; // profile
     addSkills: Array<NexusGenRootTypes['skills'] | null> | null; // [skills]
     archiveJobPost: NexusGenRootTypes['jobpost'] | null; // jobpost
+    archiveNotification: NexusGenRootTypes['notification'] | null; // notification
     createAbout: NexusGenRootTypes['AboutPayload'] | null; // AboutPayload
     createApplication: NexusGenRootTypes['ApplicationPayload'] | null; // ApplicationPayload
     createAvatar: NexusGenRootTypes['MediaPayload'] | null; // MediaPayload
@@ -778,6 +782,7 @@ export interface NexusGenFieldTypes {
     getUserProjectOrganizer: NexusGenRootTypes['ProjectOrganizerPagination'] | null; // ProjectOrganizerPagination
     jobPagination: NexusGenRootTypes['JobPagination'] | null; // JobPagination
     skillsPagination: NexusGenRootTypes['SkillsPagination'] | null; // SkillsPagination
+    unreadNotification: number | null; // Int
   }
   SchedulePagination: { // field return type
     currentPage: number | null; // Int
@@ -803,6 +808,9 @@ export interface NexusGenFieldTypes {
     totalItems: number | null; // Int
     totalPages: number | null; // Int
   }
+  UnReadNotification: { // field return type
+    unreadNotification: number | null; // Int
+  }
   UserPagination: { // field return type
     currentPage: number | null; // Int
     hasNextPage: boolean | null; // Boolean
@@ -826,6 +834,7 @@ export interface NexusGenFieldTypes {
   }
   application: { // field return type
     applicationID: string | null; // ID
+    company: NexusGenRootTypes['company'] | null; // company
     createdAt: NexusGenScalars['DateTime'] | null; // DateTime
     id: string | null; // String
     jobPost: NexusGenRootTypes['jobpost'] | null; // jobpost
@@ -920,8 +929,11 @@ export interface NexusGenFieldTypes {
     updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
   }
   notification: { // field return type
+    application: NexusGenRootTypes['application'] | null; // application
+    company: Array<NexusGenRootTypes['company'] | null> | null; // [company]
     createdAt: NexusGenScalars['DateTime'] | null; // DateTime
     notificationID: string | null; // ID
+    project: Array<NexusGenRootTypes['project'] | null> | null; // [project]
     read: boolean | null; // Boolean
     title: string | null; // String
     updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
@@ -1179,6 +1191,7 @@ export interface NexusGenFieldTypeNames {
     addSkillToProfile: 'profile'
     addSkills: 'skills'
     archiveJobPost: 'jobpost'
+    archiveNotification: 'notification'
     createAbout: 'AboutPayload'
     createApplication: 'ApplicationPayload'
     createAvatar: 'MediaPayload'
@@ -1309,6 +1322,7 @@ export interface NexusGenFieldTypeNames {
     getUserProjectOrganizer: 'ProjectOrganizerPagination'
     jobPagination: 'JobPagination'
     skillsPagination: 'SkillsPagination'
+    unreadNotification: 'Int'
   }
   SchedulePagination: { // field return type name
     currentPage: 'Int'
@@ -1334,6 +1348,9 @@ export interface NexusGenFieldTypeNames {
     totalItems: 'Int'
     totalPages: 'Int'
   }
+  UnReadNotification: { // field return type name
+    unreadNotification: 'Int'
+  }
   UserPagination: { // field return type name
     currentPage: 'Int'
     hasNextPage: 'Boolean'
@@ -1357,6 +1374,7 @@ export interface NexusGenFieldTypeNames {
   }
   application: { // field return type name
     applicationID: 'ID'
+    company: 'company'
     createdAt: 'DateTime'
     id: 'String'
     jobPost: 'jobpost'
@@ -1451,8 +1469,11 @@ export interface NexusGenFieldTypeNames {
     updatedAt: 'DateTime'
   }
   notification: { // field return type name
+    application: 'application'
+    company: 'company'
     createdAt: 'DateTime'
     notificationID: 'ID'
+    project: 'project'
     read: 'Boolean'
     title: 'String'
     updatedAt: 'DateTime'
@@ -1665,6 +1686,9 @@ export interface NexusGenArgTypes {
     }
     archiveJobPost: { // args
       jobPostID: string; // ID!
+    }
+    archiveNotification: { // args
+      notificationID: string; // ID!
     }
     createAbout: { // args
       input: NexusGenInputs['AboutInput']; // AboutInput!
@@ -2071,6 +2095,9 @@ export interface NexusGenArgTypes {
     skillsPagination: { // args
       input: NexusGenInputs['PaginationInput']; // PaginationInput!
       search: string; // String!
+    }
+    unreadNotification: { // args
+      userID: string; // ID!
     }
   }
 }

@@ -16,6 +16,7 @@ export const NotificationQuery = extendType({
         const notif = await prisma.notification.findMany({
           where: {
             userID,
+            is_deleted: false,
           },
           take: queryLimit + 1,
           ...(cursor && {
@@ -49,6 +50,18 @@ export const NotificationQuery = extendType({
         return await prisma.notification.findFirst({
           where: {
             notificationID,
+          },
+        });
+      },
+    });
+    t.int("unreadNotification", {
+      args: { userID: nonNull(idArg()) },
+      resolve: async (_, { userID }) => {
+        return await prisma.notification.count({
+          where: {
+            userID,
+            is_deleted: false,
+            read: false,
           },
         });
       },

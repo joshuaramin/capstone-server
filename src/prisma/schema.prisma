@@ -78,13 +78,17 @@ model Requirements {
 }
 
 model Notification {
-  notificationID String   @id @default(cuid())
-  title          String   @db.VarChar(300)
-  read           Boolean  @default(false) @db.Boolean
-  createdAt      DateTime @default(now()) @db.Timestamp()
-  updatedAt      DateTime @default(now()) @updatedAt @db.Timestamp()
-  User           User?    @relation(fields: [userID], references: [userID], onDelete: Cascade)
-  userID         String?
+  notificationID   String             @id @default(cuid())
+  title            String             @db.VarChar(300)
+  read             Boolean            @default(false) @db.Boolean
+  is_deleted       Boolean            @default(false)
+  createdAt        DateTime           @default(now()) @db.Timestamp()
+  updatedAt        DateTime           @default(now()) @updatedAt @db.Timestamp()
+  User             User?              @relation(fields: [userID], references: [userID], onDelete: Cascade)
+  userID           String?
+  Company          Company[]
+  Application      Application[]
+  ProjectOrganizer ProjectOrganizer[]
 }
 
 model Message {
@@ -111,6 +115,7 @@ model Company {
   JobPost      JobPost[]
   review       Review[]
   Organizer    ProjectOrganizer[]
+  Notification Notification[]
   createdAt    DateTime           @default(now()) @db.Timestamp()
   updatedAt    DateTime           @default(now()) @updatedAt @db.Timestamp()
   User         User?              @relation(fields: [userID], references: [userID], onDelete: Cascade)
@@ -352,6 +357,7 @@ model Application {
   updatedAt     DateTime          @default(now()) @updatedAt @db.Timestamp()
   ATS           ApplicationScore?
   Resume        Resume[]
+  Notification  Notification[]
   JobPost       JobPost?          @relation(fields: [jobPostID], references: [jobPostID], onDelete: Cascade)
   jobPostID     String?
   User          User?             @relation(fields: [userID], references: [userID], onDelete: Cascade)
@@ -407,16 +413,17 @@ model Review {
 }
 
 model ProjectOrganizer {
-  projectOrganizerID String   @id @default(cuid())
-  title              String   @db.VarChar(300)
-  status             String   @db.VarChar(100)
+  projectOrganizerID String         @id @default(cuid())
+  title              String         @db.VarChar(300)
+  status             String         @db.VarChar(100)
   amount             Float
-  startDate          DateTime @db.Date
-  endDate            DateTime @db.Date
-  createdAt          DateTime @default(now()) @db.Timestamp()
-  updatedAt          DateTime @default(now()) @updatedAt @db.Timestamp()
-  User               User?    @relation(fields: [userID], references: [userID], onDelete: Cascade)
+  startDate          DateTime       @db.Date
+  endDate            DateTime       @db.Date
+  createdAt          DateTime       @default(now()) @db.Timestamp()
+  updatedAt          DateTime       @default(now()) @updatedAt @db.Timestamp()
+  Notification       Notification[]
+  User               User?          @relation(fields: [userID], references: [userID], onDelete: Cascade)
   userID             String?
-  Company            Company? @relation(fields: [companyID], references: [companyID])
+  Company            Company?       @relation(fields: [companyID], references: [companyID])
   companyID          String?
 }

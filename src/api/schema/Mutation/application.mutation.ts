@@ -8,7 +8,6 @@ import {
 import { ATSMainFunc } from "../../helpers/ats";
 import {
   ApplicantHired,
-  ApplicantInterview,
   ApplicantPending,
   ApplicantReject,
   ApplicantReview,
@@ -49,6 +48,9 @@ export const ApplicationMutation = extendType({
 
         const jobPostDesc = await prisma.jobPost.findUnique({
           where: { jobPostID },
+          include: {
+            Company: true
+          }
         });
 
         if (new Date(jobPostDesc.endDate) < new Date()) {
@@ -110,10 +112,15 @@ export const ApplicationMutation = extendType({
 
         await prisma.notification.create({
           data: {
-            title: `You Submitted your application to ${jobPostDesc.title}`,
+            title: `You Submitted your application to ${jobPostDesc.Company.companyName}`,
             User: {
               connect: {
                 userID,
+              },
+            },
+            Application: {
+              connect: {
+                applicationID: application.applicationID,
               },
             },
           },
@@ -180,6 +187,11 @@ export const ApplicationMutation = extendType({
                   userID: applicant.userID,
                 },
               },
+              Application: {
+                connect: {
+                  applicationID: applicant.applicationID,
+                },
+              },
             },
           });
         } else if (status === "Hired") {
@@ -196,6 +208,11 @@ export const ApplicationMutation = extendType({
               User: {
                 connect: {
                   userID: applicant.userID,
+                },
+              },
+              Application: {
+                connect: {
+                  applicationID: applicant.applicationID,
                 },
               },
             },
@@ -234,6 +251,11 @@ export const ApplicationMutation = extendType({
               User: {
                 connect: {
                   userID: applicant.userID,
+                },
+              },
+              Application: {
+                connect: {
+                  applicationID: applicant.applicationID,
                 },
               },
             },

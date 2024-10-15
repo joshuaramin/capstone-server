@@ -142,6 +142,7 @@ type Mutation {
   addSkillToProfile(profileID: ID!, skills: [String]): profile
   addSkills: [skills]
   archiveJobPost(jobPostID: ID!): jobpost
+  archiveNotification(notificationID: ID!): notification
   createAbout(input: AboutInput!, profileID: ID!): AboutPayload
   createApplication(jobPostID: ID!, resumeID: ID!, userID: ID!): ApplicationPayload
   createAvatar(file: Upload!, profileID: ID!): MediaPayload
@@ -310,6 +311,7 @@ type Query {
   getUserProjectOrganizer(input: PaginationInput!, status: String!, userID: ID!): ProjectOrganizerPagination
   jobPagination(pagination: PaginationInput, search: String, userID: ID!): JobPagination
   skillsPagination(input: PaginationInput!, search: String!): SkillsPagination
+  unreadNotification(userID: ID!): Int
 }
 
 input RequirementInput {
@@ -363,6 +365,10 @@ type ThemePagination {
   item: [theme]
   totalItems: Int
   totalPages: Int
+}
+
+type UnReadNotification {
+  unreadNotification: Int
 }
 
 """The `Upload` scalar type represents a file upload."""
@@ -422,6 +428,7 @@ type activityLogs {
 
 type application {
   applicationID: ID
+  company: company
   createdAt: DateTime
   id: String
   jobPost: jobpost
@@ -536,8 +543,11 @@ type message {
 }
 
 type notification {
+  application: application
+  company: [company]
   createdAt: DateTime
   notificationID: ID
+  project: [project]
   read: Boolean
   title: String
   updatedAt: DateTime

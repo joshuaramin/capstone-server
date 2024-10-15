@@ -43,6 +43,22 @@ export const ApplicationObject = objectType({
         });
       },
     });
+    t.field("company", {
+      type: "company",
+      resolve: async ({ applicationID }) => {
+        return await prisma.company.findFirst({
+          where: {
+            JobPost: {
+              some: {
+                Application: {
+                  some: { applicationID },
+                },
+              },
+            },
+          },
+        });
+      },
+    });
     t.field("jobPost", {
       type: "jobpost",
       resolve: async ({ applicationID }): Promise<any> => {

@@ -29,5 +29,19 @@ export const NotificationMutation = extendType({
         });
       },
     });
+    t.field("archiveNotification", {
+      type: "notification",
+      args: { notificationID: nonNull(idArg()) },
+      resolve: async (_, { notificationID }) => {
+        return await prisma.notification.update({
+          data: {
+            is_deleted: true,
+          },
+          where: {
+            notificationID,
+          },
+        });
+      },
+    });
   },
 });
