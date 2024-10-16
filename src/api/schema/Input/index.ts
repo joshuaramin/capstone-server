@@ -37,6 +37,7 @@ export const UserInput = inputObjectType({
     t.string("password");
     t.string("firstname");
     t.string("lastname");
+    t.phone("phone");
   },
 });
 

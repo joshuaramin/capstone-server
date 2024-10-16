@@ -269,6 +269,7 @@ type Query {
   getAllEducationByProfileId(profileID: ID!): [education]
   getAllFonts(pagination: PaginationInput!, search: String): FontPagination
   getAllJobPost(input: PaginationInput!): [jobpost]
+  getAllJobPostReport: [ReportPagination]
   getAllMediaProfile(pagination: PaginationInput!, profileID: ID!): [media]
   getAllMyMessage(search: String, userID: ID!): [message]
   getAllMySaveJobs(userID: ID!): [favourite]
@@ -312,6 +313,15 @@ type Query {
   jobPagination(pagination: PaginationInput, search: String, userID: ID!): JobPagination
   skillsPagination(input: PaginationInput!, search: String!): SkillsPagination
   unreadNotification(userID: ID!): Int
+}
+
+type ReportPagination {
+  currentPage: Int
+  hasNextPage: Boolean
+  hasPrevPage: Boolean
+  item: [report]
+  totalItems: Int
+  totalPages: Int
 }
 
 input RequirementInput {
@@ -386,6 +396,7 @@ input UserInput {
   firstname: String
   lastname: String
   password: String
+  phone: PhoneNumber
 }
 
 type UserPagination {
@@ -611,6 +622,7 @@ type project {
 }
 
 type report {
+  jobPost: [jobpost]
   message: String
   reportID: ID
 }
@@ -618,7 +630,7 @@ type report {
 type requirement {
   createdAt: DateTime
   requirement: String
-  requirementID: ID
+  requirementsID: ID
   type: String
   updatedAt: DateTime
 }
@@ -732,6 +744,7 @@ type user {
   plan: String
   projectOrganizer: [project]
   receiverList: [message]
+  requirement: [requirement]
   role: String
   senderList: [message]
   updatedAt: DateTime

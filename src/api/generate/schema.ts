@@ -135,6 +135,7 @@ export interface NexusGenInputs {
     firstname?: string | null; // String
     lastname?: string | null; // String
     password?: string | null; // String
+    phone?: NexusGenScalars['PhoneNumber'] | null; // PhoneNumber
   }
   UserRecruiterInput: { // input type
     companyName?: string | null; // String
@@ -270,6 +271,14 @@ export interface NexusGenObjects {
     totalPages?: number | null; // Int
   }
   Query: {};
+  ReportPagination: { // root type
+    currentPage?: number | null; // Int
+    hasNextPage?: boolean | null; // Boolean
+    hasPrevPage?: boolean | null; // Boolean
+    item?: Array<NexusGenRootTypes['report'] | null> | null; // [report]
+    totalItems?: number | null; // Int
+    totalPages?: number | null; // Int
+  }
   SchedulePagination: { // root type
     currentPage?: number | null; // Int
     hasNextPage?: boolean | null; // Boolean
@@ -447,7 +456,7 @@ export interface NexusGenObjects {
   requirement: { // root type
     createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
     requirement?: string | null; // String
-    requirementID?: string | null; // ID
+    requirementsID?: string | null; // ID
     type?: string | null; // String
     updatedAt?: NexusGenScalars['DateTime'] | null; // DateTime
   }
@@ -740,6 +749,7 @@ export interface NexusGenFieldTypes {
     getAllEducationByProfileId: Array<NexusGenRootTypes['education'] | null> | null; // [education]
     getAllFonts: NexusGenRootTypes['FontPagination'] | null; // FontPagination
     getAllJobPost: Array<NexusGenRootTypes['jobpost'] | null> | null; // [jobpost]
+    getAllJobPostReport: Array<NexusGenRootTypes['ReportPagination'] | null> | null; // [ReportPagination]
     getAllMediaProfile: Array<NexusGenRootTypes['media'] | null> | null; // [media]
     getAllMyMessage: Array<NexusGenRootTypes['message'] | null> | null; // [message]
     getAllMySaveJobs: Array<NexusGenRootTypes['favourite'] | null> | null; // [favourite]
@@ -783,6 +793,14 @@ export interface NexusGenFieldTypes {
     jobPagination: NexusGenRootTypes['JobPagination'] | null; // JobPagination
     skillsPagination: NexusGenRootTypes['SkillsPagination'] | null; // SkillsPagination
     unreadNotification: number | null; // Int
+  }
+  ReportPagination: { // field return type
+    currentPage: number | null; // Int
+    hasNextPage: boolean | null; // Boolean
+    hasPrevPage: boolean | null; // Boolean
+    item: Array<NexusGenRootTypes['report'] | null> | null; // [report]
+    totalItems: number | null; // Int
+    totalPages: number | null; // Int
   }
   SchedulePagination: { // field return type
     currentPage: number | null; // Int
@@ -992,13 +1010,14 @@ export interface NexusGenFieldTypes {
     updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
   }
   report: { // field return type
+    jobPost: Array<NexusGenRootTypes['jobpost'] | null> | null; // [jobpost]
     message: string | null; // String
     reportID: string | null; // ID
   }
   requirement: { // field return type
     createdAt: NexusGenScalars['DateTime'] | null; // DateTime
     requirement: string | null; // String
-    requirementID: string | null; // ID
+    requirementsID: string | null; // ID
     type: string | null; // String
     updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
   }
@@ -1085,6 +1104,7 @@ export interface NexusGenFieldTypes {
     plan: string | null; // String
     projectOrganizer: Array<NexusGenRootTypes['project'] | null> | null; // [project]
     receiverList: Array<NexusGenRootTypes['message'] | null> | null; // [message]
+    requirement: Array<NexusGenRootTypes['requirement'] | null> | null; // [requirement]
     role: string | null; // String
     senderList: Array<NexusGenRootTypes['message'] | null> | null; // [message]
     updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
@@ -1280,6 +1300,7 @@ export interface NexusGenFieldTypeNames {
     getAllEducationByProfileId: 'education'
     getAllFonts: 'FontPagination'
     getAllJobPost: 'jobpost'
+    getAllJobPostReport: 'ReportPagination'
     getAllMediaProfile: 'media'
     getAllMyMessage: 'message'
     getAllMySaveJobs: 'favourite'
@@ -1323,6 +1344,14 @@ export interface NexusGenFieldTypeNames {
     jobPagination: 'JobPagination'
     skillsPagination: 'SkillsPagination'
     unreadNotification: 'Int'
+  }
+  ReportPagination: { // field return type name
+    currentPage: 'Int'
+    hasNextPage: 'Boolean'
+    hasPrevPage: 'Boolean'
+    item: 'report'
+    totalItems: 'Int'
+    totalPages: 'Int'
   }
   SchedulePagination: { // field return type name
     currentPage: 'Int'
@@ -1532,13 +1561,14 @@ export interface NexusGenFieldTypeNames {
     updatedAt: 'DateTime'
   }
   report: { // field return type name
+    jobPost: 'jobpost'
     message: 'String'
     reportID: 'ID'
   }
   requirement: { // field return type name
     createdAt: 'DateTime'
     requirement: 'String'
-    requirementID: 'ID'
+    requirementsID: 'ID'
     type: 'String'
     updatedAt: 'DateTime'
   }
@@ -1625,6 +1655,7 @@ export interface NexusGenFieldTypeNames {
     plan: 'String'
     projectOrganizer: 'project'
     receiverList: 'message'
+    requirement: 'requirement'
     role: 'String'
     senderList: 'message'
     updatedAt: 'DateTime'

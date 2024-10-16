@@ -12,6 +12,16 @@ export const UserObject = objectType({
     t.boolean("verified");
     t.datetime("createdAt");
     t.datetime("updatedAt");
+    t.list.field("requirement", {
+      type: "requirement",
+      resolve: async ({ userID }) => {
+        return await prisma.requirements.findMany({
+          where: {
+            userID,
+          },
+        });
+      },
+    });
     t.field("myProfile", {
       type: "profile",
       resolve: async ({ userID }): Promise<any> => {

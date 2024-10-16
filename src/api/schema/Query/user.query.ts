@@ -27,14 +27,20 @@ export const UserQuery = extendType({
           where: {
             role: role as any,
             Profile: {
-              firstname: {
-                contains: search,
-                mode: "insensitive",
-              },
-              lastname: {
-                contains: search,
-                mode: "insensitive",
-              },
+              OR: [
+                {
+                  firstname: {
+                    contains: search,
+                    mode: "insensitive",
+                  },
+                },
+                {
+                  lastname: {
+                    contains: search,
+                    mode: "insensitive",
+                  },
+                },
+              ],
             },
           },
           take: take,

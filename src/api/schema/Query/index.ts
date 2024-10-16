@@ -12,6 +12,7 @@ import * as NotificationQuery from "./notification.query";
 import * as PortfolioQuery from "./portfolio.query";
 import * as ProfileQuery from "./profile.query";
 import * as ProjectOrganizer from "./project.query";
+import * as ReportQuery from "./report.query";
 import * as ResetPassword from "./resetPassword";
 import * as ResumeQuery from "./resume.query";
 import * as ScheduleQuery from "./schedule.query";
@@ -35,6 +36,7 @@ export {
   PortfolioQuery,
   ProfileQuery,
   ProjectOrganizer,
+  ReportQuery,
   ResetPassword,
   ResumeQuery,
   ScheduleQuery,

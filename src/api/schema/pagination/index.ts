@@ -150,3 +150,17 @@ export const NotificationPagination = objectType({
       t.string("cursor");
   },
 });
+
+export const ReportPagination = objectType({
+  name: "ReportPagination",
+  definition(t) {
+    t.list.field("item", {
+      type: "report",
+    });
+    t.int("totalPages");
+    t.int("currentPage");
+    t.int("totalItems");
+    t.boolean("hasNextPage");
+    t.boolean("hasPrevPage");
+  },
+});
