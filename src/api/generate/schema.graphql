@@ -167,6 +167,7 @@ type Mutation {
   deleteFontFamily(fontID: ID!, userID: ID!): fonts
   deleteJobPost(jobPostID: ID!): jobpost
   deleteMedia(mediaID: ID!): media
+  deleteMessage(messageID: ID!): message
   deletePortfolio(portfolioID: ID!): portfolio
   deleteProfileAvatar(mediaID: ID!, profileID: ID!): profile
   deleteProfileHeader(mediaID: ID!, profileID: ID!): profile
@@ -188,7 +189,7 @@ type Mutation {
   updateEducationBackground(educationID: ID!, input: EducationInput): education
   updateFontFamily(file: Upload, font: String!, fontID: String!): fonts
   updateJobPost(input: jobPostInput, jobPostID: ID!, salary: salaryInput, skills: [String]!): jobpost
-  updateMessage(message: String!, messageID: String!): message
+  updateMessage(message: String!, messageID: ID!): message
   updateNotification(notificationID: ID!): notification
   updatePortfolio(input: PortfolioInput!, portfolioID: ID!, skills: [String]!): portfolio
   updateProfile(input: ProfileInput!, profileID: ID!): profile

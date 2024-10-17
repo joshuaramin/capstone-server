@@ -1,4 +1,4 @@
-import { extendType, list, nonNull, stringArg } from "nexus";
+import { extendType, idArg, list, nonNull, stringArg } from "nexus";
 import { prisma } from "../../helpers/server";
 import { id } from "date-fns/locale";
 import { uploader } from "../../helpers/cloudinary";
@@ -45,9 +45,18 @@ export const MessageMutation = extendType({
         }
       },
     });
+    t.field("deleteMessage", {
+      type: "message",
+      args: { messageID: nonNull(idArg()) },
+      resolve: async (_, { messageID }) => {
+        return await prisma.message.delete({
+          where: { messageID },
+        });
+      },
+    });
     t.field("updateMessage", {
       type: "message",
-      args: { messageID: nonNull(stringArg()), message: nonNull(stringArg()) },
+      args: { messageID: nonNull(idArg()), message: nonNull(stringArg()) },
       resolve: async (_, { messageID, message }): Promise<any> => {
         return await prisma.message.update({
           where: {

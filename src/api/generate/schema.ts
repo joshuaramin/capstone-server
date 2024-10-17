@@ -685,6 +685,7 @@ export interface NexusGenFieldTypes {
     deleteFontFamily: NexusGenRootTypes['fonts'] | null; // fonts
     deleteJobPost: NexusGenRootTypes['jobpost'] | null; // jobpost
     deleteMedia: NexusGenRootTypes['media'] | null; // media
+    deleteMessage: NexusGenRootTypes['message'] | null; // message
     deletePortfolio: NexusGenRootTypes['portfolio'] | null; // portfolio
     deleteProfileAvatar: NexusGenRootTypes['profile'] | null; // profile
     deleteProfileHeader: NexusGenRootTypes['profile'] | null; // profile
@@ -1236,6 +1237,7 @@ export interface NexusGenFieldTypeNames {
     deleteFontFamily: 'fonts'
     deleteJobPost: 'jobpost'
     deleteMedia: 'media'
+    deleteMessage: 'message'
     deletePortfolio: 'portfolio'
     deleteProfileAvatar: 'profile'
     deleteProfileHeader: 'profile'
@@ -1828,6 +1830,9 @@ export interface NexusGenArgTypes {
     deleteMedia: { // args
       mediaID: string; // ID!
     }
+    deleteMessage: { // args
+      messageID: string; // ID!
+    }
     deletePortfolio: { // args
       portfolioID: string; // ID!
     }
@@ -1907,7 +1912,7 @@ export interface NexusGenArgTypes {
     }
     updateMessage: { // args
       message: string; // String!
-      messageID: string; // String!
+      messageID: string; // ID!
     }
     updateNotification: { // args
       notificationID: string; // ID!
