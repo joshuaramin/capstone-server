@@ -136,5 +136,15 @@ export const TokenObject = objectType({
     t.id("userID");
     t.string("role");
     t.string("token");
+    t.field("user", {
+      type: "user",
+      resolve: async ({ userID }) => {
+        return await prisma.user.findFirst({
+          where: {
+            userID,
+          },
+        });
+      },
+    });
   },
 });

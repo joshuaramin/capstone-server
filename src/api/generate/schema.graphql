@@ -134,6 +134,13 @@ union JobPostPayload = BADINPUT | Forbidden | Payment | jobpost
 
 union MediaPayload = BADINPUT | media
 
+type MessageStatus {
+  createAt: DateTime
+  isRead: Boolean
+  messageStatus: ID
+  updatedAt: DateTime
+}
+
 type Mutation {
   Logout(userID: ID!): activityLogs
   addProfileAvatar(file: Upload!, profileID: ID!): profile
@@ -395,6 +402,7 @@ input UserFreelanceInput {
 }
 
 input UserInput {
+  birthday: Date
   email: String
   firstname: String
   lastname: String
@@ -549,6 +557,7 @@ type message {
   media: media
   message: String
   messageID: ID
+  messageStatus: MessageStatus
   receivedUser: user
   receiverID: String
   sendUser: user
@@ -730,6 +739,7 @@ type theme {
 type token {
   role: String
   token: String
+  user: user
   userID: ID
 }
 

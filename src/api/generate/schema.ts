@@ -131,6 +131,7 @@ export interface NexusGenInputs {
     password?: string | null; // String
   }
   UserInput: { // input type
+    birthday?: NexusGenScalars['Date'] | null; // Date
     email?: string | null; // String
     firstname?: string | null; // String
     lastname?: string | null; // String
@@ -244,6 +245,12 @@ export interface NexusGenObjects {
     item?: Array<NexusGenRootTypes['jobpost'] | null> | null; // [jobpost]
     totalItems?: number | null; // Int
     totalPages?: number | null; // Int
+  }
+  MessageStatus: { // root type
+    createAt?: NexusGenScalars['DateTime'] | null; // DateTime
+    isRead?: boolean | null; // Boolean
+    messageStatus?: string | null; // ID
+    updatedAt?: NexusGenScalars['DateTime'] | null; // DateTime
   }
   Mutation: {};
   NOTFOUND: { // root type
@@ -652,6 +659,12 @@ export interface NexusGenFieldTypes {
     totalItems: number | null; // Int
     totalPages: number | null; // Int
   }
+  MessageStatus: { // field return type
+    createAt: NexusGenScalars['DateTime'] | null; // DateTime
+    isRead: boolean | null; // Boolean
+    messageStatus: string | null; // ID
+    updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
+  }
   Mutation: { // field return type
     Logout: NexusGenRootTypes['activityLogs'] | null; // activityLogs
     addProfileAvatar: NexusGenRootTypes['profile'] | null; // profile
@@ -943,6 +956,7 @@ export interface NexusGenFieldTypes {
     media: NexusGenRootTypes['media'] | null; // media
     message: string | null; // String
     messageID: string | null; // ID
+    messageStatus: NexusGenRootTypes['MessageStatus'] | null; // MessageStatus
     receivedUser: NexusGenRootTypes['user'] | null; // user
     receiverID: string | null; // String
     sendUser: NexusGenRootTypes['user'] | null; // user
@@ -1091,6 +1105,7 @@ export interface NexusGenFieldTypes {
   token: { // field return type
     role: string | null; // String
     token: string | null; // String
+    user: NexusGenRootTypes['user'] | null; // user
     userID: string | null; // ID
   }
   user: { // field return type
@@ -1205,6 +1220,12 @@ export interface NexusGenFieldTypeNames {
     item: 'jobpost'
     totalItems: 'Int'
     totalPages: 'Int'
+  }
+  MessageStatus: { // field return type name
+    createAt: 'DateTime'
+    isRead: 'Boolean'
+    messageStatus: 'ID'
+    updatedAt: 'DateTime'
   }
   Mutation: { // field return type name
     Logout: 'activityLogs'
@@ -1497,6 +1518,7 @@ export interface NexusGenFieldTypeNames {
     media: 'media'
     message: 'String'
     messageID: 'ID'
+    messageStatus: 'MessageStatus'
     receivedUser: 'user'
     receiverID: 'String'
     sendUser: 'user'
@@ -1645,6 +1667,7 @@ export interface NexusGenFieldTypeNames {
   token: { // field return type name
     role: 'String'
     token: 'String'
+    user: 'user'
     userID: 'ID'
   }
   user: { // field return type name

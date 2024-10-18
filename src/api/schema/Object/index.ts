@@ -9,6 +9,7 @@ import * as FavouriteObject from "./favourite.object";
 import * as FontObject from "./font.object";
 import * as MedieaObject from "./media.object";
 import * as MessageObject from "./message.object";
+import * as MessageStatusObject from "./messageStatus.object";
 import * as NotificationObject from "./notification.object";
 import * as PasswordObject from "./password.object";
 import * as PortfolioObject from "./portfolio.object";
@@ -38,6 +39,7 @@ export {
   JobPostObject,
   MedieaObject,
   MessageObject,
+  MessageStatusObject,
   NotificationObject,
   PasswordObject,
   PortfolioObject,

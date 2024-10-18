@@ -1,6 +1,5 @@
 import { extendType, idArg, list, nonNull, stringArg } from "nexus";
 import { prisma } from "../../helpers/server";
-import { id } from "date-fns/locale";
 import { uploader } from "../../helpers/cloudinary";
 
 export const MessageMutation = extendType({
@@ -27,6 +26,16 @@ export const MessageMutation = extendType({
                 Media: {
                   create: {
                     media: await uploader(createReadStream()),
+                  },
+                },
+                MessageStatus: {
+                  create: {
+                    isRead: false,
+                    User: {
+                      connect: {
+                        userID: receiverID,
+                      },
+                    },
                   },
                 },
                 senderID,

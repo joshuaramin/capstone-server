@@ -31,9 +31,9 @@ export const UserMutation = extendType({
       args: { input: nonNull("UserInput") },
       resolve: async (
         _,
-        { input: { firstname, lastname, password, email, phone } }
+        { input: { firstname, lastname, password, email, phone, birthday } }
       ): Promise<any> => {
-        if (!firstname || !lastname || !password || !email) {
+        if (!firstname || !lastname || !password || !email || !birthday) {
           return ERROR_MESSAGE_BAD_INPUT;
         }
 
@@ -59,7 +59,8 @@ export const UserMutation = extendType({
               create: {
                 firstname,
                 lastname,
-                phone
+                phone,
+                birthday,
               },
             },
           },
@@ -418,6 +419,7 @@ export const UserMutation = extendType({
           userID: users.userID,
           role: users.role,
           token,
+          ...users,
         };
       },
     });

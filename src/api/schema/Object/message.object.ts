@@ -10,6 +10,16 @@ export const MessageObject = objectType({
     t.string("receiverID");
     t.datetime("createdAt");
     t.datetime("updatedAt");
+    t.field("messageStatus", {
+      type: "MessageStatus",
+      resolve: async ({ messageID }) => {
+        return await prisma.messageStatus.findFirst({
+          where: {
+            messageID,
+          },
+        });
+      },
+    });
     t.field("media", {
       type: "media",
       resolve: async ({ messageID }): Promise<any> => {

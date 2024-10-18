@@ -38,6 +38,7 @@ export const UserInput = inputObjectType({
     t.string("firstname");
     t.string("lastname");
     t.phone("phone");
+    t.date("birthday");
   },
 });
 

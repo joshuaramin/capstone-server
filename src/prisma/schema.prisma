@@ -51,6 +51,7 @@ model User {
   Organizer        ProjectOrganizer[]
   Favourite        Favourite[]
   ResetPassword    ResetPassword[]
+  MessageStatus    MessageStatus[]
   Zoom             zintegration?
   Profile          Profile?
   Company          Company?
@@ -92,15 +93,27 @@ model Notification {
 }
 
 model Message {
-  messageID  String   @id @default(cuid())
-  message    String?
-  senderID   String
-  receiverID String
-  Media      Media[]
-  createdAt  DateTime @default(now()) @db.Timestamp()
-  updatedAt  DateTime @default(now()) @updatedAt @db.Timestamp()
-  sender     User     @relation("SentMessage", fields: [senderID], references: [userID], onDelete: Cascade)
-  receiver   User     @relation("ReceivedMessage", fields: [receiverID], references: [userID], onDelete: Cascade)
+  messageID     String          @id @default(cuid())
+  message       String?
+  senderID      String
+  receiverID    String
+  Media         Media[]
+  createdAt     DateTime        @default(now()) @db.Timestamp()
+  updatedAt     DateTime        @default(now()) @updatedAt @db.Timestamp()
+  MessageStatus MessageStatus[]
+  sender        User            @relation("SentMessage", fields: [senderID], references: [userID], onDelete: Cascade)
+  receiver      User            @relation("ReceivedMessage", fields: [receiverID], references: [userID], onDelete: Cascade)
+}
+
+model MessageStatus {
+  messageStatus String   @id @default(cuid())
+  isRead        Boolean  @default(false)
+  Message       Message? @relation(fields: [messageID], references: [messageID])
+  messageID     String?
+  User          User?    @relation(fields: [userID], references: [userID])
+  userID        String?
+  createdAt     DateTime @default(now()) @db.Timestamp()
+  updatedAt     DateTime @default(now()) @updatedAt @db.Timestamp()
 }
 
 model Company {
