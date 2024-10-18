@@ -382,6 +382,40 @@ export const JobPostMutation = extendType({
         };
       },
     });
+    t.field("unarchiveJobPost", {
+      type: "jobpost",
+      args: { jobPostID: nonNull(idArg()) },
+      resolve: async (_, { jobPostID }): Promise<any> => {
+        const jobpost = await prisma.jobPost.update({
+          data: { isArchive: false },
+          where: {
+            jobPostID,
+          },
+          include: {
+            Company: {
+              include: {
+                User: true,
+              },
+            },
+          },
+        });
+        await prisma.activityLogs.create({
+          data: {
+            title: "UnArchive Job Post",
+            description: "You unarchive a Job post",
+            User: {
+              connect: {
+                userID: jobpost.Company.User.userID,
+              },
+            },
+          },
+        });
+
+        return {
+          ...jobpost,
+        };
+      },
+    });
     t.field("deleteJobPost", {
       type: "jobpost",
       args: { jobPostID: nonNull(idArg()) },

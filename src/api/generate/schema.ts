@@ -701,6 +701,7 @@ export interface NexusGenFieldTypes {
     login: NexusGenRootTypes['CredentialsPayload'] | null; // CredentialsPayload
     markallNotificationAsRead: NexusGenRootTypes['notification'] | null; // notification
     removedSkillToProfile: NexusGenRootTypes['profile'] | null; // profile
+    unarchiveJobPost: NexusGenRootTypes['jobpost'] | null; // jobpost
     updateAbout: NexusGenRootTypes['about'] | null; // about
     updateApplicationStatus: NexusGenRootTypes['application'] | null; // application
     updateCompany: NexusGenRootTypes['company'] | null; // company
@@ -761,6 +762,7 @@ export interface NexusGenFieldTypes {
     getAllUserAccountByRole: NexusGenRootTypes['UserPagination'] | null; // UserPagination
     getApplicantJobPostByIdPagination: NexusGenRootTypes['ApplicantPagination'] | null; // ApplicantPagination
     getApplicationByID: NexusGenRootTypes['application'] | null; // application
+    getArchiveJobPost: NexusGenRootTypes['JobPagination'] | null; // JobPagination
     getCompanyByID: NexusGenRootTypes['company'] | null; // company
     getCompanyProjects: Array<NexusGenRootTypes['ProjectOrganizerPagination'] | null> | null; // [ProjectOrganizerPagination]
     getCompanySlug: NexusGenRootTypes['company'] | null; // company
@@ -1253,6 +1255,7 @@ export interface NexusGenFieldTypeNames {
     login: 'CredentialsPayload'
     markallNotificationAsRead: 'notification'
     removedSkillToProfile: 'profile'
+    unarchiveJobPost: 'jobpost'
     updateAbout: 'about'
     updateApplicationStatus: 'application'
     updateCompany: 'company'
@@ -1313,6 +1316,7 @@ export interface NexusGenFieldTypeNames {
     getAllUserAccountByRole: 'UserPagination'
     getApplicantJobPostByIdPagination: 'ApplicantPagination'
     getApplicationByID: 'application'
+    getArchiveJobPost: 'JobPagination'
     getCompanyByID: 'company'
     getCompanyProjects: 'ProjectOrganizerPagination'
     getCompanySlug: 'company'
@@ -1884,6 +1888,9 @@ export interface NexusGenArgTypes {
       profileID: string; // ID!
       skillsID: string; // ID!
     }
+    unarchiveJobPost: { // args
+      jobPostID: string; // ID!
+    }
     updateAbout: { // args
       aboutID: string; // ID!
       bio: string; // String!
@@ -2011,6 +2018,11 @@ export interface NexusGenArgTypes {
     }
     getApplicationByID: { // args
       applicationID: string; // ID!
+    }
+    getArchiveJobPost: { // args
+      input: NexusGenInputs['PaginationInput']; // PaginationInput!
+      search?: string | null; // String
+      userID: string; // ID!
     }
     getCompanyByID: { // args
       companyID: string; // ID!

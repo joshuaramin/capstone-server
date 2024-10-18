@@ -54,6 +54,7 @@ export const JobPostQuery = extendType({
               contains: search,
               mode: "insensitive",
             },
+            isArchive: false,
             Company: {
               userID,
             },
@@ -195,6 +196,7 @@ export const JobPostQuery = extendType({
       resolve: async (_, { userID }): Promise<any> => {
         return await prisma.jobPost.findMany({
           where: {
+            isArchive: false,
             Company: {
               userID,
             },
@@ -211,6 +213,40 @@ export const JobPostQuery = extendType({
             slug,
           },
         });
+      },
+    });
+    t.field("getArchiveJobPost", {
+      type: "JobPagination",
+      args: {
+        input: nonNull("PaginationInput"),
+        userID: nonNull(idArg()),
+        search: stringArg(),
+      },
+      resolve: async (_, { input: { page, take }, userID, search}): Promise<any> => {
+        const jobPost = await prisma.jobPost.findMany({
+          where: {
+            isArchive: true,
+            title: {
+              contains: search,
+              mode: "insensitive",
+            },
+            Company: {
+              userID,
+            },
+          },
+          take,
+          skip: (page - 1) * take,
+        });
+        const offset = (page - 1) * take;
+        const item = jobPost.slice(offset, offset + take);
+        return {
+          totalPages: Math.ceil(jobPost.length / take),
+          totalItems: jobPost.length,
+          currentPage: page,
+          hasNextPage: page < Math.ceil(jobPost.length / take),
+          hasPrevPage: page > 1,
+          item,
+        };
       },
     });
     t.list.field("getSimilarJobPost", {

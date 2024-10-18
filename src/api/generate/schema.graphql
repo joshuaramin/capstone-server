@@ -183,6 +183,7 @@ type Mutation {
   login(email: String!, password: String!): CredentialsPayload
   markallNotificationAsRead(userID: ID!): notification
   removedSkillToProfile(profileID: ID!, skillsID: ID!): profile
+  unarchiveJobPost(jobPostID: ID!): jobpost
   updateAbout(aboutID: ID!, bio: String!): about
   updateApplicationStatus(applicationID: ID!, status: String!): application
   updateCompany(companyID: ID!): company
@@ -281,6 +282,7 @@ type Query {
   getAllUserAccountByRole(input: PaginationInput, role: String, search: String): UserPagination
   getApplicantJobPostByIdPagination(input: PaginationInput!, jobPostID: ID!, search: String): ApplicantPagination
   getApplicationByID(applicationID: ID!): application
+  getArchiveJobPost(input: PaginationInput!, search: String, userID: ID!): JobPagination
   getCompanyByID(companyID: ID!): company
   getCompanyProjects(companyID: ID!, input: PaginationInput!, status: String!): [ProjectOrganizerPagination]
   getCompanySlug(slug: String!): company
