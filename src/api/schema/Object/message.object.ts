@@ -60,3 +60,21 @@ export const MessageObject = objectType({
     });
   },
 });
+
+export const GroupMessageObject = objectType({
+  name: "GroupMessage",
+  definition(t) {
+    t.id("userID");
+    t.field("user", {
+      type: "user",
+      resolve: async ({ userID }) => {
+        return await prisma.user.findFirst({
+          where: { userID },
+        });
+      },
+    });
+    t.field("message", {
+      type: "message",
+    });
+  },
+});

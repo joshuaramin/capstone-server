@@ -1,6 +1,6 @@
 import { extendType, idArg, nonNull, stringArg } from "nexus";
 import { prisma } from "../../helpers/server";
-
+import { groupBy } from "lodash";
 export const MessageQuery = extendType({
   type: "Query",
   definition(t) {
@@ -21,75 +21,78 @@ export const MessageQuery = extendType({
         });
       },
     });
-
-    t.list.field("getListofMessage", {
-      type: "message",
-      args: { userID: nonNull(idArg()), search: stringArg() },
-      resolve: async (_, { userID, search }) => {
-        return await prisma.message.findMany({
+    t.int("getUnreadCountMessage", {
+      args: { userID: nonNull(idArg()) },
+      resolve: async (_, { userID }) => {
+        return await prisma.messageStatus.count({
           where: {
-            OR: [{ senderID: userID }, { receiverID: userID }],
-            sender: {
-              Profile: {
-                OR: [
-                  {
-                    firstname: {
-                      contains: search,
-                      mode: "insensitive",
-                    },
-                    lastname: {
-                      contains: search,
-                      mode: "insensitive",
-                    },
-                  },
-                ],
-              },
-            },
-            NOT: [{ senderID: userID }],
-          },
-          include: {
-            sender: true,
-          },
-          distinct: ["receiverID", "senderID"],
-          orderBy: {
-            createdAt: "desc",
+            userID,
+            isRead: false,
           },
         });
       },
     });
-
-    t.list.field("getAllMyMessage", {
-      type: "message",
+    t.list.field("getMessages", {
+      type: "GroupMessage",
       args: { userID: nonNull(idArg()), search: stringArg() },
       resolve: async (_, { userID, search }): Promise<any> => {
-        return await prisma.message.findMany({
+        const messages = await prisma.message.findMany({
           where: {
             OR: [{ senderID: userID }, { receiverID: userID }],
-            receiver: {
-              Profile: {
-                OR: [
-                  {
+            sender: {
+              OR: [
+                {
+                  Profile: {
                     firstname: {
                       contains: search,
                       mode: "insensitive",
                     },
-                  },
-                  {
                     lastname: {
                       contains: search,
                       mode: "insensitive",
                     },
                   },
-                ],
-              },
+                },
+              ],
             },
-            NOT: [{ receiverID: userID }],
+            receiver: {
+              OR: [
+                {
+                  Profile: {
+                    firstname: {
+                      contains: search,
+                      mode: "insensitive",
+                    },
+                    lastname: {
+                      contains: search,
+                      mode: "insensitive",
+                    },
+                  },
+                },
+              ],
+            },
           },
           orderBy: {
             createdAt: "desc",
           },
+          include: {
+            receiver: true,
+            sender: true,
+            Media: true,
+          },
           distinct: ["receiverID", "senderID"],
         });
+
+        const groupedMessages = groupBy(messages, (message) => {
+          return message.senderID === userID
+            ? message.receiverID
+            : message.senderID;
+        });
+
+        return Object.entries(groupedMessages).map(([userID, messages]) => ({
+          userID,
+          message: messages[0],
+        }));
       },
     });
   },

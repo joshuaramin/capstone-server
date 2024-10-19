@@ -238,6 +238,10 @@ export interface NexusGenObjects {
     code?: number | null; // Int
     message?: string | null; // String
   }
+  GroupMessage: { // root type
+    message?: NexusGenRootTypes['message'] | null; // message
+    userID?: string | null; // ID
+  }
   JobPagination: { // root type
     currentPage?: number | null; // Int
     hasNextPage?: boolean | null; // Boolean
@@ -247,9 +251,9 @@ export interface NexusGenObjects {
     totalPages?: number | null; // Int
   }
   MessageStatus: { // root type
-    createAt?: NexusGenScalars['DateTime'] | null; // DateTime
+    createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
     isRead?: boolean | null; // Boolean
-    messageStatus?: string | null; // ID
+    messageStatusID?: string | null; // ID
     updatedAt?: NexusGenScalars['DateTime'] | null; // DateTime
   }
   Mutation: {};
@@ -651,6 +655,11 @@ export interface NexusGenFieldTypes {
     code: number | null; // Int
     message: string | null; // String
   }
+  GroupMessage: { // field return type
+    message: NexusGenRootTypes['message'] | null; // message
+    user: NexusGenRootTypes['user'] | null; // user
+    userID: string | null; // ID
+  }
   JobPagination: { // field return type
     currentPage: number | null; // Int
     hasNextPage: boolean | null; // Boolean
@@ -660,9 +669,9 @@ export interface NexusGenFieldTypes {
     totalPages: number | null; // Int
   }
   MessageStatus: { // field return type
-    createAt: NexusGenScalars['DateTime'] | null; // DateTime
+    createdAt: NexusGenScalars['DateTime'] | null; // DateTime
     isRead: boolean | null; // Boolean
-    messageStatus: string | null; // ID
+    messageStatusID: string | null; // ID
     updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
   }
   Mutation: { // field return type
@@ -721,7 +730,7 @@ export interface NexusGenFieldTypes {
     updateEducationBackground: NexusGenRootTypes['education'] | null; // education
     updateFontFamily: NexusGenRootTypes['fonts'] | null; // fonts
     updateJobPost: NexusGenRootTypes['jobpost'] | null; // jobpost
-    updateMessage: NexusGenRootTypes['message'] | null; // message
+    updateMessageStatus: NexusGenRootTypes['message'] | null; // message
     updateNotification: NexusGenRootTypes['notification'] | null; // notification
     updatePortfolio: NexusGenRootTypes['portfolio'] | null; // portfolio
     updateProfile: NexusGenRootTypes['profile'] | null; // profile
@@ -766,7 +775,6 @@ export interface NexusGenFieldTypes {
     getAllJobPost: Array<NexusGenRootTypes['jobpost'] | null> | null; // [jobpost]
     getAllJobPostReport: Array<NexusGenRootTypes['ReportPagination'] | null> | null; // [ReportPagination]
     getAllMediaProfile: Array<NexusGenRootTypes['media'] | null> | null; // [media]
-    getAllMyMessage: Array<NexusGenRootTypes['message'] | null> | null; // [message]
     getAllMySaveJobs: Array<NexusGenRootTypes['favourite'] | null> | null; // [favourite]
     getAllMySocialLink: NexusGenRootTypes['social'] | null; // social
     getAllResumyByProfileID: Array<NexusGenRootTypes['resume'] | null> | null; // [resume]
@@ -783,7 +791,7 @@ export interface NexusGenFieldTypes {
     getJobBoard: NexusGenRootTypes['JobPagination'] | null; // JobPagination
     getJobPostById: NexusGenRootTypes['jobpost'] | null; // jobpost
     getJobPostBySlug: NexusGenRootTypes['jobpost'] | null; // jobpost
-    getListofMessage: Array<NexusGenRootTypes['message'] | null> | null; // [message]
+    getMessages: Array<NexusGenRootTypes['GroupMessage'] | null> | null; // [GroupMessage]
     getMyApplication: NexusGenRootTypes['ApplicantPagination'] | null; // ApplicantPagination
     getMyCompanyByUserID: NexusGenRootTypes['company'] | null; // company
     getMyCompanyJobPost: Array<NexusGenRootTypes['jobpost'] | null> | null; // [jobpost]
@@ -802,6 +810,7 @@ export interface NexusGenFieldTypes {
     getSkillByProfileID: Array<NexusGenRootTypes['skills'] | null> | null; // [skills]
     getSkillsByGroup: Array<NexusGenRootTypes['skills'] | null> | null; // [skills]
     getThemes: NexusGenRootTypes['ThemePagination'] | null; // ThemePagination
+    getUnreadCountMessage: number | null; // Int
     getUserAccountById: NexusGenRootTypes['user'] | null; // user
     getUserActivityLogs: Array<NexusGenRootTypes['activityLogs'] | null> | null; // [activityLogs]
     getUserProfileById: NexusGenRootTypes['profile'] | null; // profile
@@ -1213,6 +1222,11 @@ export interface NexusGenFieldTypeNames {
     code: 'Int'
     message: 'String'
   }
+  GroupMessage: { // field return type name
+    message: 'message'
+    user: 'user'
+    userID: 'ID'
+  }
   JobPagination: { // field return type name
     currentPage: 'Int'
     hasNextPage: 'Boolean'
@@ -1222,9 +1236,9 @@ export interface NexusGenFieldTypeNames {
     totalPages: 'Int'
   }
   MessageStatus: { // field return type name
-    createAt: 'DateTime'
+    createdAt: 'DateTime'
     isRead: 'Boolean'
-    messageStatus: 'ID'
+    messageStatusID: 'ID'
     updatedAt: 'DateTime'
   }
   Mutation: { // field return type name
@@ -1283,7 +1297,7 @@ export interface NexusGenFieldTypeNames {
     updateEducationBackground: 'education'
     updateFontFamily: 'fonts'
     updateJobPost: 'jobpost'
-    updateMessage: 'message'
+    updateMessageStatus: 'message'
     updateNotification: 'notification'
     updatePortfolio: 'portfolio'
     updateProfile: 'profile'
@@ -1328,7 +1342,6 @@ export interface NexusGenFieldTypeNames {
     getAllJobPost: 'jobpost'
     getAllJobPostReport: 'ReportPagination'
     getAllMediaProfile: 'media'
-    getAllMyMessage: 'message'
     getAllMySaveJobs: 'favourite'
     getAllMySocialLink: 'social'
     getAllResumyByProfileID: 'resume'
@@ -1345,7 +1358,7 @@ export interface NexusGenFieldTypeNames {
     getJobBoard: 'JobPagination'
     getJobPostById: 'jobpost'
     getJobPostBySlug: 'jobpost'
-    getListofMessage: 'message'
+    getMessages: 'GroupMessage'
     getMyApplication: 'ApplicantPagination'
     getMyCompanyByUserID: 'company'
     getMyCompanyJobPost: 'jobpost'
@@ -1364,6 +1377,7 @@ export interface NexusGenFieldTypeNames {
     getSkillByProfileID: 'skills'
     getSkillsByGroup: 'skills'
     getThemes: 'ThemePagination'
+    getUnreadCountMessage: 'Int'
     getUserAccountById: 'user'
     getUserActivityLogs: 'activityLogs'
     getUserProfileById: 'profile'
@@ -1940,9 +1954,9 @@ export interface NexusGenArgTypes {
       salary?: NexusGenInputs['salaryInput'] | null; // salaryInput
       skills: Array<string | null>; // [String]!
     }
-    updateMessage: { // args
-      message: string; // String!
-      messageID: string; // ID!
+    updateMessageStatus: { // args
+      messageStatusID: string; // ID!
+      receiverID: string; // ID!
     }
     updateNotification: { // args
       notificationID: string; // ID!
@@ -2010,10 +2024,6 @@ export interface NexusGenArgTypes {
       pagination: NexusGenInputs['PaginationInput']; // PaginationInput!
       profileID: string; // ID!
     }
-    getAllMyMessage: { // args
-      search?: string | null; // String
-      userID: string; // ID!
-    }
     getAllMySaveJobs: { // args
       userID: string; // ID!
     }
@@ -2077,7 +2087,7 @@ export interface NexusGenArgTypes {
     getJobPostBySlug: { // args
       slug: string; // ID!
     }
-    getListofMessage: { // args
+    getMessages: { // args
       search?: string | null; // String
       userID: string; // ID!
     }
@@ -2142,6 +2152,9 @@ export interface NexusGenArgTypes {
     getThemes: { // args
       pagination: NexusGenInputs['PaginationInput']; // PaginationInput!
       search?: string | null; // String
+    }
+    getUnreadCountMessage: { // args
+      userID: string; // ID!
     }
     getUserAccountById: { // args
       userID: string; // ID!

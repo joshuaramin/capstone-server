@@ -106,14 +106,14 @@ model Message {
 }
 
 model MessageStatus {
-  messageStatus String   @id @default(cuid())
-  isRead        Boolean  @default(false)
-  Message       Message? @relation(fields: [messageID], references: [messageID])
-  messageID     String?
-  User          User?    @relation(fields: [userID], references: [userID])
-  userID        String?
-  createdAt     DateTime @default(now()) @db.Timestamp()
-  updatedAt     DateTime @default(now()) @updatedAt @db.Timestamp()
+  messageStatusID String   @id @default(cuid())
+  isRead          Boolean  @default(false)
+  Message         Message? @relation(fields: [messageID], references: [messageID])
+  messageID       String?
+  User            User?    @relation(fields: [userID], references: [userID])
+  userID          String?
+  createdAt       DateTime @default(now()) @db.Timestamp()
+  updatedAt       DateTime @default(now()) @updatedAt @db.Timestamp()
 }
 
 model Company {

@@ -49,6 +49,16 @@ export const MessageMutation = extendType({
               message,
               senderID,
               receiverID,
+              MessageStatus: {
+                create: {
+                  isRead: false,
+                  User: {
+                    connect: {
+                      userID: receiverID,
+                    },
+                  },
+                },
+              },
             },
           });
         }
@@ -63,16 +73,28 @@ export const MessageMutation = extendType({
         });
       },
     });
-    t.field("updateMessage", {
+    t.field("updateMessageStatus", {
       type: "message",
-      args: { messageID: nonNull(idArg()), message: nonNull(stringArg()) },
-      resolve: async (_, { messageID, message }): Promise<any> => {
-        return await prisma.message.update({
+      args: {
+        messageStatusID: nonNull(idArg()),
+        receiverID: nonNull(idArg()),
+      },
+      resolve: async (_, { messageStatusID, receiverID }): Promise<any> => {
+        const messageStatus = await prisma.messageStatus.findUnique({
+          where: { messageStatusID },
+          include: { Message: true },
+        });
+
+        if (messageStatus.Message.receiverID !== receiverID) {
+          return false;
+        }
+
+        return await prisma.messageStatus.update({
           where: {
-            messageID,
+            messageStatusID,
           },
           data: {
-            message,
+            isRead: true,
           },
         });
       },

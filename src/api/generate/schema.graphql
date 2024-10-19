@@ -116,6 +116,12 @@ type Forbidden implements Error {
   message: String
 }
 
+type GroupMessage {
+  message: message
+  user: user
+  userID: ID
+}
+
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -135,9 +141,9 @@ union JobPostPayload = BADINPUT | Forbidden | Payment | jobpost
 union MediaPayload = BADINPUT | media
 
 type MessageStatus {
-  createAt: DateTime
+  createdAt: DateTime
   isRead: Boolean
-  messageStatus: ID
+  messageStatusID: ID
   updatedAt: DateTime
 }
 
@@ -197,7 +203,7 @@ type Mutation {
   updateEducationBackground(educationID: ID!, input: EducationInput): education
   updateFontFamily(file: Upload, font: String!, fontID: String!): fonts
   updateJobPost(input: jobPostInput, jobPostID: ID!, salary: salaryInput, skills: [String]!): jobpost
-  updateMessage(message: String!, messageID: ID!): message
+  updateMessageStatus(messageStatusID: ID!, receiverID: ID!): message
   updateNotification(notificationID: ID!): notification
   updatePortfolio(input: PortfolioInput!, portfolioID: ID!, skills: [String]!): portfolio
   updateProfile(input: ProfileInput!, profileID: ID!): profile
@@ -280,7 +286,6 @@ type Query {
   getAllJobPost(input: PaginationInput!): [jobpost]
   getAllJobPostReport: [ReportPagination]
   getAllMediaProfile(pagination: PaginationInput!, profileID: ID!): [media]
-  getAllMyMessage(search: String, userID: ID!): [message]
   getAllMySaveJobs(userID: ID!): [favourite]
   getAllMySocialLink(profileID: ID!): social
   getAllResumyByProfileID(profileID: ID!): [resume]
@@ -297,7 +302,7 @@ type Query {
   getJobBoard(duration: [String], experience: [String], filter: String!, input: PaginationInput!, jobType: [String], orderBy: String, search: String, skills: [String]): JobPagination
   getJobPostById(jobPostID: ID!): jobpost
   getJobPostBySlug(slug: ID!): jobpost
-  getListofMessage(search: String, userID: ID!): [message]
+  getMessages(search: String, userID: ID!): [GroupMessage]
   getMyApplication(input: PaginationInput!, status: String!, userID: ID!): ApplicantPagination
   getMyCompanyByUserID(userID: ID!): company
   getMyCompanyJobPost(pagination: PaginationInput, userID: ID!): [jobpost]
@@ -316,6 +321,7 @@ type Query {
   getSkillByProfileID(profileID: ID!): [skills]
   getSkillsByGroup: [skills]
   getThemes(pagination: PaginationInput!, search: String): ThemePagination
+  getUnreadCountMessage(userID: ID!): Int
   getUserAccountById(userID: ID!): user
   getUserActivityLogs(input: PaginationInput!, userID: ID!): [activityLogs]
   getUserProfileById(profileID: ID!): profile
