@@ -76,22 +76,30 @@ export const MessageMutation = extendType({
     t.field("updateMessageStatus", {
       type: "message",
       args: {
-        messageStatusID: nonNull(idArg()),
         receiverID: nonNull(idArg()),
       },
-      resolve: async (_, { messageStatusID, receiverID }): Promise<any> => {
-        const messageStatus = await prisma.messageStatus.findUnique({
-          where: { messageStatusID },
-          include: { Message: true },
+      resolve: async (_, { receiverID }): Promise<any> => {
+        const messageStatus = await prisma.messageStatus.findMany({
+          where: {
+            isRead: false,
+            User: {
+              receivedMessages: {
+                some: {
+                  receiverID,
+                },
+              },
+            },
+          },
+          select: {
+            messageStatusID: true,
+          },
         });
 
-        if (messageStatus.Message.receiverID !== receiverID) {
-          return false;
-        }
-
-        return await prisma.messageStatus.update({
+        return await prisma.messageStatus.updateMany({
           where: {
-            messageStatusID,
+            messageStatusID: {
+              in: messageStatus.map((a) => a.messageStatusID),
+            },
           },
           data: {
             isRead: true,

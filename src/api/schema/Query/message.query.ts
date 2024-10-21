@@ -21,15 +21,23 @@ export const MessageQuery = extendType({
         });
       },
     });
-    t.int("getUnreadCountMessage", {
+    t.field("getUnreadCountMessage", {
+      type: "Int",
       args: { userID: nonNull(idArg()) },
-      resolve: async (_, { userID }) => {
-        return await prisma.messageStatus.count({
+      resolve: async (_, { userID }): Promise<any> => {
+        const hello = await prisma.message.findMany({
           where: {
-            userID,
-            isRead: false,
+            receiverID: userID,
+            MessageStatus: {
+              some: {
+                isRead: false,
+              },
+            },
           },
+          distinct: ["senderID"],
         });
+
+        return hello.length;
       },
     });
     t.list.field("getMessages", {

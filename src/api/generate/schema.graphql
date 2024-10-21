@@ -203,7 +203,7 @@ type Mutation {
   updateEducationBackground(educationID: ID!, input: EducationInput): education
   updateFontFamily(file: Upload, font: String!, fontID: String!): fonts
   updateJobPost(input: jobPostInput, jobPostID: ID!, salary: salaryInput, skills: [String]!): jobpost
-  updateMessageStatus(messageStatusID: ID!, receiverID: ID!): message
+  updateMessageStatus(receiverID: ID!): message
   updateNotification(notificationID: ID!): notification
   updatePortfolio(input: PortfolioInput!, portfolioID: ID!, skills: [String]!): portfolio
   updateProfile(input: ProfileInput!, profileID: ID!): profile

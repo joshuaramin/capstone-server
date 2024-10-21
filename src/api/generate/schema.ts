@@ -1966,7 +1966,6 @@ export interface NexusGenArgTypes {
       skills: Array<string | null>; // [String]!
     }
     updateMessageStatus: { // args
-      messageStatusID: string; // ID!
       receiverID: string; // ID!
     }
     updateNotification: { // args
