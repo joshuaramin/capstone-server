@@ -7,6 +7,7 @@ export const Project = objectType({
     t.id("projectOrganizerID");
     t.string("title");
     t.string("status");
+    t.string("description");
     t.float("amount");
     t.datetime("startDate");
     t.datetime("endDate");
@@ -16,6 +17,20 @@ export const Project = objectType({
       type: "company",
       resolve: async ({ projectOrganizerID }) => {
         return await prisma.company.findFirst({
+          where: {
+            Organizer: {
+              some: {
+                projectOrganizerID,
+              },
+            },
+          },
+        });
+      },
+    });
+    t.field("user", {
+      type: "user",
+      resolve: async ({ projectOrganizerID }) => {
+        return await prisma.user.findFirst({
           where: {
             Organizer: {
               some: {

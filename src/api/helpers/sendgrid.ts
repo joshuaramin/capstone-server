@@ -972,7 +972,7 @@ export async function ApplicantHired(
   email: string,
   fullname: string,
   jobtype: string,
-  companyName: string,
+  companyName: string
 ) {
   return emailTemplate(
     email,
@@ -1355,7 +1355,7 @@ export async function ApplicantReject(
         <tr>
           <td style="width: 600px; max-width: 100%">
             <table style="width: 100%;" cellpadding="0" cellspacing="0" role="none">
-              <tr>j
+              <tr>
                 <td class="sm-py-8 sm-px-6" style="padding: 48px; text-align: center">
                   <a href="http://localhost:3000">
                     <img src="http://cdn.mcauto-images-production.sendgrid.net/c19fbca0252c8257/aa48b7bb-ae11-47bc-b675-9622627de953/500x500.png" width="120" style="max-width: 100%; vertical-align: middle" alt="">

@@ -12,6 +12,7 @@ import * as NotificationMutation from "./notification.mutation";
 import * as PasswordMutation from "./password.mutation";
 import * as PortfolioMutation from "./portfolio.mutation";
 import * as ProfileMutation from "./profile.mutation";
+import * as ProjectMutation from "./project.mutation";
 import * as ReportMutation from "./report.mutation";
 import * as ResetPasswordLink from "./resetPasswordLink";
 import * as ResumeMutation from "./resume.mutation";
@@ -36,6 +37,7 @@ export {
   PasswordMutation,
   PortfolioMutation,
   ProfileMutation,
+  ProjectMutation,
   ReportMutation,
   ResetPasswordLink,
   ResumeMutation,

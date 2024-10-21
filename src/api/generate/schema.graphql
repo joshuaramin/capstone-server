@@ -207,6 +207,8 @@ type Mutation {
   updateNotification(notificationID: ID!): notification
   updatePortfolio(input: PortfolioInput!, portfolioID: ID!, skills: [String]!): portfolio
   updateProfile(input: ProfileInput!, profileID: ID!): profile
+  updateProjectDetails(amount: Int!, endDate: Date!, projectOrganizerID: ID!, startDate: Date!, title: String!, userID: ID!): project
+  updateProjectStatus(projectOrganizerID: ID!, status: String!, userID: ID!): project
   updateSchedule(input: ScheduleInput!, scheduleID: ID!): schedule
   updateSkills(input: SkillInput!, skillsID: ID!): skills
   updateSocialLink(Github: String, Web: String, X: String, facebook: String, instagram: String, socialID: ID!): social
@@ -296,7 +298,7 @@ type Query {
   getApplicationByID(applicationID: ID!): application
   getArchiveJobPost(input: PaginationInput!, search: String, userID: ID!): JobPagination
   getCompanyByID(companyID: ID!): company
-  getCompanyProjects(companyID: ID!, input: PaginationInput!, status: String!): [ProjectOrganizerPagination]
+  getCompanyProjects(companyID: ID!, input: PaginationInput!, orderBy: String!, search: String!): ProjectOrganizerPagination
   getCompanySlug(slug: String!): company
   getEducationById(educationID: ID!): education
   getJobBoard(duration: [String], experience: [String], filter: String!, input: PaginationInput!, jobType: [String], orderBy: String, search: String, skills: [String]): JobPagination
@@ -313,6 +315,7 @@ type Query {
   getPortfolioById(portfolioID: ID!): portfolio
   getPortfolioByProfileID(profileID: ID!): [portfolio]
   getProfileByUser(userID: ID!): profile
+  getProjectOrganizedID(projectOrganizerID: ID!): project
   getScheduleByDate(date: String!, userID: ID!): [schedule]
   getScheduleById(scheduleID: ID!): schedule
   getSearchByCompanyName(search: String!): company
@@ -631,12 +634,14 @@ type project {
   amount: Float
   company: company
   createdAt: DateTime
+  description: String
   endDate: DateTime
   projectOrganizerID: ID
   startDate: DateTime
   status: String
   title: String
   updatedAt: DateTime
+  user: user
 }
 
 type report {

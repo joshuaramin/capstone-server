@@ -38,24 +38,28 @@ export const ProjectOrganizerQuery = extendType({
         };
       },
     });
-    t.list.field("getCompanyProjects", {
+    t.field("getCompanyProjects", {
       type: "ProjectOrganizerPagination",
       args: {
         companyID: nonNull(idArg()),
         input: nonNull("PaginationInput"),
-        status: nonNull(stringArg()),
+        search: nonNull(stringArg()),
+        orderBy: nonNull(stringArg()),
       },
       resolve: async (
         _,
-        { companyID, input: { page, take }, status }
+        { companyID, input: { page, take }, search, orderBy }
       ): Promise<any> => {
         const project = await prisma.projectOrganizer.findMany({
           where: {
             companyID,
-            status,
+            title: {
+              contains: search,
+              mode: "insensitive",
+            },
           },
           orderBy: {
-            createdAt: "desc",
+            createdAt: orderBy as any,
           },
         });
 
@@ -70,6 +74,17 @@ export const ProjectOrganizerQuery = extendType({
           hasNextPage: page < Math.ceil(project.length / take),
           hasPrevPage: page > 1,
         };
+      },
+    });
+    t.field("getProjectOrganizedID", {
+      type: "project",
+      args: { projectOrganizerID: nonNull(idArg()) },
+      resolve: async (_, { projectOrganizerID }) => {
+        return await prisma.projectOrganizer.findFirst({
+          where: {
+            projectOrganizerID,
+          },
+        });
       },
     });
   },

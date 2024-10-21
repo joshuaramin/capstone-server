@@ -432,6 +432,7 @@ model ProjectOrganizer {
   amount             Float
   startDate          DateTime       @db.Date
   endDate            DateTime       @db.Date
+  description        String         @db.Text
   createdAt          DateTime       @default(now()) @db.Timestamp()
   updatedAt          DateTime       @default(now()) @updatedAt @db.Timestamp()
   Notification       Notification[]

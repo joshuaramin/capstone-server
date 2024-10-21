@@ -49,8 +49,8 @@ export const ApplicationMutation = extendType({
         const jobPostDesc = await prisma.jobPost.findUnique({
           where: { jobPostID },
           include: {
-            Company: true
-          }
+            Company: true,
+          },
         });
 
         if (new Date(jobPostDesc.endDate) < new Date()) {
@@ -221,6 +221,7 @@ export const ApplicationMutation = extendType({
           await prisma.projectOrganizer.create({
             data: {
               title: applicant.JobPost.title,
+              description: applicant.JobPost.description,
               amount:
                 applicant.JobPost.Salary.fixed ?? applicant.JobPost.Salary.min,
               startDate: new Date(Date.now()),
