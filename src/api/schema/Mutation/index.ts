@@ -16,12 +16,14 @@ import * as ProjectMutation from "./project.mutation";
 import * as ReportMutation from "./report.mutation";
 import * as ResetPasswordLink from "./resetPasswordLink";
 import * as ResumeMutation from "./resume.mutation";
+import * as ReviewMutation from "./review.mutation";
 import * as ScheduleMutation from "./schedule.mutation";
 import * as SkillMutation from "./skills.mutation";
 import * as ThemeMutation from "./theme.mutation";
 import * as UserMutation from "./user.mutation";
 import * as SocialMutation from "./social.mutation";
 import * as Zoom from "./zoom.mutation";
+
 export {
   AboutMutation,
   ActivityLogsMutation,
@@ -41,6 +43,7 @@ export {
   ReportMutation,
   ResetPasswordLink,
   ResumeMutation,
+  ReviewMutation,
   ScheduleMutation,
   SkillMutation,
   ThemeMutation,

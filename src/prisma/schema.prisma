@@ -416,7 +416,7 @@ model Schedule {
 model Review {
   reviewID  String   @id @default(cuid())
   review    String
-  rating    Int
+  rating    Float
   createdAt DateTime @default(now()) @db.Timestamp()
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamp()
   User      User?    @relation(fields: [userID], references: [userID], onDelete: Cascade)

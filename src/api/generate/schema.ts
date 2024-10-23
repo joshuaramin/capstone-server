@@ -486,6 +486,13 @@ export interface NexusGenObjects {
     title?: string | null; // String
     updatedaAt?: NexusGenScalars['DateTime'] | null; // DateTime
   }
+  review: { // root type
+    createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
+    rating?: number | null; // Int
+    review?: string | null; // String
+    reviewID?: string | null; // ID
+    updatedAt?: NexusGenScalars['DateTime'] | null; // DateTime
+  }
   salary: { // root type
     createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
     currency?: string | null; // String
@@ -687,6 +694,7 @@ export interface NexusGenFieldTypes {
     createAbout: NexusGenRootTypes['AboutPayload'] | null; // AboutPayload
     createApplication: NexusGenRootTypes['ApplicationPayload'] | null; // ApplicationPayload
     createAvatar: NexusGenRootTypes['MediaPayload'] | null; // MediaPayload
+    createCompanyReview: NexusGenRootTypes['review'] | null; // review
     createEducationBackground: NexusGenRootTypes['EducationPayload'] | null; // EducationPayload
     createFavourite: NexusGenRootTypes['FavouritePayload'] | null; // FavouritePayload
     createFontFamily: NexusGenRootTypes['fonts'] | null; // fonts
@@ -702,6 +710,7 @@ export interface NexusGenFieldTypes {
     createUserAdminAccount: NexusGenRootTypes['UserPayload'] | null; // UserPayload
     createUserFreelancers: NexusGenRootTypes['UserPayload'] | null; // UserPayload
     createUserRecruiter: NexusGenRootTypes['UserPayload'] | null; // UserPayload
+    createUserReview: NexusGenRootTypes['review'] | null; // review
     deleteAbout: NexusGenRootTypes['about'] | null; // about
     deleteEducationBackground: NexusGenRootTypes['education'] | null; // education
     deleteFavourite: NexusGenRootTypes['favourite'] | null; // favourite
@@ -1069,6 +1078,13 @@ export interface NexusGenFieldTypes {
     title: string | null; // String
     updatedaAt: NexusGenScalars['DateTime'] | null; // DateTime
   }
+  review: { // field return type
+    createdAt: NexusGenScalars['DateTime'] | null; // DateTime
+    rating: number | null; // Int
+    review: string | null; // String
+    reviewID: string | null; // ID
+    updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
+  }
   salary: { // field return type
     createdAt: NexusGenScalars['DateTime'] | null; // DateTime
     currency: string | null; // String
@@ -1261,6 +1277,7 @@ export interface NexusGenFieldTypeNames {
     createAbout: 'AboutPayload'
     createApplication: 'ApplicationPayload'
     createAvatar: 'MediaPayload'
+    createCompanyReview: 'review'
     createEducationBackground: 'EducationPayload'
     createFavourite: 'FavouritePayload'
     createFontFamily: 'fonts'
@@ -1276,6 +1293,7 @@ export interface NexusGenFieldTypeNames {
     createUserAdminAccount: 'UserPayload'
     createUserFreelancers: 'UserPayload'
     createUserRecruiter: 'UserPayload'
+    createUserReview: 'review'
     deleteAbout: 'about'
     deleteEducationBackground: 'education'
     deleteFavourite: 'favourite'
@@ -1643,6 +1661,13 @@ export interface NexusGenFieldTypeNames {
     title: 'String'
     updatedaAt: 'DateTime'
   }
+  review: { // field return type name
+    createdAt: 'DateTime'
+    rating: 'Int'
+    review: 'String'
+    reviewID: 'ID'
+    updatedAt: 'DateTime'
+  }
   salary: { // field return type name
     createdAt: 'DateTime'
     currency: 'String'
@@ -1792,6 +1817,11 @@ export interface NexusGenArgTypes {
       file: NexusGenScalars['Upload']; // Upload!
       profileID: string; // ID!
     }
+    createCompanyReview: { // args
+      companyID: string; // ID!
+      rating: number; // Float!
+      review: string; // String!
+    }
     createEducationBackground: { // args
       input: NexusGenInputs['EducationInput']; // EducationInput!
       profileID: string; // ID!
@@ -1866,6 +1896,11 @@ export interface NexusGenArgTypes {
     createUserRecruiter: { // args
       file: NexusGenScalars['Upload']; // Upload!
       input: NexusGenInputs['UserRecruiterInput']; // UserRecruiterInput!
+    }
+    createUserReview: { // args
+      rating: number; // Float!
+      review: string; // String!
+      userID: string; // ID!
     }
     deleteAbout: { // args
       aboutID: string; // ID!

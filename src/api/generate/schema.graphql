@@ -159,6 +159,7 @@ type Mutation {
   createAbout(input: AboutInput!, profileID: ID!): AboutPayload
   createApplication(jobPostID: ID!, resumeID: ID!, userID: ID!): ApplicationPayload
   createAvatar(file: Upload!, profileID: ID!): MediaPayload
+  createCompanyReview(companyID: ID!, rating: Float!, review: String!): review
   createEducationBackground(input: EducationInput!, profileID: ID!): EducationPayload
   createFavourite(jobPostID: ID!, userID: ID!): FavouritePayload
   createFontFamily(file: Upload!, font: String!, userID: ID!): fonts
@@ -174,6 +175,7 @@ type Mutation {
   createUserAdminAccount(input: UserInput!): UserPayload
   createUserFreelancers(fileUpload: Upload!, input: UserFreelanceInput!, requirement: RequirementInput, skills: [String]!): UserPayload
   createUserRecruiter(file: Upload!, input: UserRecruiterInput!): UserPayload
+  createUserReview(rating: Float!, review: String!, userID: ID!): review
   deleteAbout(aboutID: ID!): about
   deleteEducationBackground(educationID: ID!): education
   deleteFavourite(favouriteID: ID!): favourite
@@ -676,6 +678,14 @@ type resume {
   resumeID: ID
   title: String
   updatedaAt: DateTime
+}
+
+type review {
+  createdAt: DateTime
+  rating: Int
+  review: String
+  reviewID: ID
+  updatedAt: DateTime
 }
 
 enum roleEnum {

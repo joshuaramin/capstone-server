@@ -19,6 +19,7 @@ import * as ReportObject from "./report.object";
 import * as ResetPassword from "./resetPasswordLink";
 import * as ResumeObject from "./resume.object";
 import * as Requirement from "./requirements.object";
+import * as ReviewObject from "./review.object";
 import * as Salary from "./salary.object";
 import * as ScheduleObject from "./schedule.object";
 import * as SkillObject from "./skills.object";
@@ -49,6 +50,7 @@ export {
   ResetPassword,
   ResumeObject,
   Requirement,
+  ReviewObject,
   Salary,
   ScheduleObject,
   SkillObject,
