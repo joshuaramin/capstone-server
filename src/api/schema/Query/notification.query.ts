@@ -43,6 +43,49 @@ export const NotificationQuery = extendType({
         };
       },
     });
+    t.field("getNotificationByCompanyID", {
+      type: "NotificationPagination",
+      args: {
+        companyID: nonNull(idArg()),
+        cursor: stringArg(),
+        limit: intArg(),
+      },
+      resolve: async (_, { companyID, cursor, limit }): Promise<any> => {
+        const queryLimit = Math.min(limit, 10);
+        const notif = await prisma.notification.findMany({
+          where: {
+            Company: {
+              some: {
+                companyID,
+              },
+            },
+            is_deleted: false,
+          },
+          take: queryLimit + 1,
+          ...(cursor && {
+            cursor: {
+              notificationID: cursor,
+            },
+            skip: 1,
+          }),
+          orderBy: {
+            createdAt: "desc",
+          },
+        });
+
+        let nextCursor;
+
+        if (notif.length > queryLimit) {
+          const nextNotif = notif.pop();
+          nextCursor = nextNotif!.notificationID.toString();
+        }
+
+        return {
+          notification: notif,
+          cursor,
+        };
+      },
+    });
     t.field("getNotificationByID", {
       type: "notification",
       args: { notificationID: nonNull(idArg()) },
@@ -62,6 +105,20 @@ export const NotificationQuery = extendType({
             userID,
             is_deleted: false,
             read: false,
+          },
+        });
+      },
+    });
+    t.int("getCompanyNotification", {
+      args: { companyID: nonNull(idArg()) },
+      resolve: async (_, { companyID }): Promise<any> => {
+        return await prisma.notification.count({
+          where: {
+            is_deleted: false,
+            read: false,
+            Company: {
+              some: { companyID },
+            },
           },
         });
       },

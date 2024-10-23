@@ -788,6 +788,7 @@ export interface NexusGenFieldTypes {
     getApplicationByID: NexusGenRootTypes['application'] | null; // application
     getArchiveJobPost: NexusGenRootTypes['JobPagination'] | null; // JobPagination
     getCompanyByID: NexusGenRootTypes['company'] | null; // company
+    getCompanyNotification: number | null; // Int
     getCompanyProjects: NexusGenRootTypes['ProjectOrganizerPagination'] | null; // ProjectOrganizerPagination
     getCompanySlug: NexusGenRootTypes['company'] | null; // company
     getEducationById: NexusGenRootTypes['education'] | null; // education
@@ -799,6 +800,7 @@ export interface NexusGenFieldTypes {
     getMyCompanyByUserID: NexusGenRootTypes['company'] | null; // company
     getMyCompanyJobPost: Array<NexusGenRootTypes['jobpost'] | null> | null; // [jobpost]
     getMyFavouriteJobPost: NexusGenRootTypes['favourite'] | null; // favourite
+    getNotificationByCompanyID: NexusGenRootTypes['NotificationPagination'] | null; // NotificationPagination
     getNotificationByID: NexusGenRootTypes['notification'] | null; // notification
     getNotificationByUserID: NexusGenRootTypes['NotificationPagination'] | null; // NotificationPagination
     getPersonalMessage: Array<NexusGenRootTypes['message'] | null> | null; // [message]
@@ -1360,6 +1362,7 @@ export interface NexusGenFieldTypeNames {
     getApplicationByID: 'application'
     getArchiveJobPost: 'JobPagination'
     getCompanyByID: 'company'
+    getCompanyNotification: 'Int'
     getCompanyProjects: 'ProjectOrganizerPagination'
     getCompanySlug: 'company'
     getEducationById: 'education'
@@ -1371,6 +1374,7 @@ export interface NexusGenFieldTypeNames {
     getMyCompanyByUserID: 'company'
     getMyCompanyJobPost: 'jobpost'
     getMyFavouriteJobPost: 'favourite'
+    getNotificationByCompanyID: 'NotificationPagination'
     getNotificationByID: 'notification'
     getNotificationByUserID: 'NotificationPagination'
     getPersonalMessage: 'message'
@@ -2083,6 +2087,9 @@ export interface NexusGenArgTypes {
     getCompanyByID: { // args
       companyID: string; // ID!
     }
+    getCompanyNotification: { // args
+      companyID: string; // ID!
+    }
     getCompanyProjects: { // args
       companyID: string; // ID!
       input: NexusGenInputs['PaginationInput']; // PaginationInput!
@@ -2130,6 +2137,11 @@ export interface NexusGenArgTypes {
     getMyFavouriteJobPost: { // args
       jobPostID: string; // ID!
       userID: string; // ID!
+    }
+    getNotificationByCompanyID: { // args
+      companyID: string; // ID!
+      cursor?: string | null; // String
+      limit?: number | null; // Int
     }
     getNotificationByID: { // args
       notificationID: string; // ID!

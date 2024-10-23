@@ -298,6 +298,7 @@ type Query {
   getApplicationByID(applicationID: ID!): application
   getArchiveJobPost(input: PaginationInput!, search: String, userID: ID!): JobPagination
   getCompanyByID(companyID: ID!): company
+  getCompanyNotification(companyID: ID!): Int
   getCompanyProjects(companyID: ID!, input: PaginationInput!, orderBy: String!, search: String!): ProjectOrganizerPagination
   getCompanySlug(slug: String!): company
   getEducationById(educationID: ID!): education
@@ -309,6 +310,7 @@ type Query {
   getMyCompanyByUserID(userID: ID!): company
   getMyCompanyJobPost(pagination: PaginationInput, userID: ID!): [jobpost]
   getMyFavouriteJobPost(jobPostID: ID!, userID: ID!): favourite
+  getNotificationByCompanyID(companyID: ID!, cursor: String, limit: Int): NotificationPagination
   getNotificationByID(notificationID: ID!): notification
   getNotificationByUserID(cursor: String, limit: Int, userID: ID!): NotificationPagination
   getPersonalMessage(receiverID: ID!, senderID: ID!): [message]

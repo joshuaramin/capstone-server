@@ -108,6 +108,13 @@ export const ApplicationMutation = extendType({
               },
             },
           },
+          include: {
+            User: {
+              include: {
+                Profile: true,
+              },
+            },
+          },
         });
 
         await prisma.notification.create({
@@ -116,6 +123,22 @@ export const ApplicationMutation = extendType({
             User: {
               connect: {
                 userID,
+              },
+            },
+            Application: {
+              connect: {
+                applicationID: application.applicationID,
+              },
+            },
+          },
+        });
+
+        await prisma.notification.create({
+          data: {
+            title: `${application.User.Profile.firstname} ${application.User.Profile.lastname} submitted an application at ${jobPostDesc.title}`,
+            Company: {
+              connect: {
+                companyID: jobPostDesc.Company.companyID,
               },
             },
             Application: {
