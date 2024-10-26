@@ -148,6 +148,7 @@ type MessageStatus {
 }
 
 type Mutation {
+  ChangeEmailAddress(email: String!, userID: ID!): UserPayload
   Logout(userID: ID!): activityLogs
   addProfileAvatar(file: Upload!, profileID: ID!): profile
   addProfileHeader(file: Upload!, profileID: ID!): profile

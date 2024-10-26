@@ -15,6 +15,7 @@ import {
 
 import generateRandom from "../../helpers/generateRandom";
 import {
+  ChangeEmailAddress,
   FreelancerVerificationEmail,
   RecruitersInstruction,
   ResetPasswordLink,
@@ -369,6 +370,47 @@ export const UserMutation = extendType({
         });
       },
     });
+    t.field("ChangeEmailAddress", {
+      type: "UserPayload",
+      args: { userID: nonNull(idArg()), email: nonNull(stringArg()) },
+      resolve: async (_, { userID, email }): Promise<any> => {
+        const user = await prisma.user.findUnique({
+          where: { userID },
+          include: {
+            Profile: true,
+          },
+        });
+
+        await prisma.activityLogs.create({
+          data: {
+            title: "Email Address Changed",
+            description: "You updated your Email Address",
+            User: {
+              connect: { userID },
+            },
+          },
+        });
+
+        await ChangeEmailAddress(
+          email,
+          `${user?.Profile.firstname} ${user?.Profile.lastname}`,
+          user?.userID
+        );
+
+        const users = await prisma.user.update({
+          where: { userID },
+          data: {
+            email,
+            verified: false,
+          },
+        });
+
+        return {
+          __typename: "user",
+          ...users,
+        };
+      },
+    });
     t.field("login", {
       type: "CredentialsPayload",
       args: { email: nonNull(stringArg()), password: nonNull(stringArg()) },
@@ -389,6 +431,14 @@ export const UserMutation = extendType({
 
         if (!valid) {
           return ERROR_MESSAGE_CREDENTIALS;
+        }
+
+        if (users.verified === false) {
+          return {
+            __typename: "BADINPUT",
+            code: 401,
+            message: "You need to verify your account first",
+          };
         }
 
         await prisma.activityLogs.create({

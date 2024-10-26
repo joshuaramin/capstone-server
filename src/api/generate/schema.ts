@@ -683,6 +683,7 @@ export interface NexusGenFieldTypes {
     updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
   }
   Mutation: { // field return type
+    ChangeEmailAddress: NexusGenRootTypes['UserPayload'] | null; // UserPayload
     Logout: NexusGenRootTypes['activityLogs'] | null; // activityLogs
     addProfileAvatar: NexusGenRootTypes['profile'] | null; // profile
     addProfileHeader: NexusGenRootTypes['profile'] | null; // profile
@@ -1266,6 +1267,7 @@ export interface NexusGenFieldTypeNames {
     updatedAt: 'DateTime'
   }
   Mutation: { // field return type name
+    ChangeEmailAddress: 'UserPayload'
     Logout: 'activityLogs'
     addProfileAvatar: 'profile'
     addProfileHeader: 'profile'
@@ -1778,6 +1780,10 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    ChangeEmailAddress: { // args
+      email: string; // String!
+      userID: string; // ID!
+    }
     Logout: { // args
       userID: string; // ID!
     }
