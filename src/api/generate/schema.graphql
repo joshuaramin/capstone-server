@@ -157,6 +157,7 @@ type Mutation {
   addSkills: [skills]
   archiveJobPost(jobPostID: ID!): jobpost
   archiveNotification(notificationID: ID!): notification
+  companyUploadDocuments(companyID: ID!, file: Upload!): requirement
   createAbout(input: AboutInput!, profileID: ID!): AboutPayload
   createApplication(jobPostID: ID!, resumeID: ID!, userID: ID!): ApplicationPayload
   createAvatar(file: Upload!, profileID: ID!): MediaPayload
@@ -177,6 +178,7 @@ type Mutation {
   createUserFreelancers(fileUpload: Upload!, input: UserFreelanceInput!, requirement: RequirementInput, skills: [String]!): UserPayload
   createUserRecruiter(file: Upload!, input: UserRecruiterInput!): UserPayload
   createUserReview(rating: Float!, review: String!, userID: ID!): review
+  deactivateMyAccount(userID: ID!): user
   deleteAbout(aboutID: ID!): about
   deleteEducationBackground(educationID: ID!): education
   deleteFavourite(favouriteID: ID!): favourite
@@ -203,6 +205,7 @@ type Mutation {
   updateAbout(aboutID: ID!, bio: String!): about
   updateApplicationStatus(applicationID: ID!, status: String!): application
   updateCompany(companyID: ID!): company
+  updateCompanyLogo(companyID: ID!, file: Upload!): company
   updateEducationBackground(educationID: ID!, input: EducationInput): education
   updateFontFamily(file: Upload, font: String!, fontID: String!): fonts
   updateJobPost(input: jobPostInput, jobPostID: ID!, salary: salaryInput, skills: [String]!): jobpost
@@ -331,7 +334,7 @@ type Query {
   getThemes(pagination: PaginationInput!, search: String): ThemePagination
   getUnreadCountMessage(userID: ID!): Int
   getUserAccountById(userID: ID!): user
-  getUserActivityLogs(input: PaginationInput!, userID: ID!): [activityLogs]
+  getUserActivityLogs(input: PaginationInput!, userID: ID!): ActivityLogsPagination
   getUserProfileById(profileID: ID!): profile
   getUserProjectOrganizer(input: PaginationInput!, status: String!, userID: ID!): ProjectOrganizerPagination
   jobPagination(pagination: PaginationInput, search: String, userID: ID!): JobPagination

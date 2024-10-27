@@ -692,6 +692,7 @@ export interface NexusGenFieldTypes {
     addSkills: Array<NexusGenRootTypes['skills'] | null> | null; // [skills]
     archiveJobPost: NexusGenRootTypes['jobpost'] | null; // jobpost
     archiveNotification: NexusGenRootTypes['notification'] | null; // notification
+    companyUploadDocuments: NexusGenRootTypes['requirement'] | null; // requirement
     createAbout: NexusGenRootTypes['AboutPayload'] | null; // AboutPayload
     createApplication: NexusGenRootTypes['ApplicationPayload'] | null; // ApplicationPayload
     createAvatar: NexusGenRootTypes['MediaPayload'] | null; // MediaPayload
@@ -712,6 +713,7 @@ export interface NexusGenFieldTypes {
     createUserFreelancers: NexusGenRootTypes['UserPayload'] | null; // UserPayload
     createUserRecruiter: NexusGenRootTypes['UserPayload'] | null; // UserPayload
     createUserReview: NexusGenRootTypes['review'] | null; // review
+    deactivateMyAccount: NexusGenRootTypes['user'] | null; // user
     deleteAbout: NexusGenRootTypes['about'] | null; // about
     deleteEducationBackground: NexusGenRootTypes['education'] | null; // education
     deleteFavourite: NexusGenRootTypes['favourite'] | null; // favourite
@@ -738,6 +740,7 @@ export interface NexusGenFieldTypes {
     updateAbout: NexusGenRootTypes['about'] | null; // about
     updateApplicationStatus: NexusGenRootTypes['application'] | null; // application
     updateCompany: NexusGenRootTypes['company'] | null; // company
+    updateCompanyLogo: NexusGenRootTypes['company'] | null; // company
     updateEducationBackground: NexusGenRootTypes['education'] | null; // education
     updateFontFamily: NexusGenRootTypes['fonts'] | null; // fonts
     updateJobPost: NexusGenRootTypes['jobpost'] | null; // jobpost
@@ -828,7 +831,7 @@ export interface NexusGenFieldTypes {
     getThemes: NexusGenRootTypes['ThemePagination'] | null; // ThemePagination
     getUnreadCountMessage: number | null; // Int
     getUserAccountById: NexusGenRootTypes['user'] | null; // user
-    getUserActivityLogs: Array<NexusGenRootTypes['activityLogs'] | null> | null; // [activityLogs]
+    getUserActivityLogs: NexusGenRootTypes['ActivityLogsPagination'] | null; // ActivityLogsPagination
     getUserProfileById: NexusGenRootTypes['profile'] | null; // profile
     getUserProjectOrganizer: NexusGenRootTypes['ProjectOrganizerPagination'] | null; // ProjectOrganizerPagination
     jobPagination: NexusGenRootTypes['JobPagination'] | null; // JobPagination
@@ -1276,6 +1279,7 @@ export interface NexusGenFieldTypeNames {
     addSkills: 'skills'
     archiveJobPost: 'jobpost'
     archiveNotification: 'notification'
+    companyUploadDocuments: 'requirement'
     createAbout: 'AboutPayload'
     createApplication: 'ApplicationPayload'
     createAvatar: 'MediaPayload'
@@ -1296,6 +1300,7 @@ export interface NexusGenFieldTypeNames {
     createUserFreelancers: 'UserPayload'
     createUserRecruiter: 'UserPayload'
     createUserReview: 'review'
+    deactivateMyAccount: 'user'
     deleteAbout: 'about'
     deleteEducationBackground: 'education'
     deleteFavourite: 'favourite'
@@ -1322,6 +1327,7 @@ export interface NexusGenFieldTypeNames {
     updateAbout: 'about'
     updateApplicationStatus: 'application'
     updateCompany: 'company'
+    updateCompanyLogo: 'company'
     updateEducationBackground: 'education'
     updateFontFamily: 'fonts'
     updateJobPost: 'jobpost'
@@ -1412,7 +1418,7 @@ export interface NexusGenFieldTypeNames {
     getThemes: 'ThemePagination'
     getUnreadCountMessage: 'Int'
     getUserAccountById: 'user'
-    getUserActivityLogs: 'activityLogs'
+    getUserActivityLogs: 'ActivityLogsPagination'
     getUserProfileById: 'profile'
     getUserProjectOrganizer: 'ProjectOrganizerPagination'
     jobPagination: 'JobPagination'
@@ -1810,6 +1816,10 @@ export interface NexusGenArgTypes {
     archiveNotification: { // args
       notificationID: string; // ID!
     }
+    companyUploadDocuments: { // args
+      companyID: string; // ID!
+      file: NexusGenScalars['Upload']; // Upload!
+    }
     createAbout: { // args
       input: NexusGenInputs['AboutInput']; // AboutInput!
       profileID: string; // ID!
@@ -1908,6 +1918,9 @@ export interface NexusGenArgTypes {
       review: string; // String!
       userID: string; // ID!
     }
+    deactivateMyAccount: { // args
+      userID: string; // ID!
+    }
     deleteAbout: { // args
       aboutID: string; // ID!
     }
@@ -1994,6 +2007,10 @@ export interface NexusGenArgTypes {
     }
     updateCompany: { // args
       companyID: string; // ID!
+    }
+    updateCompanyLogo: { // args
+      companyID: string; // ID!
+      file: NexusGenScalars['Upload']; // Upload!
     }
     updateEducationBackground: { // args
       educationID: string; // ID!

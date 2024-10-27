@@ -133,7 +133,7 @@ model Company {
   updatedAt    DateTime           @default(now()) @updatedAt @db.Timestamp()
   User         User?              @relation(fields: [userID], references: [userID], onDelete: Cascade)
   userID       String?            @unique
-  media        Media[]
+  media        Media?
 }
 
 model Profile {
@@ -216,7 +216,7 @@ model Media {
   Portfolio   Portfolio? @relation(fields: [portfolioID], references: [portfolioID], onDelete: Cascade)
   portfolioID String?
   Company     Company?   @relation(fields: [companyID], references: [companyID])
-  companyID   String?
+  companyID   String?    @unique
   Avatar      Profile?   @relation("Avatar")
   Header      Profile?   @relation("Header")
   Message     Message[]

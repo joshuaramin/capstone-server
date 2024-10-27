@@ -43,8 +43,6 @@ export const UserQuery = extendType({
               ],
             },
           },
-          take: take,
-          skip: take * (page - 1),
         });
 
         const offset = (page - 1) * take;

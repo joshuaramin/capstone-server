@@ -15,6 +15,7 @@ import {
 
 import generateRandom from "../../helpers/generateRandom";
 import {
+  AccountDeactivation,
   ChangeEmailAddress,
   FreelancerVerificationEmail,
   RecruitersInstruction,
@@ -267,6 +268,32 @@ export const UserMutation = extendType({
       },
     });
 
+    t.field("deactivateMyAccount", {
+      type: "user",
+      args: { userID: nonNull(idArg()) },
+      resolve: async (_, { userID }) => {
+        const users = await prisma.user.findUnique({
+          where: { userID },
+          include: {
+            Profile: true,
+          },
+        });
+
+        AccountDeactivation(
+          users.email,
+          `${users.Profile.firstname} ${users.Profile.lastname}`
+        );
+
+        return await prisma.user.update({
+          data: {
+            isArchive: true,
+          },
+          where: {
+            userID,
+          },
+        });
+      },
+    });
     t.field("findMyEmailAddress", {
       type: "EmailPayload",
       args: { email: nonNull(stringArg()) },
@@ -431,6 +458,15 @@ export const UserMutation = extendType({
 
         if (!valid) {
           return ERROR_MESSAGE_CREDENTIALS;
+        }
+
+        if (users.isArchive === true) {
+          return await prisma.user.update({
+            where: { email },
+            data: {
+              isArchive: false,
+            },
+          });
         }
 
         if (users.verified === false) {
