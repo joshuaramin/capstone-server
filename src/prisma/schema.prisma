@@ -90,6 +90,7 @@ model Notification {
   Company          Company[]
   Application      Application[]
   ProjectOrganizer ProjectOrganizer[]
+  Schedule         Schedule[]
 }
 
 model Message {
@@ -399,20 +400,21 @@ model ApplicationScore {
 }
 
 model Schedule {
-  scheduleID  String   @id @default(cuid())
-  title       String   @db.VarChar(300)
-  description String?  @db.VarChar(1000)
-  startDate   DateTime @db.Date
-  startTime   String   @db.VarChar(50)
-  endTime     String   @db.VarChar(50)
-  endDate     DateTime @db.Date
-  link        String   @db.Text
-  createdAt   DateTime @default(now()) @db.Timestamp()
-  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamp()
-  senderID    String
-  receiverID  String
-  sender      User     @relation(name: "ScheduleSender", fields: [senderID], references: [userID], onDelete: Cascade)
-  receiver    User     @relation(name: "ScheduleReceiver", fields: [receiverID], references: [userID], onDelete: Cascade)
+  scheduleID   String         @id @default(cuid())
+  title        String         @db.VarChar(300)
+  description  String?        @db.VarChar(1000)
+  startDate    DateTime       @db.Date
+  startTime    String         @db.VarChar(50)
+  endTime      String         @db.VarChar(50)
+  endDate      DateTime       @db.Date
+  link         String         @db.Text
+  createdAt    DateTime       @default(now()) @db.Timestamp()
+  updatedAt    DateTime       @default(now()) @updatedAt @db.Timestamp()
+  senderID     String
+  receiverID   String
+  sender       User           @relation(name: "ScheduleSender", fields: [senderID], references: [userID], onDelete: Cascade)
+  receiver     User           @relation(name: "ScheduleReceiver", fields: [receiverID], references: [userID], onDelete: Cascade)
+  Notification Notification[]
 }
 
 model Review {

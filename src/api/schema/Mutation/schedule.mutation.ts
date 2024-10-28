@@ -118,6 +118,26 @@ export const ScheduleMutation = extendType({
           },
         });
 
+        await prisma.notification.create({
+          data: {
+            title: "Created Interview Schedule",
+            User: {
+              connect: {
+                userID: receiverID,
+              },
+            },
+            Company: {
+              connect: {
+                companyID: application.JobPost.Company.companyID,
+              },
+            },
+            Schedule: {
+              connect: {
+                scheduleID: schedule.scheduleID,
+              },
+            },
+          },
+        });
 
         ApplicantInterview(
           `${schedule.receiver.email}`,
@@ -130,7 +150,7 @@ export const ScheduleMutation = extendType({
         );
         await prisma.activityLogs.create({
           data: {
-            title: "Creaed Calendar Schedule",
+            title: "Create Calendar Schedule",
             description: "You have created a calendar schedule for interview",
             User: {
               connect: {
@@ -146,10 +166,55 @@ export const ScheduleMutation = extendType({
         };
       },
     });
-    t.field("updateSchedule", {     
+    t.field("updateSchedule", {
       type: "schedule",
       args: { scheduleID: nonNull(idArg()), input: nonNull("ScheduleInput") },
       resolve: async (_, { scheduleID, input }): Promise<any> => {
+        const user = await prisma.schedule.findFirst({
+          where: {
+            scheduleID,
+          },
+          include: {
+            sender: {
+              include: {
+                Company: true,
+              },
+            },
+          },
+        });
+        await prisma.notification.create({
+          data: {
+            title: "Reschedule Interview Schedule",
+            User: {
+              connect: {
+                userID: user.receiverID,
+              },
+            },
+            Company: {
+              connect: {
+                companyID: user.sender.Company.companyID,
+              },
+            },
+            Schedule: {
+              connect: {
+                scheduleID,
+              },
+            },
+          },
+        });
+
+        await prisma.activityLogs.create({
+          data: {
+            title: "Update Calendar Schedule",
+            description: "You have updated a calendar schedule for interview",
+            User: {
+              connect: {
+                userID: user.senderID,
+              },
+            },
+          },
+        });
+
         return await prisma.schedule.update({
           data: {
             ...input,

@@ -316,7 +316,6 @@ type Query {
   getMyCompanyByUserID(userID: ID!): company
   getMyCompanyJobPost(pagination: PaginationInput, userID: ID!): [jobpost]
   getMyFavouriteJobPost(jobPostID: ID!, userID: ID!): favourite
-  getNotificationByCompanyID(companyID: ID!, cursor: String, limit: Int): NotificationPagination
   getNotificationByID(notificationID: ID!): notification
   getNotificationByUserID(cursor: String, limit: Int, userID: ID!): NotificationPagination
   getPersonalMessage(receiverID: ID!, senderID: ID!): [message]
@@ -590,6 +589,7 @@ type notification {
   notificationID: ID
   project: [project]
   read: Boolean
+  schedule: schedule
   title: String
   updatedAt: DateTime
 }

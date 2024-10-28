@@ -814,7 +814,6 @@ export interface NexusGenFieldTypes {
     getMyCompanyByUserID: NexusGenRootTypes['company'] | null; // company
     getMyCompanyJobPost: Array<NexusGenRootTypes['jobpost'] | null> | null; // [jobpost]
     getMyFavouriteJobPost: NexusGenRootTypes['favourite'] | null; // favourite
-    getNotificationByCompanyID: NexusGenRootTypes['NotificationPagination'] | null; // NotificationPagination
     getNotificationByID: NexusGenRootTypes['notification'] | null; // notification
     getNotificationByUserID: NexusGenRootTypes['NotificationPagination'] | null; // NotificationPagination
     getPersonalMessage: Array<NexusGenRootTypes['message'] | null> | null; // [message]
@@ -1000,6 +999,7 @@ export interface NexusGenFieldTypes {
     notificationID: string | null; // ID
     project: Array<NexusGenRootTypes['project'] | null> | null; // [project]
     read: boolean | null; // Boolean
+    schedule: NexusGenRootTypes['schedule'] | null; // schedule
     title: string | null; // String
     updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
   }
@@ -1404,7 +1404,6 @@ export interface NexusGenFieldTypeNames {
     getMyCompanyByUserID: 'company'
     getMyCompanyJobPost: 'jobpost'
     getMyFavouriteJobPost: 'favourite'
-    getNotificationByCompanyID: 'NotificationPagination'
     getNotificationByID: 'notification'
     getNotificationByUserID: 'NotificationPagination'
     getPersonalMessage: 'message'
@@ -1590,6 +1589,7 @@ export interface NexusGenFieldTypeNames {
     notificationID: 'ID'
     project: 'project'
     read: 'Boolean'
+    schedule: 'schedule'
     title: 'String'
     updatedAt: 'DateTime'
   }
@@ -2205,11 +2205,6 @@ export interface NexusGenArgTypes {
     getMyFavouriteJobPost: { // args
       jobPostID: string; // ID!
       userID: string; // ID!
-    }
-    getNotificationByCompanyID: { // args
-      companyID: string; // ID!
-      cursor?: string | null; // String
-      limit?: number | null; // Int
     }
     getNotificationByID: { // args
       notificationID: string; // ID!

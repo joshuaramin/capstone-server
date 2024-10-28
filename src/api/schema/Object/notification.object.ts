@@ -35,6 +35,16 @@ export const NotificationJob = objectType({
         });
       },
     });
+    t.field("schedule", {
+      type: "schedule",
+      resolve: async ({ notificationID }) => {
+        return await prisma.schedule.findFirst({
+          where: {
+            Notification: { some: { notificationID } },
+          },
+        });
+      },
+    });
   },
 });
 

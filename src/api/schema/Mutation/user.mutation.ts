@@ -408,6 +408,14 @@ export const UserMutation = extendType({
           },
         });
 
+        if (user.email === email) {
+          return {
+            __typename: "BADINPUT",
+            code: 400,
+            message: "Email is already exist.",
+          };
+        }
+
         await prisma.activityLogs.create({
           data: {
             title: "Email Address Changed",
