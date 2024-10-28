@@ -222,7 +222,10 @@ export const JobPostQuery = extendType({
         userID: nonNull(idArg()),
         search: stringArg(),
       },
-      resolve: async (_, { input: { page, take }, userID, search}): Promise<any> => {
+      resolve: async (
+        _,
+        { input: { page, take }, userID, search }
+      ): Promise<any> => {
         const jobPost = await prisma.jobPost.findMany({
           where: {
             isArchive: true,

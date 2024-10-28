@@ -462,6 +462,7 @@ export interface NexusGenObjects {
     updatedAt?: NexusGenScalars['DateTime'] | null; // DateTime
   }
   report: { // root type
+    createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
     message?: string | null; // String
     reportID?: string | null; // ID
   }
@@ -789,7 +790,7 @@ export interface NexusGenFieldTypes {
     getAllEducationByProfileId: Array<NexusGenRootTypes['education'] | null> | null; // [education]
     getAllFonts: NexusGenRootTypes['FontPagination'] | null; // FontPagination
     getAllJobPost: Array<NexusGenRootTypes['jobpost'] | null> | null; // [jobpost]
-    getAllJobPostReport: Array<NexusGenRootTypes['ReportPagination'] | null> | null; // [ReportPagination]
+    getAllJobPostReport: NexusGenRootTypes['ReportPagination'] | null; // ReportPagination
     getAllMediaProfile: Array<NexusGenRootTypes['media'] | null> | null; // [media]
     getAllMySaveJobs: Array<NexusGenRootTypes['favourite'] | null> | null; // [favourite]
     getAllMySocialLink: NexusGenRootTypes['social'] | null; // social
@@ -821,6 +822,7 @@ export interface NexusGenFieldTypes {
     getPortfolioByProfileID: Array<NexusGenRootTypes['portfolio'] | null> | null; // [portfolio]
     getProfileByUser: NexusGenRootTypes['profile'] | null; // profile
     getProjectOrganizedID: NexusGenRootTypes['project'] | null; // project
+    getReportById: NexusGenRootTypes['report'] | null; // report
     getScheduleByDate: Array<NexusGenRootTypes['schedule'] | null> | null; // [schedule]
     getScheduleById: NexusGenRootTypes['schedule'] | null; // schedule
     getSearchByCompanyName: NexusGenRootTypes['company'] | null; // company
@@ -1057,9 +1059,11 @@ export interface NexusGenFieldTypes {
     user: NexusGenRootTypes['user'] | null; // user
   }
   report: { // field return type
+    createdAt: NexusGenScalars['DateTime'] | null; // DateTime
     jobPost: Array<NexusGenRootTypes['jobpost'] | null> | null; // [jobpost]
     message: string | null; // String
     reportID: string | null; // ID
+    user: NexusGenRootTypes['user'] | null; // user
   }
   requirement: { // field return type
     createdAt: NexusGenScalars['DateTime'] | null; // DateTime
@@ -1408,6 +1412,7 @@ export interface NexusGenFieldTypeNames {
     getPortfolioByProfileID: 'portfolio'
     getProfileByUser: 'profile'
     getProjectOrganizedID: 'project'
+    getReportById: 'report'
     getScheduleByDate: 'schedule'
     getScheduleById: 'schedule'
     getSearchByCompanyName: 'company'
@@ -1644,9 +1649,11 @@ export interface NexusGenFieldTypeNames {
     user: 'user'
   }
   report: { // field return type name
+    createdAt: 'DateTime'
     jobPost: 'jobpost'
     message: 'String'
     reportID: 'ID'
+    user: 'user'
   }
   requirement: { // field return type name
     createdAt: 'DateTime'
@@ -2105,6 +2112,9 @@ export interface NexusGenArgTypes {
     getAllJobPost: { // args
       input: NexusGenInputs['PaginationInput']; // PaginationInput!
     }
+    getAllJobPostReport: { // args
+      input: NexusGenInputs['PaginationInput']; // PaginationInput!
+    }
     getAllMediaProfile: { // args
       pagination: NexusGenInputs['PaginationInput']; // PaginationInput!
       profileID: string; // ID!
@@ -2224,6 +2234,9 @@ export interface NexusGenArgTypes {
     }
     getProjectOrganizedID: { // args
       projectOrganizerID: string; // ID!
+    }
+    getReportById: { // args
+      reportID: string; // ID!
     }
     getScheduleByDate: { // args
       date: string; // String!

@@ -20,5 +20,18 @@ export const ReportObject = objectType({
         });
       },
     });
+    t.field("user", {
+      type: "user",
+      resolve: async ({ reportID }) => {
+        return await prisma.user.findFirst({
+          where: {
+            report: {
+              some: { reportID },
+            },
+          },
+        });
+      },
+    });
+    t.datetime("createdAt");
   },
 });

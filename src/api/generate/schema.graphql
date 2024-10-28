@@ -292,7 +292,7 @@ type Query {
   getAllEducationByProfileId(profileID: ID!): [education]
   getAllFonts(pagination: PaginationInput!, search: String): FontPagination
   getAllJobPost(input: PaginationInput!): [jobpost]
-  getAllJobPostReport: [ReportPagination]
+  getAllJobPostReport(input: PaginationInput!): ReportPagination
   getAllMediaProfile(pagination: PaginationInput!, profileID: ID!): [media]
   getAllMySaveJobs(userID: ID!): [favourite]
   getAllMySocialLink(profileID: ID!): social
@@ -324,6 +324,7 @@ type Query {
   getPortfolioByProfileID(profileID: ID!): [portfolio]
   getProfileByUser(userID: ID!): profile
   getProjectOrganizedID(projectOrganizerID: ID!): project
+  getReportById(reportID: ID!): report
   getScheduleByDate(date: String!, userID: ID!): [schedule]
   getScheduleById(scheduleID: ID!): schedule
   getSearchByCompanyName(search: String!): company
@@ -653,9 +654,11 @@ type project {
 }
 
 type report {
+  createdAt: DateTime
   jobPost: [jobpost]
   message: String
   reportID: ID
+  user: user
 }
 
 type requirement {
