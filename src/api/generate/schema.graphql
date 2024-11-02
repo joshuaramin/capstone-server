@@ -184,7 +184,6 @@ type Mutation {
   deleteFavourite(favouriteID: ID!): favourite
   deleteFontFamily(fontID: ID!, userID: ID!): fonts
   deleteJobPost(jobPostID: ID!): jobpost
-  deleteMedia(mediaID: ID!): media
   deleteMessage(messageID: ID!): message
   deletePortfolio(portfolioID: ID!): portfolio
   deleteProfileAvatar(mediaID: ID!, profileID: ID!): profile
@@ -293,23 +292,18 @@ type Query {
   getAllFonts(pagination: PaginationInput!, search: String): FontPagination
   getAllJobPost(input: PaginationInput!): [jobpost]
   getAllJobPostReport(input: PaginationInput!): ReportPagination
-  getAllMediaProfile(pagination: PaginationInput!, profileID: ID!): [media]
   getAllMySaveJobs(userID: ID!): [favourite]
   getAllMySocialLink(profileID: ID!): social
   getAllResumyByProfileID(profileID: ID!): [resume]
-  getAllSchedule(input: PaginationInput): [schedule]
-  getAllSkill(input: PaginationInput): [skills]
   getAllUserAccountByRole(input: PaginationInput, role: String, search: String): UserPagination
   getApplicantJobPostByIdPagination(input: PaginationInput!, jobPostID: ID!, search: String): ApplicantPagination
   getApplicationByID(applicationID: ID!): application
   getCompanyByID(companyID: ID!): company
-  getCompanyNotification(companyID: ID!): Int
   getCompanyProjects(companyID: ID!, input: PaginationInput!, orderBy: String!, search: String!): ProjectOrganizerPagination
   getCompanySlug(slug: String!): company
   getEducationById(educationID: ID!): education
   getJobBoard(duration: [String], experience: [String], filter: String!, input: PaginationInput!, jobType: [String], orderBy: String, search: String, skills: [String]): JobPagination
   getJobPostById(jobPostID: ID!): jobpost
-  getJobPostBySlug(slug: ID!): jobpost
   getMessages(search: String, userID: ID!): [GroupMessage]
   getMyApplication(input: PaginationInput!, status: String!, userID: ID!): ApplicantPagination
   getMyCompanyByUserID(userID: ID!): company
@@ -317,18 +311,14 @@ type Query {
   getNotificationByID(notificationID: ID!): notification
   getNotificationByUserID(cursor: String, limit: Int, userID: ID!): NotificationPagination
   getPersonalMessage(receiverID: ID!, senderID: ID!): [message]
-  getPortfolioById(portfolioID: ID!): portfolio
   getPortfolioByProfileID(profileID: ID!): [portfolio]
   getProfileByUser(userID: ID!): profile
   getProjectOrganizedID(projectOrganizerID: ID!): project
   getReportById(reportID: ID!): report
   getScheduleByDate(date: String!, userID: ID!): [schedule]
   getScheduleById(scheduleID: ID!): schedule
-  getSearchByCompanyName(search: String!): company
-  getSearchBySkill(search: String!): [skills]
   getSimilarJobPost(input: PaginationInput!, jobPostID: ID!, skills: [String]!): [jobpost]
   getSkillByProfileID(profileID: ID!): [skills]
-  getSkillsByGroup: [skills]
   getThemes(pagination: PaginationInput!, search: String): ThemePagination
   getUnreadCountMessage(userID: ID!): Int
   getUserAccountById(userID: ID!): user
@@ -336,7 +326,7 @@ type Query {
   getUserProfileById(profileID: ID!): profile
   getUserProjectOrganizer(input: PaginationInput!, status: String!, userID: ID!): ProjectOrganizerPagination
   jobPagination(archive: Boolean, pagination: PaginationInput, search: String, userID: ID!): JobPagination
-  skillsPagination(input: PaginationInput!, search: String!): SkillsPagination
+  skillsPagination(input: PaginationInput!, search: String): SkillsPagination
   unreadNotification(userID: ID!): Int
 }
 

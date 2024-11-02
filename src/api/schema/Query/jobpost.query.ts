@@ -191,17 +191,6 @@ export const JobPostQuery = extendType({
         });
       },
     });
-    t.field("getJobPostBySlug", {
-      type: "jobpost",
-      args: { slug: nonNull(idArg()) },
-      resolve: async (_, { slug }): Promise<any> => {
-        return await prisma.jobPost.findFirst({
-          where: {
-            slug,
-          },
-        });
-      },
-    });
     t.list.field("getSimilarJobPost", {
       type: "jobpost",
       args: {
