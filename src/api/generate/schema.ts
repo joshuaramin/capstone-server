@@ -800,7 +800,6 @@ export interface NexusGenFieldTypes {
     getAllUserAccountByRole: NexusGenRootTypes['UserPagination'] | null; // UserPagination
     getApplicantJobPostByIdPagination: NexusGenRootTypes['ApplicantPagination'] | null; // ApplicantPagination
     getApplicationByID: NexusGenRootTypes['application'] | null; // application
-    getArchiveJobPost: NexusGenRootTypes['JobPagination'] | null; // JobPagination
     getCompanyByID: NexusGenRootTypes['company'] | null; // company
     getCompanyNotification: number | null; // Int
     getCompanyProjects: NexusGenRootTypes['ProjectOrganizerPagination'] | null; // ProjectOrganizerPagination
@@ -812,7 +811,6 @@ export interface NexusGenFieldTypes {
     getMessages: Array<NexusGenRootTypes['GroupMessage'] | null> | null; // [GroupMessage]
     getMyApplication: NexusGenRootTypes['ApplicantPagination'] | null; // ApplicantPagination
     getMyCompanyByUserID: NexusGenRootTypes['company'] | null; // company
-    getMyCompanyJobPost: Array<NexusGenRootTypes['jobpost'] | null> | null; // [jobpost]
     getMyFavouriteJobPost: NexusGenRootTypes['favourite'] | null; // favourite
     getNotificationByID: NexusGenRootTypes['notification'] | null; // notification
     getNotificationByUserID: NexusGenRootTypes['NotificationPagination'] | null; // NotificationPagination
@@ -1390,7 +1388,6 @@ export interface NexusGenFieldTypeNames {
     getAllUserAccountByRole: 'UserPagination'
     getApplicantJobPostByIdPagination: 'ApplicantPagination'
     getApplicationByID: 'application'
-    getArchiveJobPost: 'JobPagination'
     getCompanyByID: 'company'
     getCompanyNotification: 'Int'
     getCompanyProjects: 'ProjectOrganizerPagination'
@@ -1402,7 +1399,6 @@ export interface NexusGenFieldTypeNames {
     getMessages: 'GroupMessage'
     getMyApplication: 'ApplicantPagination'
     getMyCompanyByUserID: 'company'
-    getMyCompanyJobPost: 'jobpost'
     getMyFavouriteJobPost: 'favourite'
     getNotificationByID: 'notification'
     getNotificationByUserID: 'NotificationPagination'
@@ -2147,11 +2143,6 @@ export interface NexusGenArgTypes {
     getApplicationByID: { // args
       applicationID: string; // ID!
     }
-    getArchiveJobPost: { // args
-      input: NexusGenInputs['PaginationInput']; // PaginationInput!
-      search?: string | null; // String
-      userID: string; // ID!
-    }
     getCompanyByID: { // args
       companyID: string; // ID!
     }
@@ -2196,10 +2187,6 @@ export interface NexusGenArgTypes {
       userID: string; // ID!
     }
     getMyCompanyByUserID: { // args
-      userID: string; // ID!
-    }
-    getMyCompanyJobPost: { // args
-      pagination?: NexusGenInputs['PaginationInput'] | null; // PaginationInput
       userID: string; // ID!
     }
     getMyFavouriteJobPost: { // args
@@ -2277,6 +2264,7 @@ export interface NexusGenArgTypes {
       userID: string; // ID!
     }
     jobPagination: { // args
+      archive?: boolean | null; // Boolean
       pagination?: NexusGenInputs['PaginationInput'] | null; // PaginationInput
       search?: string | null; // String
       userID: string; // ID!

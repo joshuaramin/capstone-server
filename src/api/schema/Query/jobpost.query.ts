@@ -43,10 +43,11 @@ export const JobPostQuery = extendType({
         search: stringArg(),
         userID: nonNull(idArg()),
         pagination: "PaginationInput",
+        archive: booleanArg(),
       },
       resolve: async (
         _,
-        { search, userID, pagination: { take, page } }
+        { search, userID, pagination: { take, page }, archive }
       ): Promise<any> => {
         const getAlljobs = await prisma.jobPost.findMany({
           where: {
@@ -54,7 +55,7 @@ export const JobPostQuery = extendType({
               contains: search,
               mode: "insensitive",
             },
-            isArchive: false,
+            isArchive: archive,
             Company: {
               userID,
             },
@@ -190,20 +191,6 @@ export const JobPostQuery = extendType({
         });
       },
     });
-    t.list.field("getMyCompanyJobPost", {
-      type: "jobpost",
-      args: { userID: nonNull(idArg()), pagination: "PaginationInput" },
-      resolve: async (_, { userID }): Promise<any> => {
-        return await prisma.jobPost.findMany({
-          where: {
-            isArchive: false,
-            Company: {
-              userID,
-            },
-          },
-        });
-      },
-    });
     t.field("getJobPostBySlug", {
       type: "jobpost",
       args: { slug: nonNull(idArg()) },
@@ -213,43 +200,6 @@ export const JobPostQuery = extendType({
             slug,
           },
         });
-      },
-    });
-    t.field("getArchiveJobPost", {
-      type: "JobPagination",
-      args: {
-        input: nonNull("PaginationInput"),
-        userID: nonNull(idArg()),
-        search: stringArg(),
-      },
-      resolve: async (
-        _,
-        { input: { page, take }, userID, search }
-      ): Promise<any> => {
-        const jobPost = await prisma.jobPost.findMany({
-          where: {
-            isArchive: true,
-            title: {
-              contains: search,
-              mode: "insensitive",
-            },
-            Company: {
-              userID,
-            },
-          },
-          take,
-          skip: (page - 1) * take,
-        });
-        const offset = (page - 1) * take;
-        const item = jobPost.slice(offset, offset + take);
-        return {
-          totalPages: Math.ceil(jobPost.length / take),
-          totalItems: jobPost.length,
-          currentPage: page,
-          hasNextPage: page < Math.ceil(jobPost.length / take),
-          hasPrevPage: page > 1,
-          item,
-        };
       },
     });
     t.list.field("getSimilarJobPost", {

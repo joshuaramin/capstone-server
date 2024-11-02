@@ -302,7 +302,6 @@ type Query {
   getAllUserAccountByRole(input: PaginationInput, role: String, search: String): UserPagination
   getApplicantJobPostByIdPagination(input: PaginationInput!, jobPostID: ID!, search: String): ApplicantPagination
   getApplicationByID(applicationID: ID!): application
-  getArchiveJobPost(input: PaginationInput!, search: String, userID: ID!): JobPagination
   getCompanyByID(companyID: ID!): company
   getCompanyNotification(companyID: ID!): Int
   getCompanyProjects(companyID: ID!, input: PaginationInput!, orderBy: String!, search: String!): ProjectOrganizerPagination
@@ -314,7 +313,6 @@ type Query {
   getMessages(search: String, userID: ID!): [GroupMessage]
   getMyApplication(input: PaginationInput!, status: String!, userID: ID!): ApplicantPagination
   getMyCompanyByUserID(userID: ID!): company
-  getMyCompanyJobPost(pagination: PaginationInput, userID: ID!): [jobpost]
   getMyFavouriteJobPost(jobPostID: ID!, userID: ID!): favourite
   getNotificationByID(notificationID: ID!): notification
   getNotificationByUserID(cursor: String, limit: Int, userID: ID!): NotificationPagination
@@ -337,7 +335,7 @@ type Query {
   getUserActivityLogs(input: PaginationInput!, userID: ID!): ActivityLogsPagination
   getUserProfileById(profileID: ID!): profile
   getUserProjectOrganizer(input: PaginationInput!, status: String!, userID: ID!): ProjectOrganizerPagination
-  jobPagination(pagination: PaginationInput, search: String, userID: ID!): JobPagination
+  jobPagination(archive: Boolean, pagination: PaginationInput, search: String, userID: ID!): JobPagination
   skillsPagination(input: PaginationInput!, search: String!): SkillsPagination
   unreadNotification(userID: ID!): Int
 }
