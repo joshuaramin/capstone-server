@@ -37,7 +37,7 @@ export const ERROR_ALREADY_EXIST = {
 export const ERROR_PASSWORD_ALREADY_EXIST = {
   __typename: "AlreadyExist",
   code: 400,
-  message: "New password cannot be the same as the current password.",
+  message: "New password cannot be the same as the previous password.",
 };
 
 export const ERROR_EXPIRED = {
