@@ -2,6 +2,7 @@ import * as AboutQuery from "./about.query";
 import * as ActivityLogsQuery from "./activitylogs.query";
 import * as ApplicationQuery from "./application.query";
 import * as CompanyQuery from "./company.query";
+import * as DashboardQuery from "./dashboard.query";
 import * as EducationQuery from "./education.query";
 import * as FavouriteQuery from "./favourite.query";
 import * as FontQuery from "./font.query";
@@ -25,6 +26,7 @@ export {
   ActivityLogsQuery,
   ApplicationQuery,
   CompanyQuery,
+  DashboardQuery,
   EducationQuery,
   FavouriteQuery,
   FontQuery,

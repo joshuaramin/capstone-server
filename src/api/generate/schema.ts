@@ -222,6 +222,24 @@ export interface NexusGenObjects {
     code?: number | null; // Int
     message?: string | null; // String
   }
+  DashboardObject: { // root type
+    applicants?: number | null; // Int
+    company?: number | null; // Int
+    freelancers?: number | null; // Int
+    jobpost?: number | null; // Int
+    report?: number | null; // Int
+    schedule?: number | null; // Int
+    userID?: string | null; // ID
+    users?: number | null; // Int
+  }
+  EmployerDashboard: { // root type
+    JobPost?: number | null; // Int
+    applicants?: number | null; // Int
+    companyID?: string | null; // ID
+    projects?: number | null; // Int
+    schedule?: number | null; // Int
+    userID?: string | null; // ID
+  }
   Expired: { // root type
     code?: number | null; // Int
     message?: string | null; // String
@@ -241,6 +259,10 @@ export interface NexusGenObjects {
   GroupMessage: { // root type
     message?: NexusGenRootTypes['message'] | null; // message
     userID?: string | null; // ID
+  }
+  JobCount: { // root type
+    applicants?: number | null; // Int
+    jobPostID?: string | null; // String
   }
   JobPagination: { // root type
     currentPage?: number | null; // Int
@@ -648,6 +670,27 @@ export interface NexusGenFieldTypes {
     code: number | null; // Int
     message: string | null; // String
   }
+  DashboardObject: { // field return type
+    applicants: number | null; // Int
+    company: number | null; // Int
+    freelancers: number | null; // Int
+    jobpost: number | null; // Int
+    jobpostList: Array<NexusGenRootTypes['JobCount'] | null> | null; // [JobCount]
+    report: number | null; // Int
+    schedule: number | null; // Int
+    userID: string | null; // ID
+    users: number | null; // Int
+  }
+  EmployerDashboard: { // field return type
+    JobPost: number | null; // Int
+    applicants: number | null; // Int
+    companyID: string | null; // ID
+    getMyJobPost: Array<NexusGenRootTypes['JobCount'] | null> | null; // [JobCount]
+    getScheduleList: Array<NexusGenRootTypes['schedule'] | null> | null; // [schedule]
+    projects: number | null; // Int
+    schedule: number | null; // Int
+    userID: string | null; // ID
+  }
   Expired: { // field return type
     code: number | null; // Int
     message: string | null; // String
@@ -668,6 +711,11 @@ export interface NexusGenFieldTypes {
     message: NexusGenRootTypes['message'] | null; // message
     user: NexusGenRootTypes['user'] | null; // user
     userID: string | null; // ID
+  }
+  JobCount: { // field return type
+    applicants: number | null; // Int
+    jobPostID: string | null; // String
+    jobTitle: NexusGenRootTypes['jobpost'] | null; // jobpost
   }
   JobPagination: { // field return type
     currentPage: number | null; // Int
@@ -799,7 +847,9 @@ export interface NexusGenFieldTypes {
     getCompanyByID: NexusGenRootTypes['company'] | null; // company
     getCompanyProjects: NexusGenRootTypes['ProjectOrganizerPagination'] | null; // ProjectOrganizerPagination
     getCompanySlug: NexusGenRootTypes['company'] | null; // company
+    getDashboardQuery: NexusGenRootTypes['DashboardObject'] | null; // DashboardObject
     getEducationById: NexusGenRootTypes['education'] | null; // education
+    getEmployerDashboardQuery: NexusGenRootTypes['EmployerDashboard'] | null; // EmployerDashboard
     getJobBoard: NexusGenRootTypes['JobPagination'] | null; // JobPagination
     getJobPostById: NexusGenRootTypes['jobpost'] | null; // jobpost
     getMessages: Array<NexusGenRootTypes['GroupMessage'] | null> | null; // [GroupMessage]
@@ -1229,6 +1279,27 @@ export interface NexusGenFieldTypeNames {
     code: 'Int'
     message: 'String'
   }
+  DashboardObject: { // field return type name
+    applicants: 'Int'
+    company: 'Int'
+    freelancers: 'Int'
+    jobpost: 'Int'
+    jobpostList: 'JobCount'
+    report: 'Int'
+    schedule: 'Int'
+    userID: 'ID'
+    users: 'Int'
+  }
+  EmployerDashboard: { // field return type name
+    JobPost: 'Int'
+    applicants: 'Int'
+    companyID: 'ID'
+    getMyJobPost: 'JobCount'
+    getScheduleList: 'schedule'
+    projects: 'Int'
+    schedule: 'Int'
+    userID: 'ID'
+  }
   Expired: { // field return type name
     code: 'Int'
     message: 'String'
@@ -1249,6 +1320,11 @@ export interface NexusGenFieldTypeNames {
     message: 'message'
     user: 'user'
     userID: 'ID'
+  }
+  JobCount: { // field return type name
+    applicants: 'Int'
+    jobPostID: 'String'
+    jobTitle: 'jobpost'
   }
   JobPagination: { // field return type name
     currentPage: 'Int'
@@ -1380,7 +1456,9 @@ export interface NexusGenFieldTypeNames {
     getCompanyByID: 'company'
     getCompanyProjects: 'ProjectOrganizerPagination'
     getCompanySlug: 'company'
+    getDashboardQuery: 'DashboardObject'
     getEducationById: 'education'
+    getEmployerDashboardQuery: 'EmployerDashboard'
     getJobBoard: 'JobPagination'
     getJobPostById: 'jobpost'
     getMessages: 'GroupMessage'
@@ -1774,6 +1852,16 @@ export interface NexusGenFieldTypeNames {
 }
 
 export interface NexusGenArgTypes {
+  DashboardObject: {
+    jobpostList: { // args
+      filter?: string | null; // String
+    }
+  }
+  EmployerDashboard: {
+    getMyJobPost: { // args
+      filter?: string | null; // String
+    }
+  }
   Mutation: {
     ChangeEmailAddress: { // args
       email: string; // String!
@@ -2133,6 +2221,9 @@ export interface NexusGenArgTypes {
     }
     getEducationById: { // args
       educationID: string; // ID!
+    }
+    getEmployerDashboardQuery: { // args
+      companyID?: string | null; // ID
     }
     getJobBoard: { // args
       duration?: Array<string | null> | null; // [String]
