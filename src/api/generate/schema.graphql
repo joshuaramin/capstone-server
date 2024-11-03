@@ -155,7 +155,7 @@ type Mutation {
   addProfileThemnFonts(fontID: ID!, profileID: ID!, themeID: ID!): profile
   addSkillToProfile(profileID: ID!, skills: [String]): profile
   addSkills: [skills]
-  archiveJobPost(jobPostID: ID!): jobpost
+  archiveJobPost(boolean: Boolean, jobPostID: ID!): jobpost
   archiveNotification(notificationID: ID!): notification
   companyUploadDocuments(companyID: ID!, file: Upload!): requirement
   createAbout(input: AboutInput!, profileID: ID!): AboutPayload
@@ -200,7 +200,6 @@ type Mutation {
   login(email: String!, password: String!): CredentialsPayload
   markallNotificationAsRead(userID: ID!): notification
   removedSkillToProfile(profileID: ID!, skillsID: ID!): profile
-  unarchiveJobPost(jobPostID: ID!): jobpost
   updateAbout(aboutID: ID!, bio: String!): about
   updateApplicationStatus(applicationID: ID!, status: String!): application
   updateCompany(companyID: ID!): company
@@ -208,6 +207,7 @@ type Mutation {
   updateEducationBackground(educationID: ID!, input: EducationInput): education
   updateFontFamily(file: Upload, font: String!, fontID: String!): fonts
   updateJobPost(input: jobPostInput, jobPostID: ID!, salary: salaryInput, skills: [String]!): jobpost
+  updateJobSettings(applicationStatus: String, jobPostID: ID!, status: String): jobpost
   updateMessageStatus(receiverID: ID!): message
   updateNotification(notificationID: ID!): notification
   updatePortfolio(input: PortfolioInput!, portfolioID: ID!, skills: [String]!): portfolio
@@ -625,6 +625,7 @@ type profile {
   skills: [skills]
   social: [social]
   updatedAt: DateTime
+  user: user
 }
 
 type project {
@@ -676,6 +677,7 @@ type resume {
 }
 
 type review {
+  company: company
   createdAt: DateTime
   rating: Int
   review: String
@@ -776,6 +778,7 @@ type user {
   projectOrganizer: [project]
   receiverList: [message]
   requirement: [requirement]
+  review: [review]
   role: String
   senderList: [message]
   updatedAt: DateTime

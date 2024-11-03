@@ -11,6 +11,18 @@ export const ProfileObject = objectType({
     t.date("birthday");
     t.datetime("createdAt");
     t.datetime("updatedAt");
+    t.field("user", {
+      type: "user",
+      resolve: async ({ profileID }) => {
+        return await prisma.user.findFirst({
+          where: {
+            Profile: {
+              profileID,
+            },
+          },
+        });
+      },
+    });
     t.list.field("skills", {
       type: "skills",
       resolve: async ({ profileID }): Promise<any> => {

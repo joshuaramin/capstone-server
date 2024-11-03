@@ -736,7 +736,6 @@ export interface NexusGenFieldTypes {
     login: NexusGenRootTypes['CredentialsPayload'] | null; // CredentialsPayload
     markallNotificationAsRead: NexusGenRootTypes['notification'] | null; // notification
     removedSkillToProfile: NexusGenRootTypes['profile'] | null; // profile
-    unarchiveJobPost: NexusGenRootTypes['jobpost'] | null; // jobpost
     updateAbout: NexusGenRootTypes['about'] | null; // about
     updateApplicationStatus: NexusGenRootTypes['application'] | null; // application
     updateCompany: NexusGenRootTypes['company'] | null; // company
@@ -744,6 +743,7 @@ export interface NexusGenFieldTypes {
     updateEducationBackground: NexusGenRootTypes['education'] | null; // education
     updateFontFamily: NexusGenRootTypes['fonts'] | null; // fonts
     updateJobPost: NexusGenRootTypes['jobpost'] | null; // jobpost
+    updateJobSettings: NexusGenRootTypes['jobpost'] | null; // jobpost
     updateMessageStatus: NexusGenRootTypes['message'] | null; // message
     updateNotification: NexusGenRootTypes['notification'] | null; // notification
     updatePortfolio: NexusGenRootTypes['portfolio'] | null; // portfolio
@@ -1032,6 +1032,7 @@ export interface NexusGenFieldTypes {
     skills: Array<NexusGenRootTypes['skills'] | null> | null; // [skills]
     social: Array<NexusGenRootTypes['social'] | null> | null; // [social]
     updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
+    user: NexusGenRootTypes['user'] | null; // user
   }
   project: { // field return type
     amount: number | null; // Float
@@ -1075,6 +1076,7 @@ export interface NexusGenFieldTypes {
     updatedaAt: NexusGenScalars['DateTime'] | null; // DateTime
   }
   review: { // field return type
+    company: NexusGenRootTypes['company'] | null; // company
     createdAt: NexusGenScalars['DateTime'] | null; // DateTime
     rating: number | null; // Int
     review: string | null; // String
@@ -1152,6 +1154,7 @@ export interface NexusGenFieldTypes {
     projectOrganizer: Array<NexusGenRootTypes['project'] | null> | null; // [project]
     receiverList: Array<NexusGenRootTypes['message'] | null> | null; // [message]
     requirement: Array<NexusGenRootTypes['requirement'] | null> | null; // [requirement]
+    review: Array<NexusGenRootTypes['review'] | null> | null; // [review]
     role: string | null; // String
     senderList: Array<NexusGenRootTypes['message'] | null> | null; // [message]
     updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
@@ -1314,7 +1317,6 @@ export interface NexusGenFieldTypeNames {
     login: 'CredentialsPayload'
     markallNotificationAsRead: 'notification'
     removedSkillToProfile: 'profile'
-    unarchiveJobPost: 'jobpost'
     updateAbout: 'about'
     updateApplicationStatus: 'application'
     updateCompany: 'company'
@@ -1322,6 +1324,7 @@ export interface NexusGenFieldTypeNames {
     updateEducationBackground: 'education'
     updateFontFamily: 'fonts'
     updateJobPost: 'jobpost'
+    updateJobSettings: 'jobpost'
     updateMessageStatus: 'message'
     updateNotification: 'notification'
     updatePortfolio: 'portfolio'
@@ -1610,6 +1613,7 @@ export interface NexusGenFieldTypeNames {
     skills: 'skills'
     social: 'social'
     updatedAt: 'DateTime'
+    user: 'user'
   }
   project: { // field return type name
     amount: 'Float'
@@ -1653,6 +1657,7 @@ export interface NexusGenFieldTypeNames {
     updatedaAt: 'DateTime'
   }
   review: { // field return type name
+    company: 'company'
     createdAt: 'DateTime'
     rating: 'Int'
     review: 'String'
@@ -1730,6 +1735,7 @@ export interface NexusGenFieldTypeNames {
     projectOrganizer: 'project'
     receiverList: 'message'
     requirement: 'requirement'
+    review: 'review'
     role: 'String'
     senderList: 'message'
     updatedAt: 'DateTime'
@@ -1794,6 +1800,7 @@ export interface NexusGenArgTypes {
       skills?: Array<string | null> | null; // [String]
     }
     archiveJobPost: { // args
+      boolean?: boolean | null; // Boolean
       jobPostID: string; // ID!
     }
     archiveNotification: { // args
@@ -1974,9 +1981,6 @@ export interface NexusGenArgTypes {
       profileID: string; // ID!
       skillsID: string; // ID!
     }
-    unarchiveJobPost: { // args
-      jobPostID: string; // ID!
-    }
     updateAbout: { // args
       aboutID: string; // ID!
       bio: string; // String!
@@ -2006,6 +2010,11 @@ export interface NexusGenArgTypes {
       jobPostID: string; // ID!
       salary?: NexusGenInputs['salaryInput'] | null; // salaryInput
       skills: Array<string | null>; // [String]!
+    }
+    updateJobSettings: { // args
+      applicationStatus?: string | null; // String
+      jobPostID: string; // ID!
+      status?: string | null; // String
     }
     updateMessageStatus: { // args
       receiverID: string; // ID!

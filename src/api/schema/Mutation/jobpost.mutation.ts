@@ -1,4 +1,4 @@
-import { extendType, idArg, list, nonNull, stringArg } from "nexus";
+import { booleanArg, extendType, idArg, list, nonNull, stringArg } from "nexus";
 import { prisma } from "../../helpers/server";
 import { add } from "date-fns";
 import { ERROR_MESSAGE_BAD_INPUT } from "../../helpers/error";
@@ -63,7 +63,32 @@ export const JobPostMutation = extendType({
           },
         });
 
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+
+        const existingJobPost = await prisma.jobPost.findFirst({
+          where: {
+            Company: {
+              companyID,
+            },
+            createdAt: {
+              gte: today,
+              lt: tomorrow,
+            },
+          },
+        });
+
         if (company.User.plan === "BASIC") {
+          if (existingJobPost) {
+            return {
+              __typename: "BADINPUT",
+              code: 400,
+              message: "A job post has already been created today.",
+            };
+          }
+
           if (fixed) {
             const job = await prisma.jobPost.create({
               data: {
@@ -348,72 +373,113 @@ export const JobPostMutation = extendType({
         }
       },
     });
-    t.field("archiveJobPost", {
+    t.field("updateJobSettings", {
       type: "jobpost",
-      args: { jobPostID: nonNull(idArg()) },
-      resolve: async (_, { jobPostID }): Promise<any> => {
-        const jobpost = await prisma.jobPost.update({
-          data: { isArchive: true },
+      args: {
+        jobPostID: nonNull(idArg()),
+        applicationStatus: stringArg(),
+        status: stringArg(),
+      },
+      resolve: async (_, { jobPostID, applicationStatus, status }) => {
+        if (applicationStatus === "Close") {
+          const jobApplicants = await prisma.application.findMany({
+            where: {
+              jobPostID,
+              NOT: {
+                OR: [
+                  {
+                    status: "Hired",
+                  },
+                  {
+                    status: "Rejected",
+                  },
+                ],
+              },
+            },
+            include: {
+              User: true,
+            },
+          });
+
+          //send an email
+
+          jobApplicants.map(({}) => {});
+        }
+
+        return await prisma.jobPost.update({
           where: {
             jobPostID,
           },
-          include: {
-            Company: {
-              include: {
-                User: true,
-              },
-            },
-          },
-        });
-        await prisma.activityLogs.create({
           data: {
-            title: "Archived Job Post",
-            description: "You created archive a Job post",
-            User: {
-              connect: {
-                userID: jobpost.Company.User.userID,
-              },
-            },
+            status: status,
+            isOpen: applicationStatus,
           },
         });
-
-        return {
-          ...jobpost,
-        };
       },
     });
-    t.field("unarchiveJobPost", {
+    t.field("archiveJobPost", {
       type: "jobpost",
-      args: { jobPostID: nonNull(idArg()) },
-      resolve: async (_, { jobPostID }): Promise<any> => {
-        const jobpost = await prisma.jobPost.update({
-          data: { isArchive: false },
-          where: {
-            jobPostID,
-          },
-          include: {
-            Company: {
-              include: {
-                User: true,
+      args: { jobPostID: nonNull(idArg()), boolean: booleanArg() },
+      resolve: async (_, { jobPostID, boolean }): Promise<any> => {
+        if (boolean === true) {
+          const jobpost = await prisma.jobPost.update({
+            data: { isArchive: true },
+            where: {
+              jobPostID,
+            },
+            include: {
+              Company: {
+                include: {
+                  User: true,
+                },
               },
             },
-          },
-        });
-        await prisma.activityLogs.create({
-          data: {
-            title: "UnArchive Job Post",
-            description: "You unarchive a Job post",
-            User: {
-              connect: {
-                userID: jobpost.Company.User.userID,
+          });
+          await prisma.activityLogs.create({
+            data: {
+              title: "Archived Job Post",
+              description: "You created archive a Job post",
+              User: {
+                connect: {
+                  userID: jobpost.Company.User.userID,
+                },
               },
             },
-          },
-        });
+          });
 
-        return {
-          ...jobpost,
-        };
+          return {
+            ...jobpost,
+          };
+        } else {
+          const jobpost = await prisma.jobPost.update({
+            data: { isArchive: false },
+            where: {
+              jobPostID,
+            },
+            include: {
+              Company: {
+                include: {
+                  User: true,
+                },
+              },
+            },
+          });
+          await prisma.activityLogs.create({
+            data: {
+              title: "UnArchive Job Post",
+              description: "You unarchive a Job post",
+              User: {
+                connect: {
+                  userID: jobpost.Company.User.userID,
+                },
+              },
+            },
+          });
+
+          return {
+            ...jobpost,
+          };
+        }
       },
     });
     t.field("deleteJobPost", {
