@@ -25,5 +25,17 @@ export const ScheduleQuery = extendType({
         });
       },
     });
+    t.list.field("getReceiverByDate", {
+      type: "schedule",
+      args: { date: nonNull(stringArg()), userID: nonNull(idArg()) },
+      resolve: async (_, { date, userID }): Promise<any> => {
+        return await prisma.schedule.findMany({
+          where: {
+            startDate: new Date(date),
+            receiverID: userID,
+          },
+        });
+      },
+    });
   },
 });

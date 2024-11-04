@@ -862,6 +862,7 @@ export interface NexusGenFieldTypes {
     getPortfolioByProfileID: Array<NexusGenRootTypes['portfolio'] | null> | null; // [portfolio]
     getProfileByUser: NexusGenRootTypes['profile'] | null; // profile
     getProjectOrganizedID: NexusGenRootTypes['project'] | null; // project
+    getReceiverByDate: Array<NexusGenRootTypes['schedule'] | null> | null; // [schedule]
     getReportById: NexusGenRootTypes['report'] | null; // report
     getScheduleByDate: Array<NexusGenRootTypes['schedule'] | null> | null; // [schedule]
     getScheduleById: NexusGenRootTypes['schedule'] | null; // schedule
@@ -1471,6 +1472,7 @@ export interface NexusGenFieldTypeNames {
     getPortfolioByProfileID: 'portfolio'
     getProfileByUser: 'profile'
     getProjectOrganizedID: 'project'
+    getReceiverByDate: 'schedule'
     getReportById: 'report'
     getScheduleByDate: 'schedule'
     getScheduleById: 'schedule'
@@ -2274,6 +2276,10 @@ export interface NexusGenArgTypes {
     }
     getProjectOrganizedID: { // args
       projectOrganizerID: string; // ID!
+    }
+    getReceiverByDate: { // args
+      date: string; // String!
+      userID: string; // ID!
     }
     getReportById: { // args
       reportID: string; // ID!

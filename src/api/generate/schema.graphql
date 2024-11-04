@@ -345,6 +345,7 @@ type Query {
   getPortfolioByProfileID(profileID: ID!): [portfolio]
   getProfileByUser(userID: ID!): profile
   getProjectOrganizedID(projectOrganizerID: ID!): project
+  getReceiverByDate(date: String!, userID: ID!): [schedule]
   getReportById(reportID: ID!): report
   getScheduleByDate(date: String!, userID: ID!): [schedule]
   getScheduleById(scheduleID: ID!): schedule
