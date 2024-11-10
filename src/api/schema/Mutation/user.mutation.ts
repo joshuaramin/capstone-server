@@ -86,7 +86,11 @@ export const UserMutation = extendType({
     });
     t.field("createUserRecruiter", {
       type: "UserPayload",
-      args: { input: nonNull("UserRecruiterInput"), file: nonNull("Upload") },
+      args: {
+        input: nonNull("UserRecruiterInput"),
+        file: nonNull("Upload"),
+        subscriptionId: stringArg(),
+      },
       resolve: async (
         _,
         {
@@ -101,6 +105,7 @@ export const UserMutation = extendType({
             location,
             password,
           },
+          subscriptionId,
           file,
         }
       ): Promise<any> => {
@@ -159,6 +164,15 @@ export const UserMutation = extendType({
             },
           },
         });
+
+        if (plan === "PRO") {
+          await prisma.subscription.create({
+            data: {
+              subscriptionId,
+              userID: users.userID,
+            },
+          });
+        }
         await prisma.passwordHash.create({
           data: {
             passHash: users.password,
@@ -514,6 +528,27 @@ export const UserMutation = extendType({
           role: users.role,
           token,
           ...users,
+        };
+      },
+    });
+    t.field("checkMyEmailAddress", {
+      type: "EmailPayload",
+      args: { email: nonNull(stringArg()) },
+      resolve: async (_, { email }) => {
+        const user = await prisma.user.findUnique({
+          where: { email },
+        });
+        if (user) {
+          return {
+            __typename: "BADINPUT",
+            code: 400,
+            message: "Email is already exist",
+          };
+        }
+
+        return {
+          __typename: "user",
+          ...user,
         };
       },
     });

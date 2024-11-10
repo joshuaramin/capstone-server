@@ -295,6 +295,9 @@ export interface NexusGenObjects {
     code?: number | null; // Int
     message?: string | null; // String
   }
+  PaypalObject: { // root type
+    reason?: string | null; // String
+  }
   ProjectOrganizerPagination: { // root type
     currentPage?: number | null; // Int
     hasNextPage?: boolean | null; // Boolean
@@ -741,6 +744,8 @@ export interface NexusGenFieldTypes {
     addSkills: Array<NexusGenRootTypes['skills'] | null> | null; // [skills]
     archiveJobPost: NexusGenRootTypes['jobpost'] | null; // jobpost
     archiveNotification: NexusGenRootTypes['notification'] | null; // notification
+    cancelSubscription: NexusGenRootTypes['PaypalObject'] | null; // PaypalObject
+    checkMyEmailAddress: NexusGenRootTypes['EmailPayload'] | null; // EmailPayload
     companyUploadDocuments: NexusGenRootTypes['requirement'] | null; // requirement
     createAbout: NexusGenRootTypes['AboutPayload'] | null; // AboutPayload
     createApplication: NexusGenRootTypes['ApplicationPayload'] | null; // ApplicationPayload
@@ -803,6 +808,7 @@ export interface NexusGenFieldTypes {
     updateSocialLink: NexusGenRootTypes['social'] | null; // social
     updateTheme: NexusGenRootTypes['theme'] | null; // theme
     updateUserPasswordAccount: NexusGenRootTypes['UserPayload'] | null; // UserPayload
+    upgradeSubscription: NexusGenRootTypes['user'] | null; // user
     verifyMyAccount: NexusGenRootTypes['user'] | null; // user
     zoom_access: NexusGenRootTypes['zoom'] | null; // zoom
   }
@@ -821,6 +827,9 @@ export interface NexusGenFieldTypes {
   Payment: { // field return type
     code: number | null; // Int
     message: string | null; // String
+  }
+  PaypalObject: { // field return type
+    reason: string | null; // String
   }
   ProjectOrganizerPagination: { // field return type
     currentPage: number | null; // Int
@@ -1351,6 +1360,8 @@ export interface NexusGenFieldTypeNames {
     addSkills: 'skills'
     archiveJobPost: 'jobpost'
     archiveNotification: 'notification'
+    cancelSubscription: 'PaypalObject'
+    checkMyEmailAddress: 'EmailPayload'
     companyUploadDocuments: 'requirement'
     createAbout: 'AboutPayload'
     createApplication: 'ApplicationPayload'
@@ -1413,6 +1424,7 @@ export interface NexusGenFieldTypeNames {
     updateSocialLink: 'social'
     updateTheme: 'theme'
     updateUserPasswordAccount: 'UserPayload'
+    upgradeSubscription: 'user'
     verifyMyAccount: 'user'
     zoom_access: 'zoom'
   }
@@ -1431,6 +1443,9 @@ export interface NexusGenFieldTypeNames {
   Payment: { // field return type name
     code: 'Int'
     message: 'String'
+  }
+  PaypalObject: { // field return type name
+    reason: 'String'
   }
   ProjectOrganizerPagination: { // field return type name
     currentPage: 'Int'
@@ -1896,6 +1911,12 @@ export interface NexusGenArgTypes {
     archiveNotification: { // args
       notificationID: string; // ID!
     }
+    cancelSubscription: { // args
+      userID: string; // ID!
+    }
+    checkMyEmailAddress: { // args
+      email: string; // String!
+    }
     companyUploadDocuments: { // args
       companyID: string; // ID!
       file: NexusGenScalars['Upload']; // Upload!
@@ -1992,6 +2013,7 @@ export interface NexusGenArgTypes {
     createUserRecruiter: { // args
       file: NexusGenScalars['Upload']; // Upload!
       input: NexusGenInputs['UserRecruiterInput']; // UserRecruiterInput!
+      subscriptionId?: string | null; // String
     }
     createUserReview: { // args
       rating: number; // Float!
@@ -2157,6 +2179,10 @@ export interface NexusGenArgTypes {
     }
     updateUserPasswordAccount: { // args
       password: string; // String!
+      userID: string; // ID!
+    }
+    upgradeSubscription: { // args
+      subscriptionId: string; // String!
       userID: string; // ID!
     }
     verifyMyAccount: { // args

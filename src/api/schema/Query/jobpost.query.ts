@@ -146,20 +146,11 @@ export const JobPostQuery = extendType({
           };
         }
 
-        if (skills) {
-          whereArr = {
-            Skills: {
-              some: {
-                skills: {
-                  in: skills,
-                },
-              },
-            },
-          };
-        }
-
         let queryParams = {
           where: whereArr,
+          include: {
+            Skills: true,
+          },
           orderBy: [
             {
               featured: "desc",
@@ -169,6 +160,19 @@ export const JobPostQuery = extendType({
         };
 
         const getAllJobs = await prisma.jobPost.findMany(queryParams);
+
+        if (skills && skills.length > 0) {
+          getAllJobs.sort((a, b) => {
+            const aMatchCount = a.Skills.filter((skill) =>
+              skills.includes(skill.skills)
+            ).length;
+            const bMatchCount = b.Skills.filter((skill) =>
+              skills.includes(skill.skills)
+            ).length;
+
+            return bMatchCount - aMatchCount;
+          });
+        }
 
         const offset = (page - 1) * take;
         const item = getAllJobs.slice(offset, offset + take);

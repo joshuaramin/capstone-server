@@ -10,6 +10,7 @@ import * as MedieaMutation from "./media.mutation";
 import * as MessageMutation from "./message.mutation";
 import * as NotificationMutation from "./notification.mutation";
 import * as PasswordMutation from "./password.mutation";
+import * as PaypalMutation from "./paypal.mutation";
 import * as PortfolioMutation from "./portfolio.mutation";
 import * as ProfileMutation from "./profile.mutation";
 import * as ProjectMutation from "./project.mutation";
@@ -37,6 +38,7 @@ export {
   MessageMutation,
   NotificationMutation,
   PasswordMutation,
+  PaypalMutation,
   PortfolioMutation,
   ProfileMutation,
   ProjectMutation,

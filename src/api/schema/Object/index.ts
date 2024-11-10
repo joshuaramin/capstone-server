@@ -12,6 +12,7 @@ import * as MessageObject from "./message.object";
 import * as MessageStatusObject from "./messageStatus.object";
 import * as NotificationObject from "./notification.object";
 import * as DashboardObject from "./dashboard";
+import * as PaypalObject from "./paypal.object";
 import * as PasswordObject from "./password.object";
 import * as PortfolioObject from "./portfolio.object";
 import * as ProfileObject from "./profile.object";
@@ -44,6 +45,7 @@ export {
   MessageStatusObject,
   NotificationObject,
   DashboardObject,
+  PaypalObject,
   PasswordObject,
   PortfolioObject,
   ProfileObject,

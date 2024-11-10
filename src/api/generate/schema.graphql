@@ -186,6 +186,8 @@ type Mutation {
   addSkills: [skills]
   archiveJobPost(boolean: Boolean, jobPostID: ID!): jobpost
   archiveNotification(notificationID: ID!): notification
+  cancelSubscription(userID: ID!): PaypalObject
+  checkMyEmailAddress(email: String!): EmailPayload
   companyUploadDocuments(companyID: ID!, file: Upload!): requirement
   createAbout(input: AboutInput!, profileID: ID!): AboutPayload
   createApplication(jobPostID: ID!, resumeID: ID!, userID: ID!): ApplicationPayload
@@ -205,7 +207,7 @@ type Mutation {
   createTheme(file: Upload!, theme: String!, userID: ID!): theme
   createUserAdminAccount(input: UserInput!): UserPayload
   createUserFreelancers(fileUpload: Upload!, input: UserFreelanceInput!, requirement: RequirementInput, skills: [String]!): UserPayload
-  createUserRecruiter(file: Upload!, input: UserRecruiterInput!): UserPayload
+  createUserRecruiter(file: Upload!, input: UserRecruiterInput!, subscriptionId: String): UserPayload
   createUserReview(rating: Float!, review: String!, userID: ID!): review
   deactivateMyAccount(userID: ID!): user
   deleteAbout(aboutID: ID!): about
@@ -248,6 +250,7 @@ type Mutation {
   updateSocialLink(Github: String, Web: String, X: String, facebook: String, instagram: String, socialID: ID!): social
   updateTheme(file: Upload, theme: String!, themeID: ID!): theme
   updateUserPasswordAccount(password: String!, userID: ID!): UserPayload
+  upgradeSubscription(subscriptionId: String!, userID: ID!): user
   verifyMyAccount(userID: ID!): user
   zoom_access: zoom
 }
@@ -275,6 +278,10 @@ type PasswordAlreadyExist implements Error {
 type Payment implements Error {
   code: Int
   message: String
+}
+
+type PaypalObject {
+  reason: String
 }
 
 """
