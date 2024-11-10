@@ -66,19 +66,5 @@ export const NotificationQuery = extendType({
         });
       },
     });
-    t.int("getCompanyNotification", {
-      args: { companyID: nonNull(idArg()) },
-      resolve: async (_, { companyID }): Promise<any> => {
-        return await prisma.notification.count({
-          where: {
-            is_deleted: false,
-            read: false,
-            Company: {
-              some: { companyID },
-            },
-          },
-        });
-      },
-    });
   },
 });

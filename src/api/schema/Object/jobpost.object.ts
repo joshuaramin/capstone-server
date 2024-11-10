@@ -71,3 +71,21 @@ export const JobPost = objectType({
     });
   },
 });
+
+export const JobPostCount = objectType({
+  name: "JobCount",
+  definition(t) {
+    t.string("jobPostID");
+    t.int("applicants");
+    t.field("jobTitle", {
+      type: "jobpost",
+      resolve: async ({ jobPostID }) => {
+        return await prisma.jobPost.findFirst({
+          where: {
+            jobPostID,
+          },
+        });
+      },
+    });
+  },
+});

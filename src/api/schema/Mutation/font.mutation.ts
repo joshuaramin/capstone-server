@@ -29,7 +29,7 @@ export const FontsMutation = extendType({
         await prisma.activityLogs.create({
           data: {
             title: "Created a Profile Font",
-            description: "You craeted a profile font",
+            description: "You created a profile font",
             User: {
               connect: {
                 userID,

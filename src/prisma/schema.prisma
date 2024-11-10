@@ -53,6 +53,7 @@ model User {
   ResetPassword    ResetPassword[]
   MessageStatus    MessageStatus[]
   Zoom             zintegration?
+  Subscription     Subscription?
   Profile          Profile?
   Company          Company?
 }
@@ -64,6 +65,13 @@ model zintegration {
   secretID      String  @db.Text
   User          User?   @relation(fields: [userID], references: [userID])
   userID        String? @unique
+}
+
+model Subscription {
+  subscriptionID String  @id @default(cuid())
+  subscriptionId String
+  User           User?   @relation(fields: [userID], references: [userID])
+  userID         String? @unique
 }
 
 model Requirements {

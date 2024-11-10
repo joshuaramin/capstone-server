@@ -1,4 +1,5 @@
 import { objectType } from "nexus";
+import { prisma } from "../../helpers/server";
 
 export const ReviewObject = objectType({
   name: "review",
@@ -8,5 +9,19 @@ export const ReviewObject = objectType({
     t.int("rating");
     t.datetime("createdAt");
     t.datetime("updatedAt");
+    t.field("company", {
+      type: "company",
+      resolve: async ({ reviewID }) => {
+        return await prisma.company.findFirst({
+          where: {
+            review: {
+              some: {
+                reviewID,
+              },
+            },
+          },
+        });
+      },
+    });
   },
 });

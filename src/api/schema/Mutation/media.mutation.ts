@@ -6,15 +6,6 @@ import { ERROR_MESSAGE_BAD_INPUT } from "../../helpers/error";
 export const MediaMutation = extendType({
   type: "Mutation",
   definition(t) {
-    t.field("deleteMedia", {
-      type: "media",
-      args: { mediaID: nonNull(idArg()) },
-      resolve: async (_, { mediaID }): Promise<any> => {
-        return await prisma.media.delete({
-          where: { mediaID },
-        });
-      },
-    });
     t.field("createAvatar", {
       type: "MediaPayload",
       args: { profileID: nonNull(idArg()), file: nonNull("Upload") },

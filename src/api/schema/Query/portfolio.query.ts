@@ -18,14 +18,5 @@ export const PortfolioQuery = extendType({
         });
       },
     });
-    t.field("getPortfolioById", {
-      type: "portfolio",
-      args: { portfolioID: nonNull(idArg()) },
-      resolve: async (_, { portfolioID }): Promise<any> => {
-        return await prisma.portfolio.findFirst({
-          where: { portfolioID },
-        });
-      },
-    });
   },
 });

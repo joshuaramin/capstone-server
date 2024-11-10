@@ -66,19 +66,5 @@ export const CompanyQuery = extendType({
         });
       },
     });
-    t.field("getSearchByCompanyName", {
-      type: "company",
-      args: { search: nonNull(stringArg()) },
-      resolve: async (_, { search }): Promise<any> => {
-        return await prisma.company.findMany({
-          where: {
-            companyName: {
-              contains: search,
-              mode: "insensitive",
-            },
-          },
-        });
-      },
-    });
   },
 });

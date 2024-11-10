@@ -127,6 +127,16 @@ export const UserObject = objectType({
         });
       },
     });
+    t.list.field("review", {
+      type: "review",
+      resolve: async ({ userID }) => {
+        return await prisma.review.findMany({
+          where: {
+            userID,
+          },
+        });
+      },
+    });
   },
 });
 

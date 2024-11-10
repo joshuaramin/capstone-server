@@ -1510,7 +1510,7 @@ export async function ChangeEmailAddress(
                     <p style="color: #000001">Dear ${fullname},</p>
                     <p style="color: #000001;">
                       You recently requested to change the email address
-                      associated with your account on [Your Company Name]. To
+                      associated with your account on BeeHired. To
                       complete this update, please verify your new email address
                       by clicking the link below:
                     </p>
