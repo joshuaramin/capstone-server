@@ -309,13 +309,6 @@ model PasswordHash {
   userID     String?
 }
 
-model Payment {
-  paymentID   String      @id @default(cuid())
-  paymentType paymentType
-  createdAt   DateTime    @default(now()) @db.Timestamp()
-  updatedAt   DateTime    @default(now()) @updatedAt @db.Timestamp()
-}
-
 model JobPost {
   jobPostID   String        @id @default(cuid())
   title       String        @db.VarChar(300)
