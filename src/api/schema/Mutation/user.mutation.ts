@@ -270,8 +270,8 @@ export const UserMutation = extendType({
             userID,
           },
           data: {
-            isArchive: true
-          }
+            isArchive: true,
+          },
         });
       },
     });
@@ -386,7 +386,8 @@ export const UserMutation = extendType({
             return {
               __typename: "ErrorObject",
               code: 400,
-              message: "Password is Already Exist",
+              message:
+                "Your new password cannot be the same as your current or any previous passwords",
             };
           }
         }
@@ -432,11 +433,25 @@ export const UserMutation = extendType({
           },
         });
 
+        const userEmail = await prisma.user.findUnique({
+          where: {
+            email,
+          },
+        });
+
+        if (userEmail) {
+          return {
+            __typename: "ErrorObject",
+            code: 400,
+            message: "Email Address is already existing.",
+          };
+        }
+
         if (user.email === email) {
           return {
             __typename: "ErrorObject",
             code: 400,
-            message: "Email Address is already exist.",
+            message: "Email Address is already existing.",
           };
         }
 
@@ -490,7 +505,7 @@ export const UserMutation = extendType({
           return {
             __typename: "ErrorObject",
             code: 400,
-            message: "Email Address is already exist",
+            message: "Email Address does not exist",
           };
         }
 
@@ -500,7 +515,7 @@ export const UserMutation = extendType({
           return {
             __typename: "ErrorObject",
             code: 401,
-            message: "Password is does not matched",
+            message: "Email Address or Password is incorrect",
           };
         }
 
