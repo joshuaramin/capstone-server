@@ -1,6 +1,5 @@
 import { extendType, idArg, intArg, nonNull, stringArg } from "nexus";
 import { prisma } from "../../helpers/server";
-import { ERROR_MESSAGE_BAD_INPUT } from "../../helpers/error";
 
 export const ProjectMutation = extendType({
   type: "Mutation",
@@ -15,21 +14,27 @@ export const ProjectMutation = extendType({
         endDate: nonNull("Date"),
         userID: nonNull(idArg()),
       },
-      resolve: async (
-        _,
-        { title, amount, startDate, endDate, projectOrganizerID, userID }
-      ): Promise<any> => {
-        if (!title || !amount || !startDate || !endDate) {
-          return ERROR_MESSAGE_BAD_INPUT;
+      resolve: async (_, args): Promise<any> => {
+        for (const key in args) {
+          if (args.hasOwnProperty(key)) {
+            if (!args[key]) {
+              return {
+                __typename: "ErrorObject",
+                code: 400,
+                message: `${key}is required`,
+              };
+            }
+          }
         }
+
         const project = await prisma.projectOrganizer.update({
           data: {
-            title,
-            amount,
-            startDate,
-            endDate,
+            title: args.title,
+            amount: args.amount,
+            startDate: args.startDate,
+            endDate: args.endDate,
           },
-          where: { projectOrganizerID },
+          where: { projectOrganizerID: args.projectOrganizerID },
         });
 
         await prisma.activityLogs.create({
@@ -38,7 +43,7 @@ export const ProjectMutation = extendType({
             description: "You Updated the Project Details",
             User: {
               connect: {
-                userID,
+                userID: args.userID,
               },
             },
           },

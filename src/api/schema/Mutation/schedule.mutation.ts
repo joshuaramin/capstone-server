@@ -37,7 +37,7 @@ export const ScheduleMutation = extendType({
       ): Promise<any> => {
         if (!startDate) {
           return {
-            __typename: "BADINPUT",
+            __typename: "ErrorObject",
             code: 400,
             message: "Start Date is required",
           };
@@ -45,7 +45,7 @@ export const ScheduleMutation = extendType({
 
         if (!endDate) {
           return {
-            __typename: "BADINPUT",
+            __typename: "ErrorObject",
             code: 400,
             message: "End Date is required",
           };
@@ -53,7 +53,7 @@ export const ScheduleMutation = extendType({
 
         if (!title) {
           return {
-            __typename: "BADINPUT",
+            __typename: "ErrorObject",
             code: 400,
             message: "Title is required",
           };

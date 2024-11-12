@@ -9,7 +9,6 @@ import * as JobPostMutation from "./jobpost.mutation";
 import * as MedieaMutation from "./media.mutation";
 import * as MessageMutation from "./message.mutation";
 import * as NotificationMutation from "./notification.mutation";
-import * as PasswordMutation from "./password.mutation";
 import * as PaypalMutation from "./paypal.mutation";
 import * as PortfolioMutation from "./portfolio.mutation";
 import * as ProfileMutation from "./profile.mutation";
@@ -37,7 +36,6 @@ export {
   MedieaMutation,
   MessageMutation,
   NotificationMutation,
-  PasswordMutation,
   PaypalMutation,
   PortfolioMutation,
   ProfileMutation,

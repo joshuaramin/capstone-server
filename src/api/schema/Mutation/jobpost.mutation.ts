@@ -17,29 +17,18 @@ export const JobPostMutation = extendType({
       },
       resolve: async (
         _,
-        {
-          companyID,
-          input: {
-            title,
-            description,
-            JobType,
-            location,
-            duration,
-            experience,
-          },
-          salary: { min, max, currency, fixed },
-          skills,
-        }
+        { companyID, input, salary: { min, max, currency, fixed }, skills }
       ): Promise<any> => {
-        if (
-          !title ||
-          !description ||
-          !JobType ||
-          !location ||
-          !duration ||
-          !currency
-        ) {
-          return ERROR_MESSAGE_BAD_INPUT;
+        for (const key in input) {
+          if (input.hasOwnProperty(key)) {
+            if (!input[key]) {
+              return {
+                __typename: "ErrorObject",
+                code: 400,
+                message: `${key}is required`,
+              };
+            }
+          }
         }
         const company = await prisma.company.findUnique({
           where: {
@@ -50,6 +39,14 @@ export const JobPostMutation = extendType({
             JobPost: true,
           },
         });
+
+        if (company.verified === false) {
+          return {
+            __typename: "ErrorObject",
+            code: 401,
+            message: "You Company must be verified",
+          };
+        }
 
         await prisma.activityLogs.create({
           data: {
@@ -92,25 +89,25 @@ export const JobPostMutation = extendType({
           if (fixed) {
             const job = await prisma.jobPost.create({
               data: {
-                title,
-                description,
+                title: input.title,
+                description: input.description,
                 endDate: add(new Date(Date.now()), {
                   days: 21,
                 }),
-                location,
-                duration,
-                experience,
+                location: input.location,
+                duration: input.duration,
+                experience: input.experience,
                 featured: false,
                 status: "Published",
                 isOpen: "Open",
-                slug: Slugify(title),
+                slug: Slugify(input.title),
                 Salary: {
                   create: {
                     fixed,
                     currency,
                   },
                 },
-                JobType,
+                JobType: input.JobType,
                 Company: {
                   connect: {
                     companyID,
@@ -131,18 +128,18 @@ export const JobPostMutation = extendType({
           } else {
             const job = await prisma.jobPost.create({
               data: {
-                title,
-                description,
+                title: input.title,
+                description: input.description,
                 endDate: add(new Date(Date.now()), {
                   days: 21,
                 }),
-                location,
-                duration,
-                experience,
+                location: input.location,
+                duration: input.duration,
+                experience: input.experience,
                 featured: false,
                 status: "Published",
                 isOpen: "Open",
-                slug: Slugify(title),
+                slug: Slugify(input.title),
                 Salary: {
                   create: {
                     min,
@@ -150,7 +147,7 @@ export const JobPostMutation = extendType({
                     currency,
                   },
                 },
-                JobType,
+                JobType: input.JobType,
                 Company: {
                   connect: {
                     companyID,
@@ -173,17 +170,17 @@ export const JobPostMutation = extendType({
           if (fixed) {
             const job = await prisma.jobPost.create({
               data: {
-                title,
-                description,
+                title: input.title,
+                description: input.description,
                 endDate: add(new Date(Date.now()), {
                   days: 90,
                 }),
-                location,
-                duration,
-                experience,
+                location: input.location,
+                duration: input.duration,
+                experience: input.experience,
                 status: "Published",
                 isOpen: "Open",
-                slug: Slugify(title),
+                slug: Slugify(input.title),
                 featured: true,
                 Salary: {
                   create: {
@@ -191,7 +188,7 @@ export const JobPostMutation = extendType({
                     currency,
                   },
                 },
-                JobType,
+                JobType: input.JobType,
                 Company: {
                   connect: {
                     companyID,
@@ -212,18 +209,18 @@ export const JobPostMutation = extendType({
           } else {
             const job = await prisma.jobPost.create({
               data: {
-                title,
-                description,
+                title: input.title,
+                description: input.description,
                 endDate: add(new Date(Date.now()), {
                   days: 90,
                 }),
-                location,
-                duration,
-                experience,
+                location: input.location,
+                duration: input.duration,
+                experience: input.experience,
                 featured: true,
                 status: "Published",
                 isOpen: "Open",
-                slug: Slugify(title),
+                slug: Slugify(input.title),
                 Salary: {
                   create: {
                     min,
@@ -231,7 +228,7 @@ export const JobPostMutation = extendType({
                     currency,
                   },
                 },
-                JobType,
+                JobType: input.JobType,
                 Company: {
                   connect: {
                     companyID,
@@ -486,9 +483,49 @@ export const JobPostMutation = extendType({
       type: "jobpost",
       args: { jobPostID: nonNull(idArg()) },
       resolve: async (_, { jobPostID }): Promise<any> => {
-        return await prisma.jobPost.delete({
-          where: { jobPostID },
+        const jobfind = await prisma.jobPost.findFirst({
+          where: {
+            jobPostID,
+          },
+          include: {
+            Company: {
+              include: {
+                User: true,
+              },
+            },
+          },
         });
+
+        const report = await prisma.report.findFirst({
+          where: { jobpostID: jobPostID },
+        });
+
+        await prisma.notification.create({
+          data: {
+            title: `Job Post Removed: ${jobfind.title} - ${report.message}`,
+            User: {
+              connect: {
+                userID: jobfind.Company.User.userID,
+              },
+            },
+          },
+        });
+
+        await prisma.report.delete({
+          where: {
+            reportID: report.reportID,
+          },
+        });
+
+        const jobpost = await prisma.jobPost.delete({
+          where: { jobPostID },
+          include: {
+            Company: {
+              include: { User: true },
+            },
+          },
+        });
+        return jobpost;
       },
     });
     t.list.field("generateJobPostApplicant", {

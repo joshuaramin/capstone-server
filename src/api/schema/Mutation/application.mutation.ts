@@ -1,10 +1,7 @@
 import { extendType, idArg, nonNull, stringArg } from "nexus";
 import { prisma } from "../../helpers/server";
 import generateRandom from "../../helpers/generateRandom";
-import {
-  ERROR_MESSAGE_BAD_INPUT,
-  ERROR_MESSAGE_FORBIDDEN,
-} from "../../helpers/error";
+
 import { ATSMainFunc } from "../../helpers/ats";
 import {
   ApplicantHired,
@@ -28,7 +25,7 @@ export const ApplicationMutation = extendType({
 
         if (!resumeID) {
           return {
-            __typename: "BADINPUT",
+            __typename: "ErrorObject",
             code: 400,
             message: "You need to submit a resume",
           };
@@ -39,7 +36,11 @@ export const ApplicationMutation = extendType({
         });
 
         if (users.verified === false) {
-          return ERROR_MESSAGE_FORBIDDEN;
+          return {
+            __typename: "ErrorObject",
+            code: 401,
+            message: "You must verify your account to submit your application",
+          };
         }
 
         const resume = await prisma.resume.findUnique({
@@ -55,7 +56,7 @@ export const ApplicationMutation = extendType({
 
         if (new Date(jobPostDesc.endDate) < new Date()) {
           return {
-            __typename: "BADINPUT",
+            __typename: "ErrorObject",
             message: "The application period has ended.",
             code: 400,
           };
@@ -74,9 +75,9 @@ export const ApplicationMutation = extendType({
 
         if (applied) {
           return {
-            __typename: "AlreadyExist",
+            __typename: "ErrorObject",
             code: 400,
-            message: "Application already exist",
+            message: "You already applied to this application",
           };
         }
 

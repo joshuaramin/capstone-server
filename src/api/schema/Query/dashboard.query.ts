@@ -73,7 +73,9 @@ export const DashboardQuery = extendType({
           JobPost: jobpost,
           projects,
           schedule,
-          applicants
+          applicants,
+          userID: company.userID,
+          companyID,
         };
       },
     });

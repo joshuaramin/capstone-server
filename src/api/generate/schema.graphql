@@ -6,7 +6,7 @@ input AboutInput {
   bio: String
 }
 
-union AboutPayload = BADINPUT | about
+union AboutPayload = ErrorObject | about
 
 type ActivityLogsPagination {
   currentPage: Int
@@ -15,11 +15,6 @@ type ActivityLogsPagination {
   item: [activityLogs]
   totalItems: Int
   totalPages: Int
-}
-
-type AlreadyExist implements Error {
-  code: Int
-  message: String
 }
 
 type ApplicantPagination {
@@ -31,12 +26,7 @@ type ApplicantPagination {
   totalPages: Int
 }
 
-union ApplicationPayload = AlreadyExist | BADINPUT | Forbidden | application
-
-type BADINPUT implements Error {
-  code: Int
-  message: String
-}
+union ApplicationPayload = ErrorObject | application
 
 type CompaniesPagination {
   currentPage: Int
@@ -54,12 +44,7 @@ input CompanyInput {
   location: String
 }
 
-type CredentialsInvalid implements Error {
-  code: Int
-  message: String
-}
-
-union CredentialsPayload = BADINPUT | CredentialsInvalid | NOTFOUND | token
+union CredentialsPayload = ErrorObject | token
 
 type DashboardObject {
   applicants: Int
@@ -93,14 +78,14 @@ input EducationInput {
   study: String
 }
 
-union EducationPayload = BADINPUT | education
+union EducationPayload = ErrorObject | education
 
 """
 A field whose value conforms to the standard internet email address format as specified in HTML Spec: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.
 """
 scalar EmailAddress @specifiedBy(url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address")
 
-union EmailPayload = BADINPUT | NOTFOUND | user
+union EmailPayload = ErrorObject | user
 
 type EmployerDashboard {
   JobPost: Int
@@ -118,12 +103,12 @@ interface Error {
   message: String
 }
 
-type Expired implements Error {
+type ErrorObject implements Error {
   code: Int
   message: String
 }
 
-union FavouritePayload = BADINPUT | Forbidden | favourite
+union FavouritePayload = ErrorObject | favourite
 
 type FontPagination {
   currentPage: Int
@@ -132,11 +117,6 @@ type FontPagination {
   item: [fonts]
   totalItems: Int
   totalPages: Int
-}
-
-type Forbidden implements Error {
-  code: Int
-  message: String
 }
 
 type GroupMessage {
@@ -165,9 +145,9 @@ type JobPagination {
   totalPages: Int
 }
 
-union JobPostPayload = BADINPUT | Forbidden | Payment | jobpost
+union JobPostPayload = ErrorObject | jobpost
 
-union MediaPayload = BADINPUT | media
+union MediaPayload = ErrorObject | media
 
 type MessageStatus {
   createdAt: DateTime
@@ -192,7 +172,7 @@ type Mutation {
   createAbout(input: AboutInput!, profileID: ID!): AboutPayload
   createApplication(jobPostID: ID!, resumeID: ID!, userID: ID!): ApplicationPayload
   createAvatar(file: Upload!, profileID: ID!): MediaPayload
-  createCompanyReview(companyID: ID!, rating: Float!, review: String!): review
+  createCompanyReview(companyID: ID!, rating: Float!, review: String!, userID: ID!): review
   createEducationBackground(input: EducationInput!, profileID: ID!): EducationPayload
   createFavourite(jobPostID: ID!, userID: ID!): FavouritePayload
   createFontFamily(file: Upload!, font: String!, userID: ID!): fonts
@@ -208,7 +188,7 @@ type Mutation {
   createUserAdminAccount(input: UserInput!): UserPayload
   createUserFreelancers(fileUpload: Upload!, input: UserFreelanceInput!, requirement: RequirementInput, skills: [String]!): UserPayload
   createUserRecruiter(file: Upload!, input: UserRecruiterInput!, subscriptionId: String): UserPayload
-  createUserReview(rating: Float!, review: String!, userID: ID!): review
+  createUserReview(companyID: ID!, rating: Float!, review: String!, userID: ID!): review
   deactivateMyAccount(userID: ID!): user
   deleteAbout(aboutID: ID!): about
   deleteEducationBackground(educationID: ID!): education
@@ -255,11 +235,6 @@ type Mutation {
   zoom_access: zoom
 }
 
-type NOTFOUND implements Error {
-  code: Int
-  message: String
-}
-
 type NotificationPagination {
   cursor: String
   notification: [notification]
@@ -268,16 +243,6 @@ type NotificationPagination {
 input PaginationInput {
   page: Int
   take: Int
-}
-
-type PasswordAlreadyExist implements Error {
-  code: Int
-  message: String
-}
-
-type Payment implements Error {
-  code: Int
-  message: String
 }
 
 type PaypalObject {
@@ -302,7 +267,7 @@ input PortfolioInput {
   title: String
 }
 
-union PortfolioPayload = BADINPUT | portfolio
+union PortfolioPayload = ErrorObject | portfolio
 
 input ProfileInput {
   birthday: Date
@@ -382,7 +347,7 @@ input RequirementInput {
   type: String
 }
 
-union ResumePayload = BADINPUT | resume
+union ResumePayload = ErrorObject | resume
 
 input ScheduleInput {
   description: String
@@ -403,13 +368,13 @@ type SchedulePagination {
   totalPages: Int
 }
 
-union SchedulePayload = BADINPUT | schedule
+union SchedulePayload = ErrorObject | schedule
 
 input SkillInput {
   skills: String
 }
 
-union SkillPayload = AlreadyExist | BADINPUT | skills
+union SkillPayload = ErrorObject | skills
 
 type SkillsPagination {
   currentPage: Int
@@ -420,7 +385,7 @@ type SkillsPagination {
   totalPages: Int
 }
 
-union SocialPayload = AlreadyExist | BADINPUT | social
+union SocialPayload = ErrorObject | social
 
 type ThemePagination {
   currentPage: Int
@@ -463,7 +428,7 @@ type UserPagination {
   totalPages: Int
 }
 
-union UserPayload = AlreadyExist | BADINPUT | PasswordAlreadyExist | user
+union UserPayload = ErrorObject | user
 
 input UserRecruiterInput {
   companyName: String
@@ -661,8 +626,9 @@ type profile {
   phone: PhoneNumber
   portfolio: [portfolio]
   profileID: ID
+  review: [review]
   skills: [skills]
-  social: [social]
+  social: social
   updatedAt: DateTime
   user: user
 }
@@ -705,7 +671,7 @@ type resetPassword {
   updatedAt: DateTime
 }
 
-union resetPasswordPayload = Expired | NOTFOUND | resetPassword
+union resetPasswordPayload = ErrorObject | resetPassword
 
 type resume {
   createdAt: DateTime
@@ -747,7 +713,7 @@ input salaryInput {
   min: Float
 }
 
-union salaryPayload = BADINPUT | salary
+union salaryPayload = ErrorObject | salary
 
 type schedule {
   applicant: user

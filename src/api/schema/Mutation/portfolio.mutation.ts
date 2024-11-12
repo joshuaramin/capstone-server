@@ -7,7 +7,6 @@ import {
   stringArg,
 } from "nexus";
 import { prisma } from "../../helpers/server";
-import { ERROR_MESSAGE_BAD_INPUT } from "../../helpers/error";
 
 export const PortfolioMutation = extendType({
   type: "Mutation",
@@ -20,35 +19,17 @@ export const PortfolioMutation = extendType({
         skills: list(stringArg()),
       },
 
-      resolve: async (
-        _,
-        {
-          profileID,
-          input: {
-            companyName,
-            description,
-            employmentType,
-            location,
-            locationType,
-            title,
-            startMonth,
-            startYear,
-            endYear,
-            endMonth,
-          },
-          skills,
-        }
-      ): Promise<any> => {
-        if (
-          !companyName ||
-          !employmentType ||
-          !startMonth ||
-          !startYear ||
-          !location ||
-          !locationType ||
-          !title
-        ) {
-          return ERROR_MESSAGE_BAD_INPUT;
+      resolve: async (_, { profileID, input, skills }): Promise<any> => {
+        for (const key in input) {
+          if (input.hasOwnProperty(key)) {
+            if (!input[key]) {
+              return {
+                __typename: "ErrorObject",
+                code: 400,
+                message: `${key}is required`,
+              };
+            }
+          }
         }
 
         const user = await prisma.user.findFirst({
@@ -68,16 +49,16 @@ export const PortfolioMutation = extendType({
         });
         const portfolio = await prisma.portfolio.create({
           data: {
-            companyName,
-            description,
-            employmentType,
-            startMonth,
-            startYear,
-            endMonth,
-            endYear,
-            location,
-            locationType,
-            title,
+            companyName: input.companyName,
+            description: input.description,
+            employmentType: input.employmentType,
+            startMonth: input.startMonth,
+            startYear: input.startYear,
+            endMonth: input.endMonth,
+            endYear: input.endYear,
+            location: input.location,
+            locationType: input.locationType,
+            title: input.title,
             Skills: {
               connect: skills.map((skilled) => {
                 return { skills: skilled };
@@ -105,9 +86,18 @@ export const PortfolioMutation = extendType({
         skills: nonNull(list(stringArg())),
       },
       resolve: async (_, { portfolioID, input, skills }): Promise<any> => {
-        if (!input) {
-          return ERROR_MESSAGE_BAD_INPUT;
+        for (const key in input) {
+          if (input.hasOwnProperty(key)) {
+            if (!input[key]) {
+              return {
+                __typename: "ErrorObject",
+                code: 400,
+                message: `${key}is required`,
+              };
+            }
+          }
         }
+
         const portfolio = await prisma.portfolio.update({
           data: {
             ...input,

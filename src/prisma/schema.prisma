@@ -375,7 +375,7 @@ model Application {
   ATS           ApplicationScore?
   Resume        Resume[]
   Notification  Notification[]
-  JobPost       JobPost?          @relation(fields: [jobPostID], references: [jobPostID], onDelete: Cascade)
+  JobPost       JobPost?          @relation(fields: [jobPostID], references: [jobPostID])
   jobPostID     String?
   User          User?             @relation(fields: [userID], references: [userID], onDelete: Cascade)
   userID        String?
@@ -441,7 +441,7 @@ model ProjectOrganizer {
   createdAt          DateTime       @default(now()) @db.Timestamp()
   updatedAt          DateTime       @default(now()) @updatedAt @db.Timestamp()
   Notification       Notification[]
-  User               User?          @relation(fields: [userID], references: [userID], onDelete: Cascade)
+  User               User?          @relation(fields: [userID], references: [userID])
   userID             String?
   Company            Company?       @relation(fields: [companyID], references: [companyID])
   companyID          String?
