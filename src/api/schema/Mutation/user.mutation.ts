@@ -107,9 +107,9 @@ export const UserMutation = extendType({
 
         if (emailCheck) {
           return {
-            __typename: "AlreadyExist",
+            __typename: "ErrorObject",
             code: 409,
-            message: " Email Address is Already Exist.",
+            message: " Email Address is already existing",
           };
         }
 
@@ -209,7 +209,7 @@ export const UserMutation = extendType({
           return {
             __typename: "ErrorObject",
             code: 400,
-            message: "Email Address  is already exist",
+            message: "Email Address is already exist",
           };
         }
 

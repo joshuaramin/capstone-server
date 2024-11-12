@@ -7,7 +7,11 @@ export const DashboardQuery = extendType({
     t.field("getDashboardQuery", {
       type: "DashboardObject",
       resolve: async () => {
-        const user = await prisma.user.count();
+        const user = await prisma.user.count({
+          where: {
+            isArchive: false,
+          },
+        });
         const jobpost = await prisma.jobPost.count();
         const applicants = await prisma.application.count();
         const companies = await prisma.company.count();
