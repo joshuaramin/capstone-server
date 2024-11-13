@@ -92,7 +92,7 @@ export const ApplicationQuery = extendType({
             userID,
             status,
             JobPost: {
-              NOT: null,
+              isNot: null,
             },
           },
           include: {

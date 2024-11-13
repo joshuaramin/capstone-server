@@ -82,7 +82,8 @@ export const JobPostMutation = extendType({
             return {
               __typename: "BADINPUT",
               code: 400,
-              message: "A job post has already been created today.",
+              message:
+                "You’ve reached the daily limit for job posts. Upgrade your plan to post more.",
             };
           }
 

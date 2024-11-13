@@ -30,7 +30,7 @@ export const SkillsMutation = extendType({
 
         if (ujSkill) {
           return {
-            __typename: "AlreadyExist",
+            __typename: "ErrorObject",
             code: 400,
             message: "Skill is already exist.",
           };
