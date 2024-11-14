@@ -15,11 +15,13 @@ import * as ProfileQuery from "./profile.query";
 import * as ProjectOrganizer from "./project.query";
 import * as ReportQuery from "./report.query";
 import * as ResumeQuery from "./resume.query";
+import * as Reviews from "./reviews.query";
 import * as ScheduleQuery from "./schedule.query";
 import * as SkillQuery from "./skills.query";
 import * as ThemeQuery from "./theme.query";
 import * as SocialQuery from "./social.query";
 import * as UserQuery from "./user.query";
+import * as ZoomQuery from "./zoom.query";
 
 export {
   AboutQuery,
@@ -39,9 +41,11 @@ export {
   ProjectOrganizer,
   ReportQuery,
   ResumeQuery,
+  Reviews,
   ScheduleQuery,
   SkillQuery,
   ThemeQuery,
   SocialQuery,
   UserQuery,
+  ZoomQuery,
 };

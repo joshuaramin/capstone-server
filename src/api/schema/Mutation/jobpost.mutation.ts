@@ -3,6 +3,7 @@ import { prisma } from "../../helpers/server";
 import { add } from "date-fns";
 import { ERROR_MESSAGE_BAD_INPUT } from "../../helpers/error";
 import { Slugify } from "../../helpers/slugify";
+import { uploader } from "../../helpers/cloudinary";
 
 export const JobPostMutation = extendType({
   type: "Mutation",
@@ -14,10 +15,17 @@ export const JobPostMutation = extendType({
         input: nonNull("jobPostInput"),
         salary: nonNull("salaryInput"),
         skills: nonNull(list(stringArg())),
+        file: "Upload",
       },
       resolve: async (
         _,
-        { companyID, input, salary: { min, max, currency, fixed }, skills }
+        {
+          companyID,
+          input,
+          salary: { min, max, currency, fixed },
+          skills,
+          file,
+        }
       ): Promise<any> => {
         for (const key in input) {
           if (input.hasOwnProperty(key)) {
@@ -88,6 +96,7 @@ export const JobPostMutation = extendType({
           }
 
           if (fixed) {
+            const { createReadStream } = await file;
             const job = await prisma.jobPost.create({
               data: {
                 title: input.title,
@@ -108,6 +117,7 @@ export const JobPostMutation = extendType({
                     currency,
                   },
                 },
+                agreement: await uploader(createReadStream()),
                 JobType: input.JobType,
                 Company: {
                   connect: {
@@ -127,6 +137,7 @@ export const JobPostMutation = extendType({
               ...job,
             };
           } else {
+            const { createReadStream } = await file;
             const job = await prisma.jobPost.create({
               data: {
                 title: input.title,
@@ -141,6 +152,7 @@ export const JobPostMutation = extendType({
                 status: "Published",
                 isOpen: "Open",
                 slug: Slugify(input.title),
+                agreement: await uploader(createReadStream()),
                 Salary: {
                   create: {
                     min,
@@ -169,6 +181,7 @@ export const JobPostMutation = extendType({
           }
         } else {
           if (fixed) {
+            const { createReadStream } = await file;
             const job = await prisma.jobPost.create({
               data: {
                 title: input.title,
@@ -181,6 +194,7 @@ export const JobPostMutation = extendType({
                 experience: input.experience,
                 status: "Published",
                 isOpen: "Open",
+                agreement: await uploader(createReadStream()),
                 slug: Slugify(input.title),
                 featured: true,
                 Salary: {
@@ -208,6 +222,7 @@ export const JobPostMutation = extendType({
               ...job,
             };
           } else {
+            const { createReadStream } = await file;
             const job = await prisma.jobPost.create({
               data: {
                 title: input.title,
@@ -218,6 +233,7 @@ export const JobPostMutation = extendType({
                 location: input.location,
                 duration: input.duration,
                 experience: input.experience,
+                agreement: await uploader(createReadStream()),
                 featured: true,
                 status: "Published",
                 isOpen: "Open",
@@ -401,7 +417,7 @@ export const JobPostMutation = extendType({
 
           //send an email
 
-          jobApplicants.map(({}) => {});
+          jobApplicants.map(({ User: { email } }) => {});
         }
 
         return await prisma.jobPost.update({

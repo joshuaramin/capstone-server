@@ -530,9 +530,9 @@ export const UserMutation = extendType({
 
         if (users.verified === false) {
           return {
-            __typename: "BADINPUT",
+            __typename: "ErrorObject",
             code: 401,
-            message: "You need to verify your account first",
+            message: "Account must be verified",
           };
         }
 

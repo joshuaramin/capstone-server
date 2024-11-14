@@ -1,5 +1,6 @@
 import { extendType, idArg, intArg, nonNull, stringArg } from "nexus";
 import { prisma } from "../../helpers/server";
+import { format } from "date-fns";
 
 export const ProjectMutation = extendType({
   type: "Mutation",
@@ -89,6 +90,25 @@ export const ProjectMutation = extendType({
         });
 
         return project;
+      },
+    });
+    t.list.field("generateProjectOrganizer", {
+      type: "project",
+      args: {
+        startDate: stringArg(),
+        endDate: stringArg(),
+        userID: nonNull(idArg()),
+      },
+      resolve: async (_, { userID, endDate, startDate }): Promise<any> => {
+        return await prisma.projectOrganizer.findMany({
+          where: {
+            userID,
+            createdAt: {
+              gte: new Date(startDate),
+              lte: new Date(endDate),
+            },
+          },
+        });
       },
     });
   },

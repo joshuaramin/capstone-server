@@ -322,6 +322,7 @@ model JobPost {
   status      String        @db.VarChar(200)
   isArchive   Boolean       @default(false)
   isOpen      String        @db.VarChar(200)
+  agreement   String        @db.Text
   featured    Boolean       @default(false) @db.Boolean
   createdAt   DateTime      @default(now()) @db.Timestamp()
   updatedAt   DateTime      @default(now()) @updatedAt @db.Timestamp()
