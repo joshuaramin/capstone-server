@@ -9,6 +9,7 @@ import {
   ApplicantReject,
   ApplicantReview,
 } from "../../helpers/sendgrid";
+import axios from "axios";
 
 export const ApplicationMutation = extendType({
   type: "Mutation",
@@ -219,11 +220,25 @@ export const ApplicationMutation = extendType({
             },
           });
         } else if (status === "Hired") {
+          const urlPDF = await axios.get(applicant.JobPost.agreement, {
+            responseType: "arraybuffer",
+          });
+
+          const fileData = Buffer.from(urlPDF.data).toString("base64");
+
           ApplicantHired(
             applicant.User.email,
             `${applicant.User.Profile.firstname} ${applicant.User.Profile.lastname}`,
             `${applicant.JobPost.title}`,
-            `${applicant.JobPost.Company.companyName}`
+            `${applicant.JobPost.Company.companyName}`,
+            [
+              {
+                content: fileData,
+                disposition: "attachment",
+                filename: "Disclosure Agreement",
+                type: "application/pdf",
+              },
+            ]
           );
 
           await prisma.notification.create({

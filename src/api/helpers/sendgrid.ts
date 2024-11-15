@@ -2,10 +2,18 @@ import sendgrid from "@sendgrid/mail";
 import { format } from "date-fns";
 sendgrid.setApiKey(process.env.SGMAIL);
 
+interface attachmentProps {
+  content: string;
+  filename: string;
+  type: string;
+  disposition: string;
+}
+
 const emailTemplate = (
   receiver: string,
   subject: string,
-  htmlContent: string
+  htmlContent: string,
+  attachment?: attachmentProps[]
 ) => {
   try {
     sendgrid.send({
@@ -18,6 +26,7 @@ const emailTemplate = (
           value: htmlContent,
         },
       ],
+      attachments: attachment,
     });
   } catch (e) {
     console.log(e);
@@ -972,7 +981,8 @@ export async function ApplicantHired(
   email: string,
   fullname: string,
   jobtype: string,
-  companyName: string
+  companyName: string,
+  pdf: attachmentProps[]
 ) {
   return emailTemplate(
     email,
@@ -1101,7 +1111,8 @@ export async function ApplicantHired(
     </div>
   </div>
 </body>
-</html>`
+</html>`,
+    pdf
   );
 }
 
@@ -1644,7 +1655,7 @@ export async function AccountDeactivation(email: string, fullname: string) {
                     <p style="color: #000001;">We hope this message finds you well.</p>
                     <p style="color: #000001;">
                       We’re reaching out to inform you of our account deactivation. If your account remains inactive for over 30 days,
-                      it will be automatically deactivated.
+                      it will be automatically deleted.
                     </p>
                     <p style="color: #000001;">
                       However, you can restore access to your account within this
