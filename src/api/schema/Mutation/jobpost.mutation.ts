@@ -34,7 +34,7 @@ export const JobPostMutation = extendType({
               return {
                 __typename: "ErrorObject",
                 code: 400,
-                message: `${key}is required`,
+                message: `${key} is required`,
               };
             }
           }
@@ -89,7 +89,7 @@ export const JobPostMutation = extendType({
         if (company.User.plan === "BASIC") {
           if (existingJobPost) {
             return {
-              __typename: "BADINPUT",
+              __typename: "ErrorObject",
               code: 400,
               message:
                 "You’ve reached the daily limit for job posts. Upgrade your plan to post more.",
