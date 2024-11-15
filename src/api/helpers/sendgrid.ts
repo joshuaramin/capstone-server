@@ -1678,3 +1678,140 @@ export async function AccountDeactivation(email: string, fullname: string) {
 </html>`
   );
 }
+
+export async function JobApplicationClose(
+  email: string,
+  fullname: string,
+  jobTitle: string
+) {
+  return emailTemplate(
+    email,
+    "Job Opportunity Update – Position No Longer Available",
+    `<!DOCTYPE html>
+<html lang="en" xmlns:v="urn:schemas-microsoft-com:vml">
+<head>
+  <meta charset="utf-8">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
+  <!--[if mso]>
+      <noscript>
+        <xml>
+          <o:OfficeDocumentSettings
+            xmlns:o="urn:schemas-microsoft-com:office:office"
+          >
+            <o:PixelsPerInch>96</o:PixelsPerInch>
+          </o:OfficeDocumentSettings>
+        </xml>
+      </noscript>
+      <style>
+        td,
+        th,
+        div,
+        p,
+        a,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          font-family: "Segoe UI", sans-serif;
+          mso-line-height-rule: exactly;
+        }
+      </style>
+    <![endif]-->
+  <title>Submitted Application</title>
+  <style>
+    .leading-8 {
+      line-height: 32px !important
+    }
+    @media (max-width: 600px) {
+      .sm-px-0 {
+        padding-left: 0 !important;
+        padding-right: 0 !important
+      }
+      .sm-px-4 {
+        padding-left: 16px !important;
+        padding-right: 16px !important
+      }
+      .sm-px-6 {
+        padding-left: 24px !important;
+        padding-right: 24px !important
+      }
+      .sm-py-8 {
+        padding-top: 32px !important;
+        padding-bottom: 32px !important
+      }
+      .sm-leading-8 {
+        line-height: 32px !important
+      }
+    }
+  </style>
+</head>
+<body style="margin: 0; width: 100%; background-color: #f1f5f9; padding: 0; -webkit-font-smoothing: antialiased; word-break: break-word">
+  <div role="article" aria-roledescription="email" aria-label="Submitted Application" lang="en">
+    <div class="sm-px-4" style="background-color: #e2e8f0; font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif">
+      <table align="center" cellpadding="0" cellspacing="0" role="none">
+        <tr>
+          <td style="width: 600px; max-width: 100%">
+            <table style="width: 100%;" cellpadding="0" cellspacing="0" role="none">
+              <tr>
+                <td class="sm-py-8 sm-px-6" style="padding: 48px; text-align: center">
+                  <a href="http://localhost:3000">
+                    <img src="http://cdn.mcauto-images-production.sendgrid.net/c19fbca0252c8257/aa48b7bb-ae11-47bc-b675-9622627de953/500x500.png" width="120" style="max-width: 100%; vertical-align: middle" alt="">
+                  </a>
+                </td>
+              </tr>
+              <tr>
+                <table style="width: 100%;" cellpadding="0" cellspacing="0" role="none">
+                  <td class="sm-px-6" style="border-radius: 8px; background-color: #fffffe; padding: 40px 48px">
+                    <p style="color: #000001">Dear ${fullname},</p>
+                    <p style="color: #000001;">
+                      Thank you for your interest in the ${jobTitle} opportunity
+                      on BeeHired. We appreciate the time and effort you invested
+                      in preparing your application, and we recognize the
+                      dedication it takes to apply for new roles and explore
+                      exciting job opportunities.
+                    </p>
+                    <p style="color: #000001;">
+                      We are reaching out to inform you that the job posting for
+                      ${jobTitle} has recently been updated, and, unfortunately,
+                      the position is no longer available. This may be because the
+                      position has already been filled or the employer has decided
+                      to remove the job post.
+                    </p>
+                    <p style="color: #000001;">
+                      BeeHired regularly updates job openings that may fit your
+                      skill set and profession perfectly. You can browse for other
+                      positions of interest that better suit your skills.
+                    </p>
+                    <p style="color: #000001;">
+                      Thank you again for choosing BeeHired as your freelancing
+                      platform. We wish you the best of luck in your job search!
+                    </p>
+                    <p style="color: #000001;">Warm Regards,</p>
+                    <p style="color: #000001;">The BeeHired Team</p>
+                  </td>
+                </table>
+              </tr>
+              <tr>
+                <td class="sm-px-0" style="width: 100%; padding-left: 24px; padding-right: 24px; text-align: left">
+                  <table style="width: 100%;" cellpadding="0" cellspacing="0" role="none"></table>
+                </td>
+              </tr>
+              <tr role="separator">
+                <td class="sm-leading-8" style="line-height: 48px">&zwj;</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</body>
+</html>`
+  );
+}
