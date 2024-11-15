@@ -4,6 +4,7 @@ import { add } from "date-fns";
 import { ERROR_MESSAGE_BAD_INPUT } from "../../helpers/error";
 import { Slugify } from "../../helpers/slugify";
 import { uploader } from "../../helpers/cloudinary";
+import { JobApplicationClose } from "../../helpers/sendgrid";
 
 export const JobPostMutation = extendType({
   type: "Mutation",
@@ -411,13 +412,32 @@ export const JobPostMutation = extendType({
               },
             },
             include: {
-              User: true,
+              User: {
+                include: {
+                  Profile: true,
+                },
+              },
+              JobPost: true,
             },
           });
 
           //send an email
 
-          jobApplicants.map(({ User: { email } }) => {});
+          jobApplicants.map(
+            async ({
+              JobPost,
+              User: {
+                email,
+                Profile: { firstname, lastname },
+              },
+            }) => {
+              await JobApplicationClose(
+                email,
+                `${firstname} ${lastname},`,
+                JobPost.title
+              );
+            }
+          );
         }
 
         return await prisma.jobPost.update({
