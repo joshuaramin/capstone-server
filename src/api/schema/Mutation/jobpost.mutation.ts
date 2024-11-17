@@ -433,7 +433,7 @@ export const JobPostMutation = extendType({
             }) => {
               await JobApplicationClose(
                 email,
-                `${firstname} ${lastname},`,
+                `${firstname} ${lastname}`,
                 JobPost.title
               );
             }
