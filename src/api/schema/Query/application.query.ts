@@ -91,6 +91,9 @@ export const ApplicationQuery = extendType({
           where: {
             userID,
             status,
+            JobPost: {
+              isNot: null,
+            },
           },
           include: {
             JobPost: true,

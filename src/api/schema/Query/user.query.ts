@@ -26,6 +26,7 @@ export const UserQuery = extendType({
         const result = await prisma.user.findMany({
           where: {
             role: role as any,
+            isArchive: false,
             Profile: {
               OR: [
                 {

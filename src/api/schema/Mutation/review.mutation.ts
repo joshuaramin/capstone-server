@@ -1,6 +1,5 @@
 import { extendType, floatArg, idArg, nonNull, stringArg } from "nexus";
 import { prisma } from "../../helpers/server";
-import { ERROR_MESSAGE_BAD_INPUT } from "../../helpers/error";
 
 export const ReviewMutation = extendType({
   type: "Mutation",
@@ -11,17 +10,26 @@ export const ReviewMutation = extendType({
         rating: nonNull(floatArg()),
         review: nonNull(stringArg()),
         userID: nonNull(idArg()),
+        companyID: nonNull(idArg()),
       },
-      resolve: async (_, { rating, review, userID }): Promise<any> => {
-        if (!rating || !review) {
-          return ERROR_MESSAGE_BAD_INPUT;
+      resolve: async (_, args): Promise<any> => {
+        for (const key in args) {
+          if (args.hasOwnProperty(key)) {
+            if (!args[key]) {
+              return {
+                __typename: "ErrorObject",
+                code: 400,
+                message: `${key} is required`,
+              };
+            }
+          }
         }
         return await prisma.review.create({
           data: {
-            rating,
-            review,
+            rating: args.rating,
+            review: args.review,
             User: {
-              connect: { userID },
+              connect: { userID: args.userID },
             },
           },
         });
@@ -34,14 +42,26 @@ export const ReviewMutation = extendType({
         review: nonNull(stringArg()),
         companyID: nonNull(idArg()),
       },
-      resolve: async (_, { rating, review, companyID }): Promise<any> => {
+      resolve: async (_, args): Promise<any> => {
+        for (const key in args) {
+          if (args.hasOwnProperty(key)) {
+            if (!args[key]) {
+              return {
+                __typename: "ErrorObject",
+                code: 400,
+                message: `${key} is required`,
+              };
+            }
+          }
+        }
+
         return await prisma.review.create({
           data: {
-            rating,
-            review,
+            rating: args.rating,
+            review: args.review,
             Company: {
               connect: {
-                companyID,
+                companyID: args.companyID,
               },
             },
           },

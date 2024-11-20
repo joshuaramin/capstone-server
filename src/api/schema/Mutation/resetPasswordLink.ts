@@ -1,6 +1,5 @@
 import { extendType, idArg, nonNull, stringArg } from "nexus";
 import { prisma } from "../../helpers/server";
-import { ERROR_EXPIRED, ERROR_NOT_FOUND } from "../../helpers/error";
 
 export const ResetPasswordQuery = extendType({
   type: "Mutation",
@@ -14,13 +13,22 @@ export const ResetPasswordQuery = extendType({
         });
 
         if (!pass) {
-          return ERROR_NOT_FOUND;
+          return {
+            __typename: "ErrorObject",
+            code: 400,
+            message: "Reset Password Code is Not found",
+          };
         }
 
         const currentDate = new Date();
 
         if (new Date(pass.expiredAt) < currentDate) {
-          return ERROR_EXPIRED;
+          return {
+            __typename: "ErrorObject",
+            code: 400,
+            message:
+              "The resource you are looking for has been permanently removed. Please check the URL for any spelling mistakes or contact the site administrator if you believe this is an error.",
+          };
         }
 
         return {

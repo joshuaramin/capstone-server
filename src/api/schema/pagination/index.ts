@@ -164,3 +164,17 @@ export const ReportPagination = objectType({
     t.boolean("hasPrevPage");
   },
 });
+
+export const ReviewPagination = objectType({
+  name: "ReviewPagination",
+  definition(t) {
+    t.list.field("item", {
+      type: "review",
+    });
+    t.int("totalPages");
+    t.int("currentPage");
+    t.int("totalItems");
+    t.boolean("hasNextPage");
+    t.boolean("hasPrevPage");
+  },
+});

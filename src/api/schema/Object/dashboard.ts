@@ -37,6 +37,9 @@ export const DashboardObject = objectType({
             },
           },
           where: {
+            jobPostID: {
+              not: null,
+            },
             createdAt: {
               gte: startDate,
               lte: today,

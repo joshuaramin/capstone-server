@@ -13,6 +13,9 @@ export const FavouriteQuery = extendType({
             User: {
               userID,
             },
+            JobPost: {
+              isNot: null,
+            },
           },
         });
       },

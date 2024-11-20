@@ -1,9 +1,5 @@
 import { extendType, idArg, nonNull } from "nexus";
 import { prisma } from "../../helpers/server";
-import {
-  ERROR_MESSAGE_BAD_INPUT,
-  ERROR_MESSAGE_FORBIDDEN,
-} from "../../helpers/error";
 
 export const FavouriteMutation = extendType({
   type: "Mutation",
@@ -11,40 +7,52 @@ export const FavouriteMutation = extendType({
     t.field("createFavourite", {
       type: "FavouritePayload",
       args: { userID: nonNull(idArg()), jobPostID: nonNull(idArg()) },
-      resolve: async (_, { userID, jobPostID }): Promise<any> => {
-        if (!userID || !jobPostID) {
-          return ERROR_MESSAGE_BAD_INPUT;
+      resolve: async (_, args): Promise<any> => {
+        for (const key in args) {
+          if (args.hasOwnProperty(key)) {
+            if (!args[key]) {
+              return {
+                __typename: "ErrorObject",
+                code: 400,
+                message: `${key}is required`,
+              };
+            }
+          }
         }
 
         const user = await prisma.user.findUnique({
-          where: { userID },
+          where: { userID: args.userID },
         });
 
         const jobPost = await prisma.jobPost.findFirst({
           where: {
-            jobPostID,
+            jobPostID: args.jobPostID,
           },
         });
 
         if (user.verified === false) {
-          return ERROR_MESSAGE_FORBIDDEN;
+          return {
+            __typename: "ErrorObject",
+            code: 401,
+            message: "You don't have an access on this resources",
+          };
         }
 
         await prisma.activityLogs.create({
           data: {
             title: "Added to Save Jobs",
             description: `You added ${jobPost.title} in your save job list`,
-            User: { connect: { userID } },
+            User: { connect: { userID: args.userID } },
           },
         });
 
         const result = await prisma.favourite.create({
           data: {
             User: {
-              connect: { userID },
+              connect: { userID: args.userID },
             },
             JobPost: {
-              connect: { jobPostID },
+              connect: { jobPostID: args.jobPostID },
             },
           },
         });

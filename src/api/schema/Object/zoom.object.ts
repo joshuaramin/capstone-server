@@ -32,3 +32,13 @@ export const ZoomMeeting = objectType({
     t.string("encrypted_password");
   },
 });
+
+export const zintegration = objectType({
+  name: "zintegration",
+  definition(t) {
+    t.id("integrationID");
+    t.string("accountID");
+    t.string("clientID");
+    t.string("secretID");
+  },
+});

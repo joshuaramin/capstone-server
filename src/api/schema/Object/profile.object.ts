@@ -89,10 +89,10 @@ export const ProfileObject = objectType({
         });
       },
     });
-    t.list.field("social", {
+    t.field("social", {
       type: "social",
       resolve: async ({ profileID }) => {
-        return await prisma.social.findMany({
+        return await prisma.social.findFirst({
           where: { profileID },
         });
       },
@@ -112,6 +112,20 @@ export const ProfileObject = objectType({
       resolve: async ({ profileID }) => {
         return await prisma.font.findFirst({
           where: { Profile: { some: { profileID } } },
+        });
+      },
+    });
+    t.list.field("review", {
+      type: "review",
+      resolve: async ({ profileID }) => {
+        return await prisma.review.findMany({
+          where: {
+            User: {
+              Profile: {
+                profileID,
+              },
+            },
+          },
         });
       },
     });

@@ -5,14 +5,6 @@ import jsonwebtoken from "jsonwebtoken";
 
 const { sign } = jsonwebtoken;
 
-import {
-  EMAIL_ADDRESS_NOT_FOUND,
-  ERROR_ALREADY_EXIST,
-  ERROR_MESSAGE_BAD_INPUT,
-  ERROR_MESSAGE_CREDENTIALS,
-  ERROR_PASSWORD_ALREADY_EXIST,
-} from "../../helpers/error";
-
 import generateRandom from "../../helpers/generateRandom";
 import {
   AccountDeactivation,
@@ -31,38 +23,43 @@ export const UserMutation = extendType({
     t.field("createUserAdminAccount", {
       type: "UserPayload",
       args: { input: nonNull("UserInput") },
-      resolve: async (
-        _,
-        { input: { firstname, lastname, password, email, phone, birthday } }
-      ): Promise<any> => {
-        if (!firstname || !lastname || !password || !email || !birthday) {
-          return ERROR_MESSAGE_BAD_INPUT;
+      resolve: async (_, { input }): Promise<any> => {
+        for (const key in input) {
+          if (input.hasOwnProperty(key)) {
+            if (!input[key]) {
+              return {
+                __typename: "ErrorObject",
+                code: 400,
+                message: `${key}is required`,
+              };
+            }
+          }
         }
 
         const emailCheck = await prisma.user.findUnique({
-          where: { email },
+          where: { email: input.email },
         });
 
         if (emailCheck) {
           return {
-            __typename: "AlreadyExist",
+            __typename: "ErrorObject",
             code: 409,
-            message: " Email Address is Already Exist.",
+            message: "Email Address is already existing",
           };
         }
 
         const users = await prisma.user.create({
           data: {
-            email,
-            password: await PashBcrypt(password),
+            email: input.email,
+            password: await PashBcrypt(input.password),
             role: "admin",
             verified: true,
             Profile: {
               create: {
-                firstname,
-                lastname,
-                phone,
-                birthday,
+                firstname: input.firstname,
+                lastname: input.lastname,
+                phone: input.phone,
+                birthday: input.birthday,
               },
             },
           },
@@ -91,64 +88,45 @@ export const UserMutation = extendType({
         file: nonNull("Upload"),
         subscriptionId: stringArg(),
       },
-      resolve: async (
-        _,
-        {
-          input: {
-            companyName,
-            companySize,
-            description,
-            email,
-            plan,
-            firstname,
-            lastname,
-            location,
-            password,
-          },
-          subscriptionId,
-          file,
-        }
-      ): Promise<any> => {
-        if (
-          !companyName ||
-          !companySize ||
-          !description ||
-          !email ||
-          !plan ||
-          !firstname ||
-          !lastname ||
-          !location ||
-          !password
-        ) {
-          return ERROR_MESSAGE_BAD_INPUT;
+      resolve: async (_, { input, subscriptionId, file }): Promise<any> => {
+        for (const key in input) {
+          if (input.hasOwnProperty(key)) {
+            if (!input[key]) {
+              return {
+                __typename: "ErrorObject",
+                code: 400,
+                message: `${key}is required`,
+              };
+            }
+          }
         }
 
         const emailCheck = await prisma.user.findUnique({
-          where: { email },
+          where: { email: input.email },
         });
 
         if (emailCheck) {
           return {
-            __typename: "AlreadyExist",
+            __typename: "ErrorObject",
             code: 409,
-            message: " Email Address is Already Exist.",
+            message: "Email Address is already existing",
           };
         }
 
         const { createReadStream, filename } = await file;
         const users = await prisma.user.create({
           data: {
-            email,
-            password: await PashBcrypt(password),
-            plan,
+            email: input.email,
+            password: await PashBcrypt(input.password),
+            plan: input.plan,
             role: "recruiter",
             Company: {
               create: {
-                companyName,
-                slug: Slugify(companyName),
-                companySize,
-                description,
-                location,
+                companyName: input.companyName,
+                slug: Slugify(input.companyName),
+                companySize: input.companySize,
+                description: input.location,
+                location: input.location,
                 media: {
                   create: {
                     media: await uploader(createReadStream()),
@@ -158,14 +136,14 @@ export const UserMutation = extendType({
             },
             Profile: {
               create: {
-                firstname,
-                lastname,
+                firstname: input.firstname,
+                lastname: input.lastname,
               },
             },
           },
         });
 
-        if (plan === "PRO") {
+        if (input.plan === "PRO") {
           await prisma.subscription.create({
             data: {
               subscriptionId,
@@ -183,10 +161,13 @@ export const UserMutation = extendType({
             },
           },
         });
-        RecruitersInstruction(users.email, `${firstname} ${lastname}`);
+        RecruitersInstruction(
+          users.email,
+          `${input.firstname} ${input.lastname}`
+        );
         VerificationEmail(
           users.email,
-          `${firstname} ${lastname}`,
+          `${input.firstname} ${input.lastname}`,
           users.userID
         );
 
@@ -206,35 +187,42 @@ export const UserMutation = extendType({
       },
       resolve: async (
         _,
-        {
-          input: { email, firstname, lastname, password },
-          requirement: { type },
-          fileUpload,
-          skills,
-        }
+        { input, requirement: { type }, fileUpload, skills }
       ): Promise<any> => {
-        if (!email || !firstname || !lastname || !password) {
-          return ERROR_MESSAGE_BAD_INPUT;
+        for (const key in input) {
+          if (input.hasOwnProperty(key)) {
+            if (!input[key]) {
+              return {
+                __typename: "ErrorObject",
+                code: 400,
+                message: `${key}is required`,
+              };
+            }
+          }
         }
 
         const checkUserEmail = await prisma.user.findUnique({
-          where: { email },
+          where: { email: input.email },
         });
 
         if (checkUserEmail) {
-          return ERROR_ALREADY_EXIST;
+          return {
+            __typename: "ErrorObject",
+            code: 400,
+            message: "Email Address is already exist",
+          };
         }
 
         const { createReadStream, filename } = await fileUpload;
         const users = await prisma.user.create({
           data: {
-            email,
-            password: await PashBcrypt(password),
+            email: input.email,
+            password: await PashBcrypt(input.password),
             role: "freelance",
             Profile: {
               create: {
-                firstname,
-                lastname,
+                firstname: input.firstname,
+                lastname: input.lastname,
                 Skills: {
                   connect: skills.map((skilled) => {
                     return { skills: skilled };
@@ -262,7 +250,10 @@ export const UserMutation = extendType({
           },
         });
 
-        FreelancerVerificationEmail(users.email, `${firstname} ${lastname}`);
+        FreelancerVerificationEmail(
+          users.email,
+          `${input.firstname} ${input.lastname}`
+        );
 
         return {
           __typename: "user",
@@ -274,9 +265,12 @@ export const UserMutation = extendType({
       type: "user",
       args: { userID: nonNull(idArg()) },
       resolve: async (_, { userID }): Promise<any> => {
-        return await prisma.user.delete({
+        return await prisma.user.update({
           where: {
             userID,
+          },
+          data: {
+            isArchive: true,
           },
         });
       },
@@ -320,11 +314,19 @@ export const UserMutation = extendType({
         });
 
         if (!email) {
-          return ERROR_MESSAGE_BAD_INPUT;
+          return {
+            __typename: "ErrorObject",
+            code: 400,
+            message: "Email Address is required",
+          };
         }
 
         if (!users) {
-          return EMAIL_ADDRESS_NOT_FOUND;
+          return {
+            __typename: "ErrorObject",
+            code: 400,
+            message: "Email Address is Not Found",
+          };
         }
 
         const date = new Date();
@@ -366,7 +368,11 @@ export const UserMutation = extendType({
         });
 
         if (!password) {
-          return ERROR_MESSAGE_BAD_INPUT;
+          return {
+            __typename: "ErrorObject",
+            code: 400,
+            message: "Password is required",
+          };
         }
 
         const checkPassHash = await prisma.passwordHash.findMany({
@@ -377,7 +383,12 @@ export const UserMutation = extendType({
           const compareBcrypt = await ComparePass(password, passHash);
 
           if (compareBcrypt) {
-            return ERROR_PASSWORD_ALREADY_EXIST;
+            return {
+              __typename: "ErrorObject",
+              code: 400,
+              message:
+                "Your new password cannot be the same as your current or any previous passwords",
+            };
           }
         }
 
@@ -422,11 +433,25 @@ export const UserMutation = extendType({
           },
         });
 
+        const userEmail = await prisma.user.findUnique({
+          where: {
+            email,
+          },
+        });
+
+        if (userEmail) {
+          return {
+            __typename: "ErrorObject",
+            code: 400,
+            message: "Email Address is already existing.",
+          };
+        }
+
         if (user.email === email) {
           return {
-            __typename: "BADINPUT",
+            __typename: "ErrorObject",
             code: 400,
-            message: "Email is already exist.",
+            message: "Email Address is already existing.",
           };
         }
 
@@ -460,12 +485,36 @@ export const UserMutation = extendType({
         };
       },
     });
+    t.field("updateUserProfile", {
+      type: "user",
+      args: { userID: nonNull(idArg()), input: "ProfileInput" },
+      resolve: async (_, { userID, input: { firstname, lastname, phone } }) => {
+        return await prisma.user.update({
+          where: {
+            userID,
+          },
+          data: {
+            Profile: {
+              update: {
+                firstname,
+                lastname,
+                phone,
+              },
+            },
+          },
+        });
+      },
+    });
     t.field("login", {
       type: "CredentialsPayload",
       args: { email: nonNull(stringArg()), password: nonNull(stringArg()) },
       resolve: async (_, { email, password }, { req, res }): Promise<any> => {
-        if (!email || !password) {
-          return ERROR_MESSAGE_BAD_INPUT;
+        if (!email) {
+          return {
+            __typename: "ErrorObject",
+            code: 400,
+            message: "Email Address is required",
+          };
         }
 
         const users = await prisma.user.findUnique({
@@ -473,13 +522,21 @@ export const UserMutation = extendType({
         });
 
         if (!users) {
-          return EMAIL_ADDRESS_NOT_FOUND;
+          return {
+            __typename: "ErrorObject",
+            code: 400,
+            message: "Email Address does not exist",
+          };
         }
 
         const valid = await ComparePass(password, users?.password);
 
         if (!valid) {
-          return ERROR_MESSAGE_CREDENTIALS;
+          return {
+            __typename: "ErrorObject",
+            code: 401,
+            message: "Email Address or Password is incorrect",
+          };
         }
 
         if (users.isArchive === true) {
@@ -493,9 +550,9 @@ export const UserMutation = extendType({
 
         if (users.verified === false) {
           return {
-            __typename: "BADINPUT",
+            __typename: "ErrorObject",
             code: 401,
-            message: "You need to verify your account first",
+            message: "Account must be verified",
           };
         }
 
@@ -540,9 +597,9 @@ export const UserMutation = extendType({
         });
         if (user) {
           return {
-            __typename: "BADINPUT",
+            __typename: "ErrorObject",
             code: 400,
-            message: "Email is already exist",
+            message: "Email Address is already exist",
           };
         }
 

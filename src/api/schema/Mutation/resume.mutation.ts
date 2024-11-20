@@ -1,6 +1,5 @@
 import { extendType, idArg, nonNull } from "nexus";
 import { prisma } from "../../helpers/server";
-import { ERROR_MESSAGE_BAD_INPUT } from "../../helpers/error";
 import { uploader } from "../../helpers/cloudinary";
 
 export const ResumeMutation = extendType({
@@ -13,7 +12,11 @@ export const ResumeMutation = extendType({
         const { createReadStream, filename } = await file;
 
         if (!file) {
-          return ERROR_MESSAGE_BAD_INPUT;
+          return {
+            __typename: "ErrorObject",
+            code: 400,
+            message: "File Upload is required",
+          };
         }
 
         const resume = await prisma.resume.create({

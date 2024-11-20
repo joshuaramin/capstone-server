@@ -23,5 +23,15 @@ export const ReviewObject = objectType({
         });
       },
     });
+    t.field("User", {
+      type: "user",
+      resolve: async ({ reviewID }) => {
+        return await prisma.review.findFirst({
+          where: {
+            reviewID,
+          },
+        });
+      },
+    });
   },
 });

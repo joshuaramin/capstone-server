@@ -1,6 +1,5 @@
 import { extendType, idArg, inputObjectType, nonNull, stringArg } from "nexus";
 import { prisma } from "../../helpers/server";
-import { ERROR_MESSAGE_BAD_INPUT } from "../../helpers/error";
 
 export const AboutInput = inputObjectType({
   name: "AboutInput",
@@ -17,7 +16,11 @@ export const AboutMutation = extendType({
       args: { profileID: nonNull(idArg()), input: nonNull("AboutInput") },
       resolve: async (_, { input: { bio }, profileID }): Promise<any> => {
         if (!bio) {
-          return ERROR_MESSAGE_BAD_INPUT;
+          return {
+            __typename: "ErrorObject",
+            code: 400,
+            message: "Bio is required",
+          };
         }
         const about = await prisma.about.create({
           data: {
@@ -33,6 +36,14 @@ export const AboutMutation = extendType({
         const user = await prisma.user.findFirst({
           where: { Profile: { profileID } },
         });
+
+        if (!user) {
+          return {
+            __typename: "ErrorObject",
+            code: 400,
+            message: "You Profile Not Found",
+          };
+        }
 
         await prisma.activityLogs.create({
           data: {
