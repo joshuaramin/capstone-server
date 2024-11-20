@@ -780,6 +780,7 @@ export interface NexusGenFieldTypes {
     updateSocialLink: NexusGenRootTypes['social'] | null; // social
     updateTheme: NexusGenRootTypes['theme'] | null; // theme
     updateUserPasswordAccount: NexusGenRootTypes['UserPayload'] | null; // UserPayload
+    updateUserProfile: NexusGenRootTypes['user'] | null; // user
     updateZoomIntegration: NexusGenRootTypes['zintegration'] | null; // zintegration
     upgradeSubscription: NexusGenRootTypes['user'] | null; // user
     verifyMyAccount: NexusGenRootTypes['user'] | null; // user
@@ -1390,6 +1391,7 @@ export interface NexusGenFieldTypeNames {
     updateSocialLink: 'social'
     updateTheme: 'theme'
     updateUserPasswordAccount: 'UserPayload'
+    updateUserProfile: 'user'
     updateZoomIntegration: 'zintegration'
     upgradeSubscription: 'user'
     verifyMyAccount: 'user'
@@ -1912,7 +1914,6 @@ export interface NexusGenArgTypes {
       companyID: string; // ID!
       rating: number; // Float!
       review: string; // String!
-      userID: string; // ID!
     }
     createEducationBackground: { // args
       input: NexusGenInputs['EducationInput']; // EducationInput!
@@ -2167,6 +2168,10 @@ export interface NexusGenArgTypes {
     }
     updateUserPasswordAccount: { // args
       password: string; // String!
+      userID: string; // ID!
+    }
+    updateUserProfile: { // args
+      input?: NexusGenInputs['ProfileInput'] | null; // ProfileInput
       userID: string; // ID!
     }
     updateZoomIntegration: { // args

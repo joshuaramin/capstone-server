@@ -485,6 +485,26 @@ export const UserMutation = extendType({
         };
       },
     });
+    t.field("updateUserProfile", {
+      type: "user",
+      args: { userID: nonNull(idArg()), input: "ProfileInput" },
+      resolve: async (_, { userID, input: { firstname, lastname, phone } }) => {
+        return await prisma.user.update({
+          where: {
+            userID,
+          },
+          data: {
+            Profile: {
+              update: {
+                firstname,
+                lastname,
+                phone,
+              },
+            },
+          },
+        });
+      },
+    });
     t.field("login", {
       type: "CredentialsPayload",
       args: { email: nonNull(stringArg()), password: nonNull(stringArg()) },

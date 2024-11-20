@@ -172,7 +172,7 @@ type Mutation {
   createAbout(input: AboutInput!, profileID: ID!): AboutPayload
   createApplication(jobPostID: ID!, resumeID: ID!, userID: ID!): ApplicationPayload
   createAvatar(file: Upload!, profileID: ID!): MediaPayload
-  createCompanyReview(companyID: ID!, rating: Float!, review: String!, userID: ID!): review
+  createCompanyReview(companyID: ID!, rating: Float!, review: String!): review
   createEducationBackground(input: EducationInput!, profileID: ID!): EducationPayload
   createFavourite(jobPostID: ID!, userID: ID!): FavouritePayload
   createFontFamily(file: Upload!, font: String!, userID: ID!): fonts
@@ -232,6 +232,7 @@ type Mutation {
   updateSocialLink(Github: String, Web: String, X: String, facebook: String, instagram: String, socialID: ID!): social
   updateTheme(file: Upload, theme: String!, themeID: ID!): theme
   updateUserPasswordAccount(password: String!, userID: ID!): UserPayload
+  updateUserProfile(input: ProfileInput, userID: ID!): user
   updateZoomIntegration(accountID: String!, clientID: String!, integrationID: ID!, secretID: String!): zintegration
   upgradeSubscription(subscriptionId: String!, userID: ID!): user
   verifyMyAccount(userID: ID!): user

@@ -31,11 +31,6 @@ export const ReviewMutation = extendType({
             User: {
               connect: { userID: args.userID },
             },
-            Company: {
-              connect: {
-                companyID: args.companyID,
-              },
-            },
           },
         });
       },
@@ -46,7 +41,6 @@ export const ReviewMutation = extendType({
         rating: nonNull(floatArg()),
         review: nonNull(stringArg()),
         companyID: nonNull(idArg()),
-        userID: nonNull(idArg()),
       },
       resolve: async (_, args): Promise<any> => {
         for (const key in args) {
@@ -68,11 +62,6 @@ export const ReviewMutation = extendType({
             Company: {
               connect: {
                 companyID: args.companyID,
-              },
-            },
-            User: {
-              connect: {
-                userID: args.userID,
               },
             },
           },
